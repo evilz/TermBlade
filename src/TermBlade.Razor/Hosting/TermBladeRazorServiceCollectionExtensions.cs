@@ -6,23 +6,23 @@ namespace TermBlade.Razor.Hosting;
 
 public static class TermBladeRazorServiceCollectionExtensions
 {
-    extension(IServiceProvider services)
-    {
-        public bool HasTermBladeRazorServices =>
-            services.GetService<IServiceProviderIsService>() is { } serviceChecker &&
-            serviceChecker.IsService(typeof(TermBladeAppContext)) &&
-            serviceChecker.IsService(typeof(NoopComponentRenderer));
-    }
+  extension(IServiceProvider services)
+  {
+    public bool HasTermBladeRazorServices =>
+        services.GetService<IServiceProviderIsService>() is { } serviceChecker &&
+        serviceChecker.IsService(typeof(TermBladeAppContext)) &&
+        serviceChecker.IsService(typeof(NoopComponentRenderer));
+  }
 
-    extension(IServiceCollection services)
+  extension(IServiceCollection services)
+  {
+    public IServiceCollection AddTermBladeRazor()
     {
-        public IServiceCollection AddTermBladeRazor()
-        {
-            services.AddOptions<TermBladeRazorOptions>();
-            services.TryAddSingleton<IComponentActivator, TermBladeComponentActivator>();
-            services.TryAddSingleton<TermBladeAppContext>();
-            services.TryAddSingleton<NoopComponentRenderer>();
-            return services;
-        }
+      services.AddOptions<TermBladeRazorOptions>();
+      services.TryAddSingleton<IComponentActivator, TermBladeComponentActivator>();
+      services.TryAddSingleton<TermBladeAppContext>();
+      services.TryAddSingleton<NoopComponentRenderer>();
+      return services;
     }
+  }
 }

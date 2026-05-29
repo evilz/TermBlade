@@ -6,29 +6,29 @@ namespace TermBlade.Samples;
 
 internal static class MarkdownSample
 {
-    public static void Run()
+  public static void Run()
+  {
+    var config = new CliRendererConfig { ExitOnCtrlC = true, TargetFps = 30 };
+    var renderer = new CliRenderer(config);
+
+    var root = renderer.Root;
+
+    var box = new BoxRenderable(renderer, new BoxOptions
     {
-        var config = new CliRendererConfig { ExitOnCtrlC = true, TargetFps = 30 };
-        var renderer = new CliRenderer(config);
+      Border = true,
+      BorderStyle = "rounded",
+      BorderColor = "#e5c07b",
+      Title = " Markdown Viewer ",
+      FlexDirection = TermBlade.Core.Layout.FlexDirection.Column,
+      FlexGrow = 1
+    });
+    box.SetWidth("100%");
+    box.SetHeight("100%");
+    root.Add(box);
 
-        var root = renderer.Root;
-
-        var box = new BoxRenderable(renderer, new BoxOptions
-        {
-            Border = true,
-            BorderStyle = "rounded",
-            BorderColor = "#e5c07b",
-            Title = " Markdown Viewer ",
-            FlexDirection = TermBlade.Core.Layout.FlexDirection.Column,
-            FlexGrow = 1
-        });
-        box.SetWidth("100%");
-        box.SetHeight("100%");
-        root.Add(box);
-
-        var md = new MarkdownRenderable(renderer)
-        {
-            Content = """
+    var md = new MarkdownRenderable(renderer)
+    {
+      Content = """
 # TermBlade Framework
 
 ## Features
@@ -76,23 +76,23 @@ renderer.Start();
 
 Visit [GitHub](https://github.com/evilz/termblade) for more info.
 """
-        };
-        md.SetWidth("100%");
-        md.FlexGrow = 1;
-        box.Add(md);
+    };
+    md.SetWidth("100%");
+    md.FlexGrow = 1;
+    box.Add(md);
 
-        var hint = new TextRenderable(renderer, new TextOptions
-        {
-            Content = "Press q or Escape to quit",
-            Fg = "#888888"
-        });
-        box.Add(hint);
+    var hint = new TextRenderable(renderer, new TextOptions
+    {
+      Content = "Press q or Escape to quit",
+      Fg = "#888888"
+    });
+    box.Add(hint);
 
-        renderer.KeyInput.On("keypress", (KeyEvent key) =>
-        {
-            if (key.Name == "q" || key.Name == "escape") renderer.Destroy();
-        });
+    renderer.KeyInput.On("keypress", (KeyEvent key) =>
+    {
+      if (key.Name == "q" || key.Name == "escape") renderer.Destroy();
+    });
 
-        renderer.Start();
-    }
+    renderer.Start();
+  }
 }
