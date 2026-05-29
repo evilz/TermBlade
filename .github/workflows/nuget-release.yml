@@ -2,15 +2,29 @@ name: NuGet Release
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["v*.*.*"]
 
 permissions:
   contents: write
+  id-token: write
+
+concurrency:
+  group: nuget-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CONFIGURATION: Release
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 jobs:
   release:
     name: Build, Test, Pack & Release
     runs-on: ubuntu-latest
+
+    # Optionnel mais recommandé si tu veux protéger la publication
+    # environment: release
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,33 +38,77 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: ${{ runner.os }}-nuget-
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props', '**/packages.lock.json', '**/NuGet.config') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
       - name: Extract version from tag
         id: version
-        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid version: $VERSION"
+            echo "Expected format: v1.2.3 or v1.2.3-beta.1"
+            exit 1
+          fi
+
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build (Release)
-        run: dotnet build --no-restore --configuration Release -p:Version=${{ steps.version.outputs.VERSION }}
+      - name: Build
+        run: dotnet build --no-restore --configuration ${{ env.CONFIGURATION }} -p:Version=${{ steps.version.outputs.VERSION }} -p:ContinuousIntegrationBuild=true
 
       - name: Run tests
-        run: dotnet test --no-build --configuration Release
+        run: dotnet test --no-build --no-restore --configuration ${{ env.CONFIGURATION }}
 
       - name: Pack TermBlade.Core
-        run: dotnet pack src/TermBlade.Core/TermBlade.Core.csproj --no-build --configuration Release -p:Version=${{ steps.version.outputs.VERSION }} --output ./nupkgs
+        run: >
+          dotnet pack src/TermBlade.Core/TermBlade.Core.csproj
+          --no-build
+          --configuration ${{ env.CONFIGURATION }}
+          -p:Version=${{ steps.version.outputs.VERSION }}
+          -p:ContinuousIntegrationBuild=true
+          -p:IncludeSymbols=true
+          -p:SymbolPackageFormat=snupkg
+          --output ./nupkgs
 
       - name: Pack TermBlade.Razor
-        run: dotnet pack src/TermBlade.Razor/TermBlade.Razor.csproj --no-build --configuration Release -p:Version=${{ steps.version.outputs.VERSION }} --output ./nupkgs
+        run: >
+          dotnet pack src/TermBlade.Razor/TermBlade.Razor.csproj
+          --no-build
+          --configuration ${{ env.CONFIGURATION }}
+          -p:Version=${{ steps.version.outputs.VERSION }}
+          -p:ContinuousIntegrationBuild=true
+          -p:IncludeSymbols=true
+          -p:SymbolPackageFormat=snupkg
+          --output ./nupkgs
+
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push to NuGet
+        shell: bash
+        run: |
+          pushd nupkgs
+          for pkg in *.nupkg; do
+            dotnet nuget push "$pkg" \
+              --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
+          done
+          popd
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: ./nupkgs/*.nupkg
-
-      - name: Push to NuGet
-        run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+          files: |
+            ./nupkgs/*.nupkg
+            ./nupkgs/*.snupkg
