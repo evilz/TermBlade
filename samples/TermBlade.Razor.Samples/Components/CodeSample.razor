@@ -1,0 +1,25 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#0b1020" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+    <Box Width="100%" Height="100%" Border="true" BorderColor="#58a6ff" Title=" Razor Code Sample " PaddingTop="1" PaddingLeft="1" PaddingRight="1" PaddingBottom="2" BackgroundColor="#0b1020">
+        <Code Width="100%" Height="18" Language="csharp" ShowLineNumbers="true" Content="@CodeContent" />
+        <Text Content="Press q or Esc to exit" Fg="#8b949e" LayoutPosition="absolute" Left="2" Bottom="1" Width="24" Height="1" />
+    </Box>
+</Box>
+
+@code {
+    private const string CodeContent = @"using Microsoft.Extensions.Hosting;
+using TermBlade.Razor.Hosting;
+
+var host = Host.CreateDefaultBuilder(args)
+    .UseTermBladeRazor<CodeSample>()
+    .Build();
+
+await host.RunAsync();";
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#0b1020");
+        RegisterExitKeys();
+    }
+}

@@ -1,0 +1,33 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#0f172a" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+    <Box Width="90" Height="16" Border="true" BorderColor="#22c55e" Title=" Tabs Sample " BackgroundColor="#0f172a">
+        <TabSelect Width="50" LayoutPosition="absolute" Left="2" Top="2" Tabs="@Tabs" SelectedIndex="@SelectedIndex" SelectedIndexChanged="@OnTabChanged" AutoFocus="true" />
+        <Text Content="@Body" Fg="#e2e8f0" LayoutPosition="absolute" Left="2" Top="6" Width="80" Height="6" />
+        <Text Content="Use left/right to change tabs. Press q or Esc to exit." Fg="#94a3b8" LayoutPosition="absolute" Left="2" Top="13" Width="50" Height="1" />
+    </Box>
+</Box>
+
+@code {
+    private List<string> Tabs { get; } = ["Overview", "Details", "Help"];
+    private int SelectedIndex { get; set; }
+
+    private string Body => SelectedIndex switch
+    {
+        0 => "Overview tab\n- Razor wrapper for TabSelectRenderable\n- Stable focus handling",
+        1 => "Details tab\n- State is held in the Razor component\n- Renderable stays interactive",
+        _ => "Help tab\nPress q or Esc to close this sample"
+    };
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#0f172a");
+        RegisterExitKeys();
+    }
+
+    private Task OnTabChanged(int index)
+    {
+        SelectedIndex = index;
+        return InvokeAsync(StateHasChanged);
+    }
+}

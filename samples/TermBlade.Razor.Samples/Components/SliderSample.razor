@@ -1,0 +1,35 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#111827" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+    <Box Width="90" Height="16" Border="true" BorderColor="#8b5cf6" Title=" Slider Sample " BackgroundColor="#111827">
+        <Text Content="Volume" Fg="#ffffff" LayoutPosition="absolute" Left="2" Top="3" Width="12" Height="1" />
+        <Slider Width="40" Height="1" LayoutPosition="absolute" Left="16" Top="3" Value="@Volume" ValueChanged="@OnVolumeChanged" ThumbColor="#facc15" AutoFocus="true" />
+        <Text Content="Brightness" Fg="#ffffff" LayoutPosition="absolute" Left="2" Top="6" Width="12" Height="1" />
+        <Slider Width="40" Height="1" LayoutPosition="absolute" Left="16" Top="6" Value="@Brightness" ValueChanged="@OnBrightnessChanged" ThumbColor="#38bdf8" />
+        <Text Content="@Status" Fg="#cbd5e1" LayoutPosition="absolute" Left="2" Top="10" Width="80" Height="2" />
+    </Box>
+</Box>
+
+@code {
+    private float Volume { get; set; } = 35;
+    private float Brightness { get; set; } = 70;
+    private string Status => $"Volume: {Volume:0} | Brightness: {Brightness:0} | Press q or Esc to exit";
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#111827");
+        RegisterExitKeys();
+    }
+
+    private Task OnVolumeChanged(float value)
+    {
+        Volume = value;
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private Task OnBrightnessChanged(float value)
+    {
+        Brightness = value;
+        return InvokeAsync(StateHasChanged);
+    }
+}

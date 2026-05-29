@@ -1,0 +1,98 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#001122">
+    <Text Content="Use Tab/Shift+Tab to change field focus. Press q or Esc to exit." Fg="#aaaaaa" LayoutPosition="absolute" Left="5" Top="1" Width="70" Height="1" />
+    <Text Content="@FocusIndicator(0)" Fg="#00ffaa" Bg="#001122" LayoutPosition="absolute" Left="2" Top="4" Width="2" Height="1" />
+    <Text Content="@FocusIndicator(1)" Fg="#00ffaa" Bg="#001122" LayoutPosition="absolute" Left="2" Top="7" Width="2" Height="1" />
+    <Text Content="@FocusIndicator(2)" Fg="#00ffaa" Bg="#001122" LayoutPosition="absolute" Left="2" Top="10" Width="2" Height="1" />
+    <Input @ref="_nameInput" Value="@Name" ValueChanged="@(value => SetValue(nameof(Name), value))" Placeholder="Enter your name..." PlaceholderColor="#666666" CursorColor="#ffff00" Fg="#ffffff" Bg="#001122" Width="40" Height="1" LayoutPosition="absolute" Left="5" Top="4" OnEnter="@(_ => ShowStatus($"Submitted name: {Name}"))" />
+    <Input @ref="_emailInput" Value="@Email" ValueChanged="@(value => SetValue(nameof(Email), value))" Placeholder="Enter your email..." PlaceholderColor="#666666" CursorColor="#ffff00" Fg="#ffffff" Bg="#001122" Width="40" Height="1" LayoutPosition="absolute" Left="5" Top="7" OnEnter="@(_ => ShowStatus($"Submitted email: {Email}"))" />
+    <Input @ref="_commentInput" Value="@Comment" ValueChanged="@(value => SetValue(nameof(Comment), value))" Placeholder="Enter a comment..." PlaceholderColor="#666666" CursorColor="#ffff00" Fg="#ffffff" Bg="#001122" Width="60" Height="1" LayoutPosition="absolute" Left="5" Top="10" OnEnter="@(_ => ShowStatus($"Submitted comment ({Comment.Length} chars)"))" />
+    <Text Content="Name" Fg="#cbd5e1" LayoutPosition="absolute" Left="5" Top="3" Width="12" Height="1" />
+    <Text Content="Email" Fg="#cbd5e1" LayoutPosition="absolute" Left="5" Top="6" Width="12" Height="1" />
+    <Text Content="Comment" Fg="#cbd5e1" LayoutPosition="absolute" Left="5" Top="9" Width="12" Height="1" />
+    <Text Content="@Status" Fg="#7dd3fc" LayoutPosition="absolute" Left="5" Top="14" Width="90" Height="5" />
+</Box>
+
+@code {
+    private readonly List<Input> _inputs = [];
+    private Input? _nameInput;
+    private Input? _emailInput;
+    private Input? _commentInput;
+    private int _activeIndex;
+
+    private string Name { get; set; } = string.Empty;
+    private string Email { get; set; } = string.Empty;
+    private string Comment { get; set; } = string.Empty;
+    private string Status { get; set; } = "Focused field: ▶ Name";
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#001122");
+        RegisterExitKeys();
+        RegisterKeypress(HandleKeypress);
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _inputs.Clear();
+            _inputs.AddRange([_nameInput!, _emailInput!, _commentInput!]);
+            FocusInput(0);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private void HandleKeypress(KeyEvent key)
+    {
+        if (key.Name is not ("tab" or "shift+tab"))
+            return;
+
+        key.PreventDefault();
+        var delta = key.Shift || key.Name == "shift+tab" ? -1 : 1;
+        FocusInput((_activeIndex + delta + _inputs.Count) % _inputs.Count);
+    }
+
+    private void FocusInput(int index)
+    {
+        if (_inputs.Count == 0)
+            return;
+
+        _activeIndex = index;
+        foreach (var input in _inputs)
+            input.Renderable.Blur();
+
+        _inputs[index].Renderable.Focus();
+        ShowStatus($"Focused field: ▶ {index switch { 0 => "Name", 1 => "Email", _ => "Comment" }}");
+        InvokeAsync(StateHasChanged);
+    }
+
+    private string FocusIndicator(int index) => _activeIndex == index ? "▶" : " ";
+
+    private Task SetValue(string field, string value)
+    {
+        switch (field)
+        {
+            case nameof(Name):
+                Name = value;
+                break;
+            case nameof(Email):
+                Email = value;
+                break;
+            case nameof(Comment):
+                Comment = value;
+                break;
+        }
+
+        ShowStatus($"Name: {Name}\nEmail: {Email}\nComment length: {Comment.Length}");
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private Task ShowStatus(string message)
+    {
+        Status = message;
+        return InvokeAsync(StateHasChanged);
+    }
+}

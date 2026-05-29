@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TermBlade — Razor-sharp Terminal UIs</title>
+  <meta name="description" content="TermBlade is a terminal UI core library for .NET 10. Cell-based rendering, ANSI support, styled text, rope-backed editor, plugin architecture." />
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-content">
+      <a href="./" class="nav-brand">
+        <img src="img/logo.png" alt="TermBlade" class="nav-logo" />
+        <span class="nav-title">TermBlade</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#quickstart">Quick Start</a>
+        <a href="#components">Components</a>
+        <a href="#samples">Samples</a>
+        <a href="https://github.com/evilz/TermBlade" class="btn btn-outline btn-sm" target="_blank" rel="noopener">
+          <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="container hero-content">
+      <img src="img/logo.png" alt="TermBlade Logo" class="hero-logo" />
+      <h1 class="hero-title">Term<span class="accent">Blade</span></h1>
+      <p class="hero-tagline">Razor-sharp Terminal UIs for .NET 10</p>
+      <p class="hero-description">
+        A cell-based rendering engine with ANSI escape sequence support, styled text,
+        a rope-backed edit buffer with full undo/redo, Razor component hosting, and a plugin architecture.
+      </p>
+      <div class="hero-actions">
+        <a href="#quickstart" class="btn btn-primary btn-lg">Get Started</a>
+        <a href="https://www.nuget.org/packages/TermBlade.Core" class="btn btn-outline btn-lg" target="_blank" rel="noopener">NuGet Package</a>
+      </div>
+      <div class="hero-terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">terminal</span>
+        </div>
+        <pre class="terminal-body"><code><span class="prompt">$</span> dotnet add package TermBlade.Core
+<span class="output">info : Adding PackageReference for 'TermBlade.Core'...</span>
+<span class="output">info : Package 'TermBlade.Core' installed successfully.</span></code></pre>
+      </div>
+    </div>
+  </header>
+
+  <!-- Features -->
+  <section id="features" class="section">
+    <div class="container">
+      <h2 class="section-title">Features</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Cell-Based Rendering</h3>
+          <p>2D terminal cell grid with text, borders, blitting, and alpha blending. Full ANSI escape sequence support with true-color and 256-color palettes.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📝</div>
+          <h3>Rope-Backed Editor</h3>
+          <p>High-performance text editing with a rope data structure. Full cursor navigation, insert/delete operations, and unlimited undo/redo.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Diff-Based Renderer</h3>
+          <p>Only redraws cells that have changed between frames. Alternate screen support for clean terminal management.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧩</div>
+          <h3>Plugin Architecture</h3>
+          <p>Extensible plugin system with registration and lifecycle management. Build and share custom components.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔧</div>
+          <h3>Razor Component Host</h3>
+          <p>Use familiar Razor syntax to build terminal UIs. Component-based architecture with data binding and event handling.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Rich Renderables</h3>
+          <p>Built-in components: Box, Text, Input, Select, Slider, ScrollBox, Markdown, Code highlighting, Diff viewer, and more.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Start -->
+  <section id="quickstart" class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">Quick Start</h2>
+
+      <div class="step">
+        <h3><span class="step-number">1</span> Install the package</h3>
+        <pre class="code-block"><code>dotnet add package TermBlade.Core</code></pre>
+      </div>
+
+      <div class="step">
+        <h3><span class="step-number">2</span> Draw your first UI</h3>
+        <pre class="code-block"><code><span class="kw">using</span> TermBlade.Core.Ansi;
+<span class="kw">using</span> TermBlade.Core.Buffer;
+
+<span class="kw">using var</span> buf = CellBuffer.Create(<span class="num">60</span>, <span class="num">20</span>);
+<span class="kw">var</span> bg     = Rgba.FromInts(<span class="num">0</span>,   <span class="num">0</span>,   <span class="num">0</span>);
+<span class="kw">var</span> fg     = Rgba.FromInts(<span class="num">255</span>, <span class="num">255</span>, <span class="num">255</span>);
+<span class="kw">var</span> accent = Rgba.FromInts(<span class="num">0</span>,   <span class="num">200</span>, <span class="num">255</span>);
+
+buf.Clear(bg);
+buf.DrawBox(<span class="num">0</span>, <span class="num">0</span>, <span class="num">60</span>, <span class="num">20</span>, accent, bg, BorderStyle.Rounded, BorderSides.All,
+            fill: <span class="kw">true</span>, title: <span class="str">" My App "</span>);
+buf.DrawText(<span class="str">"Hello from TermBlade!"</span>, <span class="num">4</span>, <span class="num">3</span>, fg, bg);</code></pre>
+      </div>
+
+      <div class="step">
+        <h3><span class="step-number">3</span> Build &amp; run</h3>
+        <pre class="code-block"><code>dotnet build
+dotnet run</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Components -->
+  <section id="components" class="section">
+    <div class="container">
+      <h2 class="section-title">Key Types</h2>
+      <div class="table-wrapper">
+        <table class="components-table">
+          <thead>
+            <tr><th>Type</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>Rgba</code></td><td>Packed color: RGB, ANSI-256 indexed, or terminal-default intent</td></tr>
+            <tr><td><code>CellBuffer</code></td><td>2D terminal cell grid with text, borders, blitting, alpha blend</td></tr>
+            <tr><td><code>TextBuffer</code></td><td>Styled text storage (read-only display)</td></tr>
+            <tr><td><code>EditBuffer</code></td><td>Rope-backed editor: cursor, insert/delete, undo/redo</td></tr>
+            <tr><td><code>Renderer</code></td><td>Diff-based ANSI terminal renderer with alternate-screen support</td></tr>
+            <tr><td><code>SyntaxStyle</code></td><td>Named style definitions with priority-aware merging</td></tr>
+            <tr><td><code>EventEmitter</code></td><td>Simple on/off/once/emit event bus</td></tr>
+            <tr><td><code>PluginRegistry</code></td><td><code>IPlugin</code> registration and lifecycle</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Layout -->
+  <section id="samples" class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">Project Structure</h2>
+      <pre class="code-block"><code>src/TermBlade.Core/          # Core library (NuGet package)
+  Ansi/                      # Rgba, AnsiCodes, TextAttributes, ColorIntent
+  Buffer/                    # CellBuffer, Cell, BorderStyle
+  Text/                      # TextBuffer, EditBuffer, Rope, StyledText
+  Rendering/                 # Renderer (diff-based, alternate screen)
+  Syntax/                    # SyntaxStyle, StyleDefinition
+  Events/                    # EventEmitter
+  Plugins/                   # IPlugin, PluginRegistry
+
+src/TermBlade.Razor/         # Razor host + component wrappers
+
+tests/TermBlade.Tests/       # xUnit test project (126 tests)
+
+samples/TermBlade.Samples/          # Sample console applications
+samples/TermBlade.Razor.Samples/    # Razor-hosted sample applications</code></pre>
+
+      <h2 class="section-title" style="margin-top:3rem">Run Samples</h2>
+      <pre class="code-block"><code><span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- layout   <span class="comment"># simple box layout</span>
+<span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- styled   <span class="comment"># text attributes</span>
+<span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- editor   <span class="comment"># edit buffer demo</span>
+<span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- scroll   <span class="comment"># scrolling content</span>
+<span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- input    <span class="comment"># keyboard input</span></code></pre>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <img src="img/logo.png" alt="TermBlade" class="footer-logo" />
+        <span>TermBlade</span>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/evilz/TermBlade" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.nuget.org/packages/TermBlade.Core" target="_blank" rel="noopener">NuGet</a>
+        <a href="https://github.com/evilz/TermBlade/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
+      </div>
+      <p class="footer-copy">&copy; 2025 TermBlade contributors. MIT License.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

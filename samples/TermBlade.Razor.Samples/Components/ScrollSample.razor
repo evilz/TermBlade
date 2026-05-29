@@ -1,0 +1,114 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#1a1b26" FlexDirection="FlexDirection.Column">
+    <ScrollBox @ref="_scrollBox" Width="100%" FlexGrow="1" BackgroundColor="#16161e" Border="true" BorderColor="#7aa2f7" TrackColor="#414868" ThumbColor="#7aa2f7" ContentWidth="180" ContentHeight="@ContentHeight" ShowVerticalScrollbar="@_showVerticalScrollbar" ShowHorizontalScrollbar="@_showHorizontalScrollbar" AutoFocus="true">
+        @foreach (var item in Items)
+        {
+            if (item.IsBanner)
+            {
+                <AsciiFont Width="160" Height="4" MarginBottom="1" Text="@item.Title" Font="block" Color="@item.Color" />
+            }
+            else
+            {
+                <Box Width="170" Height="8" MarginBottom="1" BackgroundColor="@item.Background" PaddingTop="1" PaddingLeft="1" PaddingRight="1" PaddingBottom="1">
+                    <Text Width="168" Height="6" Content="@item.Content" Fg="@item.Color" Bg="@item.Background" Wrap="false" />
+                </Box>
+            }
+        }
+    </ScrollBox>
+    <Box Width="100%" Height="2" BackgroundColor="#2a2b3a" PaddingLeft="1" PaddingRight="1">
+        <Text Width="100%" Height="1" Content="Controls: Up/Down/PgUp/PgDn/Home/End | H horizontal scrollbar | V vertical scrollbar | N add child | q/Esc exit" Fg="#c0caf5" Bg="#2a2b3a" />
+        <Text Width="100%" Height="1" Content="@Status" Fg="#7dcfff" Bg="#2a2b3a" />
+    </Box>
+</Box>
+
+@code {
+    private ScrollBox? _scrollBox;
+    private List<ScrollItem> Items { get; } = [];
+    private int _contentHeight;
+    private int _nextIndex = 1;
+    private bool _showVerticalScrollbar = true;
+    private bool _showHorizontalScrollbar = true;
+
+    private int ContentHeight => _contentHeight;
+    private string Status => _scrollBox == null ? "Preparing scroll sample..." : BuildStatus();
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#1a1b26");
+        RegisterExitKeys();
+        RegisterKeypress(HandleKeypress);
+
+        AddBanner();
+        for (var i = 0; i < 8; i++)
+            AddBox();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _scrollBox != null)
+        {
+            _scrollBox.Renderable.Focus();
+            App.RequestRender();
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private void HandleKeypress(KeyEvent key)
+    {
+        if (_scrollBox == null)
+            return;
+
+        switch (key.Name)
+        {
+            case "v":
+                key.PreventDefault();
+                _showVerticalScrollbar = !_showVerticalScrollbar;
+                InvokeAsync(StateHasChanged);
+                break;
+            case "h":
+                key.PreventDefault();
+                _showHorizontalScrollbar = !_showHorizontalScrollbar;
+                InvokeAsync(StateHasChanged);
+                break;
+            case "n":
+                key.PreventDefault();
+                AddBox();
+                InvokeAsync(StateHasChanged);
+                break;
+        }
+    }
+
+    private void AddBanner()
+    {
+        Items.Add(new ScrollItem(true, $"SCROLL DEMO {_nextIndex++}", string.Empty, "#9ece6a", string.Empty));
+        _contentHeight += 5;
+    }
+
+    private void AddBox()
+    {
+        var index = _nextIndex++;
+        var background = index % 2 == 0 ? "#292e42" : "#2f3449";
+        var color = Palette(index);
+        Items.Add(new ScrollItem(false, $"Box {index}", $"[{index:0000}] Box {index}\nMultiline content with mixed lengths for stress testing.\n* Detail A: data data data\n* Progress: ███████░░░░░ 12\n* Long: The quick brown fox jumps over the lazy dog while terminal scrolling keeps content clipped.", color, background));
+        _contentHeight += 9;
+    }
+
+    private static string Palette(int i) => (i % 6) switch
+    {
+        0 => "#7aa2f7",
+        1 => "#9ece6a",
+        2 => "#f7768e",
+        3 => "#7dcfff",
+        4 => "#bb9af7",
+        _ => "#e0af68"
+    };
+
+    private string BuildStatus()
+        => $"Scroll X:{_scrollBox!.Renderable.ScrollX} Y:{_scrollBox.Renderable.ScrollY} | Items:{Items.Count} | V:{OnOff(_showVerticalScrollbar)} H:{OnOff(_showHorizontalScrollbar)}";
+
+    private static string OnOff(bool value) => value ? "ON" : "OFF";
+
+    private sealed record ScrollItem(bool IsBanner, string Title, string Content, string Color, string Background);
+}

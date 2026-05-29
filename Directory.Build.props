@@ -1,0 +1,16 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- Shared metadata for all projects -->
+    <Authors>TermBlade Contributors</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/evilz/termblade</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/evilz/termblade</PackageProjectUrl>
+    <PackageTags>terminal;tui;console;ansi;rendering</PackageTags>
+
+    <!-- Default: not packable. Src projects opt in. -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>

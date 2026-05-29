@@ -1,0 +1,32 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#111827" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+    <Box Width="80" Height="14" Border="true" BorderColor="#e11d48" Title=" Keypress Debug " BackgroundColor="#111827">
+        <Text Content="Press any key. q or Esc exits." Fg="#cbd5e1" LayoutPosition="absolute" Left="2" Top="2" Width="30" Height="1" />
+        <Text Content="@LastKey" Fg="#fbbf24" LayoutPosition="absolute" Left="2" Top="5" Width="70" Height="2" />
+        <Text Content="@History" Fg="#93c5fd" LayoutPosition="absolute" Left="2" Top="8" Width="70" Height="3" />
+    </Box>
+</Box>
+
+@code {
+    private readonly Queue<string> _recentKeys = new();
+    private string LastKey { get; set; } = "Waiting for input...";
+    private string History => string.Join(" | ", _recentKeys);
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#111827");
+        RegisterExitKeys();
+        RegisterKeypress(key =>
+        {
+            if (key.Name is "q" or "escape")
+                return;
+
+            LastKey = $"Last key: {key.Name} (char: {(key.Char.HasValue ? key.Char.Value.ToString() : "none")})";
+            _recentKeys.Enqueue(key.Name);
+            while (_recentKeys.Count > 5)
+                _recentKeys.Dequeue();
+            InvokeAsync(StateHasChanged);
+        });
+    }
+}

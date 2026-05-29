@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img" aria-label="OpenTUI Razor layout sample">
+  <rect width="900" height="520" fill="#0b0f14"/>
+  <rect x="40" y="40" width="820" height="440" rx="14" fill="#000000" stroke="#00c8ff" stroke-width="4"/>
+  <text x="70" y="90" fill="#7dd3fc" font-family="monospace" font-size="28">╭─ OpenTUI Razor ───────────────────────────────────────────────────────────────╮</text>
+  <text x="105" y="150" fill="#ffffff" font-family="monospace" font-size="28">Hello from OpenTUI Razor!</text>
+  <text x="105" y="190" fill="#00c8ff" font-family="monospace" font-size="22">A Razor-driven terminal UI built on the OpenTUI renderables</text>
+  <rect x="100" y="235" width="360" height="150" rx="8" fill="#000000" stroke="#ffc800" stroke-width="3"/>
+  <text x="125" y="270" fill="#ffd166" font-family="monospace" font-size="24">┌─ Stats ─────────────────────┐</text>
+  <text x="135" y="315" fill="#ffffff" font-family="monospace" font-size="22">Width  : full terminal</text>
+  <text x="135" y="350" fill="#ffffff" font-family="monospace" font-size="22">Height : full terminal</text>
+  <text x="135" y="385" fill="#ffffff" font-family="monospace" font-size="22">Runtime: .NET 9 + Razor</text>
+  <text x="105" y="440" fill="#9ca3af" font-family="monospace" font-size="22">Press q or Esc to exit</text>
+</svg>

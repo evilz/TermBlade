@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/TermBlade.Samples/TermBlade.Samples.csproj" />
+    <Project Path="samples/TermBlade.Razor.Samples/TermBlade.Razor.Samples.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/TermBlade.Core/TermBlade.Core.csproj" />
+    <Project Path="src/TermBlade.Razor/TermBlade.Razor.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TermBlade.Tests/TermBlade.Tests.csproj" />
+  </Folder>
+</Solution>

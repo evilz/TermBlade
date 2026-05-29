@@ -1,0 +1,42 @@
+name: Build .NET Samples
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-samples:
+    name: Build Samples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build TermBlade.Samples
+        run: dotnet build samples/TermBlade.Samples/TermBlade.Samples.csproj --no-restore --configuration Release
+
+      - name: Build TermBlade.Razor.Samples
+        run: dotnet build samples/TermBlade.Razor.Samples/TermBlade.Razor.Samples.csproj --no-restore --configuration Release
+
+      - name: Run layout sample (smoke test)
+        run: dotnet run --project samples/TermBlade.Samples/TermBlade.Samples.csproj --configuration Release -- layout

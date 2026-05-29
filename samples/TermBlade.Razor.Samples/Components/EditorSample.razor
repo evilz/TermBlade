@@ -1,0 +1,41 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#0b1020" FlexDirection="FlexDirection.Column">
+    <Box Width="100%" Height="100%" Border="true" BorderColor="@BorderColor" Title=" Razor Editor " FocusedBorderColor="#58a6ff" BackgroundColor="#111827" PaddingLeft="1" PaddingRight="1" PaddingTop="1" PaddingBottom="2">
+        <LineNumbers Width="6" Height="16" LayoutPosition="absolute" Left="1" Top="1" LineCount="@LineCount" StartLine="@StartLine" Bg="#111827" />
+        <Textarea @ref="_textarea" Width="100%" Height="16" LayoutPosition="absolute" Left="7" Top="1" Value="@Value" ValueChanged="@OnInputChanged" WrapMode="@WrapModeLabel" Placeholder="Write something..." Fg="#e5e7eb" Bg="#111827" CursorColor="#f59e0b" AutoFocus="true" />
+        <Text Content="@Status" Fg="#cbd5e1" LayoutPosition="absolute" Left="2" Bottom="1" Width="110" Height="1" />
+    </Box>
+</Box>
+
+@code {
+    private Textarea? _textarea;
+    private string Value { get; set; } = "This is an interactive text editor powered by Razor wrappers.\n\nPress Ctrl+W to toggle wrap mode.\nPress q or Esc to exit.";
+    private string WrapModeLabel { get; set; } = "word";
+
+    private int LineCount => Value.Split('\n').Length;
+    private int StartLine => (_textarea?.Renderable.ScrollY ?? 0) + 1;
+    private string BorderColor => WrapModeLabel == "none" ? "#f59e0b" : "#6bcf7f";
+    private string Status => $"Line {_textarea?.Renderable.LogicalCursor.Row + 1 ?? 1}, Col {_textarea?.Renderable.LogicalCursor.Col + 1 ?? 1} | Wrap: {WrapModeLabel} | Lines: {LineCount} | Press q or Esc to exit";
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#0b1020");
+        RegisterExitKeys();
+        RegisterKeypress(key =>
+        {
+            if (key.Ctrl && key.Name == "ctrl+w")
+            {
+                key.PreventDefault();
+                WrapModeLabel = WrapModeLabel == "word" ? "none" : "word";
+                InvokeAsync(StateHasChanged);
+            }
+        });
+    }
+
+    private Task OnInputChanged(string value)
+    {
+        Value = value;
+        return InvokeAsync(StateHasChanged);
+    }
+}

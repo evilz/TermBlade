@@ -1,0 +1,92 @@
+@inherits SampleComponentBase
+@using TermBlade.Core.Input
+
+<Box Width="100%" Height="100%" BackgroundColor="@CanvasBackground" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+    <Text Content="╱╱╱╱╱" Fg="#6057ff" Bg="@CanvasBackground" LayoutPosition="absolute" Left="2" Top="1" Width="8" Height="1" />
+    <Text Content="╱╱╱╱╱" Fg="#6057ff" Bg="@CanvasBackground" LayoutPosition="absolute" Left="2" Top="2" Width="8" Height="1" />
+    <Text Content="╱╱╱╱╱" Fg="#6057ff" Bg="@CanvasBackground" LayoutPosition="absolute" Left="2" Top="3" Width="8" Height="1" />
+    <Text Content="NovaTUI" Fg="#ff5ef2" Bg="@CanvasBackground" LayoutPosition="absolute" Left="10" Top="1" Width="14" Height="1" />
+    <AsciiFont Width="42" Height="4" LayoutPosition="absolute" Left="9" Top="2" Text="NOVA" Font="block" Color="#c56aff" BackgroundColor="@CanvasBackground" />
+    <Text Content="v1.0.0" Fg="#6f6bff" Bg="@CanvasBackground" LayoutPosition="absolute" Left="38" Top="1" Width="8" Height="1" />
+    <Text Content="@HeaderSlashes" Fg="#6057ff" Bg="@CanvasBackground" LayoutPosition="absolute" Left="50" Top="1" Width="62" Height="1" />
+
+    <Text Content="~" Fg="#9ca3af" Bg="@CanvasBackground" LayoutPosition="absolute" Left="2" Top="6" Width="2" Height="1" />
+    <Text Content="◇ phi4-mini-reasoning via Ollama" Fg="#d1d5db" Bg="@CanvasBackground" LayoutPosition="absolute" Left="2" Top="8" Width="40" Height="1" />
+
+    <Text Content="LSPs" Fg="#6b7280" Bg="@CanvasBackground" LayoutPosition="absolute" Left="2" Top="10" Width="12" Height="1" />
+    <Text Content="MCPs" Fg="#6b7280" Bg="@CanvasBackground" LayoutPosition="absolute" Left="30" Top="10" Width="12" Height="1" />
+    <Text Content="Skills" Fg="#6b7280" Bg="@CanvasBackground" LayoutPosition="absolute" Left="60" Top="10" Width="16" Height="1" />
+
+    <Text Content="None" Fg="#6b7280" Bg="@CanvasBackground" LayoutPosition="absolute" Left="2" Top="12" Width="12" Height="1" />
+    <Text Content="None" Fg="#6b7280" Bg="@CanvasBackground" LayoutPosition="absolute" Left="30" Top="12" Width="12" Height="1" />
+    <Text Content="●" Fg="@MintAccent" Bg="@CanvasBackground" LayoutPosition="absolute" Left="60" Top="12" Width="2" Height="1" />
+    <Text Content="nova-config" Fg="#d1d5db" Bg="@CanvasBackground" LayoutPosition="absolute" Left="62" Top="12" Width="18" Height="1" />
+    <Text Content="●" Fg="@MintAccent" Bg="@CanvasBackground" LayoutPosition="absolute" Left="60" Top="13" Width="2" Height="1" />
+    <Text Content="nova-hooks" Fg="#d1d5db" Bg="@CanvasBackground" LayoutPosition="absolute" Left="62" Top="13" Width="18" Height="1" />
+    <Text Content="●" Fg="@MintAccent" Bg="@CanvasBackground" LayoutPosition="absolute" Left="60" Top="14" Width="2" Height="1" />
+    <Text Content="jq" Fg="#d1d5db" Bg="@CanvasBackground" LayoutPosition="absolute" Left="62" Top="14" Width="18" Height="1" />
+
+    <Text Content=">" Fg="#2ef2d3" Bg="@CanvasBackground" LayoutPosition="absolute" Left="3" Top="30" Width="2" Height="1" />
+    <Text Content="R" Fg="#ff5ef2" Bg="#2a1930" LayoutPosition="absolute" Left="5" Top="30" Width="2" Height="1" />
+    <Text Content="eady?" Fg="#6b7280" Bg="@CanvasBackground" LayoutPosition="absolute" Left="7" Top="30" Width="8" Height="1" />
+
+    <Text Content="::: " Fg="@MintAccent" Bg="@CanvasBackground" LayoutPosition="absolute" Left="2" Top="31" Width="4" Height="1" />
+    <Text Content="::: " Fg="@MintAccent" Bg="@CanvasBackground" LayoutPosition="absolute" Left="2" Top="32" Width="4" Height="1" />
+
+    <Text Content="/ or ctrl+p commands • ctrl+l models • ctrl+j newline • ctrl+c quit • ctrl+g more" Fg="#6b7280" Bg="@CanvasBackground" LayoutPosition="absolute" Left="2" Top="34" Width="110" Height="1" />
+
+    @if (_showCommandModal)
+    {
+        <Box Width="100%" Height="100%" LayoutPosition="absolute" Left="0" Top="0" BackgroundColor="@ModalBackdrop" ZIndex="80" Opacity="@ModalBackdropOpacity" />
+        <Box Width="72" Height="14" LayoutPosition="absolute" Left="20" Top="8" BackgroundColor="#111827" Border="true" BorderColor="#6057ff" Title=" Command Palette " ZIndex="100" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+            <Text Content="Type a command (preview modal from Ctrl+P)" Fg="#a5b4fc" Bg="#111827" Width="66" Height="1" />
+            <Text Content="" Fg="#111827" Bg="#111827" Width="66" Height="1" />
+            <Text Content="> /theme neon" Fg="#2ef2d3" Bg="#111827" Width="66" Height="1" />
+            <Text Content="  /model phi4-mini-reasoning" Fg="#d1d5db" Bg="#111827" Width="66" Height="1" />
+            <Text Content="  /skills list" Fg="#d1d5db" Bg="#111827" Width="66" Height="1" />
+            <Text Content="  /tools status" Fg="#d1d5db" Bg="#111827" Width="66" Height="1" />
+            <Text Content="" Fg="#111827" Bg="#111827" Width="66" Height="1" />
+            <Text Content="Ctrl+P: close modal • Esc: close modal • q: quit sample" Fg="#6b7280" Bg="#111827" Width="66" Height="1" />
+        </Box>
+    }
+</Box>
+
+@code {
+    private const string CanvasBackground = "#1b1c2a";
+    private const string MintAccent = "#14d8a6";
+    private const string ModalBackdrop = "#11131f";
+    private const float ModalBackdropOpacity = 0.88f;
+    private static readonly string HeaderSlashes = new('╱', 60);
+    private bool _showCommandModal;
+
+    protected override void OnInitialized()
+    {
+        SetBackground(CanvasBackground);
+        RegisterKeypress(HandleKeypress);
+    }
+
+    private void HandleKeypress(KeyEvent key)
+    {
+        if (key.Name == "ctrl+p")
+        {
+            key.PreventDefault();
+            _showCommandModal = !_showCommandModal;
+            InvokeAsync(StateHasChanged);
+            return;
+        }
+
+        if (_showCommandModal && key.Name == "escape")
+        {
+            key.PreventDefault();
+            _showCommandModal = false;
+            InvokeAsync(StateHasChanged);
+            return;
+        }
+
+        if (!_showCommandModal && key.Name is "q" or "escape")
+        {
+            key.PreventDefault();
+            Exit();
+        }
+    }
+}

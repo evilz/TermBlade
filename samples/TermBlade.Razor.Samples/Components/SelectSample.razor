@@ -1,0 +1,41 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#0f172a" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+    <Box Width="80" Height="18" Border="true" BorderColor="#38bdf8" Title=" Select Sample " BackgroundColor="#111827">
+        <Text Content="Use arrows + Enter. Press q or Esc to exit." Fg="#cbd5e1" LayoutPosition="absolute" Left="2" Top="2" Width="44" Height="1" />
+        <Select Width="40" Height="8" LayoutPosition="absolute" Left="2" Top="4" Options="@Options" SelectedIndex="@SelectedIndex" SelectedIndexChanged="@OnSelectionChanged" OnItemSelected="@OnItemSelected" AutoFocus="true" />
+        <Text Content="@Status" Fg="#a7f3d0" LayoutPosition="absolute" Left="2" Top="13" Width="70" Height="2" />
+    </Box>
+</Box>
+
+@code {
+    private List<SelectOption> Options { get; } =
+    [
+        new() { Name = "Layout", Description = "Basic layout sample", Value = "layout" },
+        new() { Name = "Editor", Description = "Textarea editor", Value = "editor" },
+        new() { Name = "Markdown", Description = "Markdown viewer", Value = "markdown" },
+        new() { Name = "Console", Description = "Console overlay", Value = "console" }
+    ];
+
+    private int SelectedIndex { get; set; }
+    private string Status { get; set; } = "Selected: Layout";
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#0f172a");
+        RegisterExitKeys();
+    }
+
+    private Task OnSelectionChanged(int index)
+    {
+        SelectedIndex = index;
+        Status = $"Selected: {Options[index].Name}";
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private Task OnItemSelected(SelectOption option)
+    {
+        Status = $"Activated: {option.Name} ({option.Value})";
+        return InvokeAsync(StateHasChanged);
+    }
+}

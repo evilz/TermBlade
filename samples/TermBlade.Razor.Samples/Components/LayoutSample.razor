@@ -1,0 +1,22 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#000000" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+    <Box Width="100%" Height="18" Border="true" BorderStyle="rounded" BorderColor="#00c8ff" Title=" TermBlade Razor " BackgroundColor="#000000">
+        <Text Content="Hello from TermBlade Razor!" Fg="#ffffff" LayoutPosition="absolute" Left="4" Top="3" Width="40" Height="1" />
+        <Text Content="A Razor-driven terminal UI built on the TermBlade renderables" Fg="#00c8ff" LayoutPosition="absolute" Left="4" Top="4" Width="56" Height="2" />
+        <Box Width="30" Height="8" Border="true" BorderStyle="single" BorderColor="#ffc800" Title="Stats" LayoutPosition="absolute" Left="4" Top="6">
+            <Text Content="Width  : full terminal" Fg="#ffffff" LayoutPosition="absolute" Left="2" Top="2" Width="24" Height="1" />
+            <Text Content="Height : full terminal" Fg="#ffffff" LayoutPosition="absolute" Left="2" Top="3" Width="24" Height="1" />
+            <Text Content="Runtime: .NET 9 + Razor" Fg="#ffffff" LayoutPosition="absolute" Left="2" Top="4" Width="24" Height="1" />
+        </Box>
+        <Text Content="Press q or Esc to exit" Fg="#aaaaaa" LayoutPosition="absolute" Left="4" Top="15" Width="24" Height="1" />
+    </Box>
+</Box>
+
+@code {
+    protected override void OnInitialized()
+    {
+        SetBackground("#000000");
+        RegisterExitKeys();
+    }
+}

@@ -1,0 +1,44 @@
+@inherits SampleComponentBase
+
+<ConsoleOverlay @ref="_overlay" />
+<Box Width="100%" Height="100%" Border="true" BorderStyle="double" BorderColor="#ff8800" Title=" Console Overlay Demo " BackgroundColor="#000000" PaddingTop="2" PaddingLeft="2">
+    <Text Content="Press L to log, E for error, W for warning, C to clear, q/Esc to exit" Fg="#aaaaaa" Width="80" Height="3" />
+</Box>
+
+@code {
+    private ConsoleOverlay? _overlay;
+    private int _counter;
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#000000");
+        RegisterExitKeys();
+        RegisterKeypress(key =>
+        {
+            if (_overlay == null)
+                return;
+
+            switch (key.Name)
+            {
+                case "l":
+                    key.PreventDefault();
+                    _overlay.Renderable.Log($"Message #{++_counter} logged at {DateTime.Now:HH:mm:ss}");
+                    break;
+                case "e":
+                    key.PreventDefault();
+                    _overlay.Renderable.Error($"Error #{++_counter} at {DateTime.Now:HH:mm:ss}");
+                    break;
+                case "w":
+                    key.PreventDefault();
+                    _overlay.Renderable.Warn($"Warning #{++_counter} at {DateTime.Now:HH:mm:ss}");
+                    break;
+                case "c":
+                    key.PreventDefault();
+                    _overlay.Renderable.Clear();
+                    break;
+            }
+
+            App.RequestRender();
+        });
+    }
+}

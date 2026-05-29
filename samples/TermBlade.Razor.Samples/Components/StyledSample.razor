@@ -1,0 +1,22 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#000000" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+    <Box Width="60" Height="12" Border="true" BorderStyle="double" BorderColor="#6464ff" Title=" Styled Text Demo " BackgroundColor="#000000">
+        <Text Content="Normal text" Fg="#ffffff" LayoutPosition="absolute" Left="3" Top="2" Width="20" Height="1" />
+        <Text Content="Bold text" Fg="#ffff64" Attributes="@(TextAttributes.Bold)" LayoutPosition="absolute" Left="3" Top="3" Width="20" Height="1" />
+        <Text Content="Italic text" Fg="#64ff64" Attributes="@(TextAttributes.Italic)" LayoutPosition="absolute" Left="3" Top="4" Width="20" Height="1" />
+        <Text Content="Underline text" Fg="#ff6464" Attributes="@(TextAttributes.Underline)" LayoutPosition="absolute" Left="3" Top="5" Width="20" Height="1" />
+        <Text Content="Bold + Italic" Fg="#ffc800" Attributes="@(TextAttributes.Bold | TextAttributes.Italic)" LayoutPosition="absolute" Left="3" Top="6" Width="20" Height="1" />
+        <Text Content="Strikethrough" Fg="#c8c8c8" Attributes="@(TextAttributes.Strikethrough)" LayoutPosition="absolute" Left="3" Top="7" Width="20" Height="1" />
+        <Text Content="Emoji: 🎨 🚀 ✨ 🌟" Fg="#00ffc8" LayoutPosition="absolute" Left="3" Top="8" Width="24" Height="1" />
+        <Text Content="CJK: 世界 한국 日本語" Fg="#ffc864" LayoutPosition="absolute" Left="3" Top="9" Width="24" Height="1" />
+    </Box>
+</Box>
+
+@code {
+    protected override void OnInitialized()
+    {
+        SetBackground("#000000");
+        RegisterExitKeys();
+    }
+}

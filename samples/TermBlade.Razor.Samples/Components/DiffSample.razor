@@ -1,0 +1,27 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#111827" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+    <Box Width="100%" Height="100%" Border="true" BorderColor="#f59e0b" Title=" Diff Sample " PaddingTop="1" PaddingLeft="1" PaddingRight="1" PaddingBottom="2" BackgroundColor="#111827">
+        <Diff Width="100%" Height="18" OldText="@OldText" NewText="@NewText" ShowLineNumbers="true" />
+        <Text Content="Press q or Esc to exit" Fg="#9ca3af" LayoutPosition="absolute" Left="2" Bottom="1" Width="24" Height="1" />
+    </Box>
+</Box>
+
+@code {
+    private const string OldText = @"public string Greet(string name)
+{
+    return $""Hello {name}"";
+}";
+
+    private const string NewText = @"public string Greet(string name)
+{
+    var message = $""Hello {name}!"";
+    return message;
+}";
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#111827");
+        RegisterExitKeys();
+    }
+}
