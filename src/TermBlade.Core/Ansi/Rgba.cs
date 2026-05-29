@@ -26,21 +26,21 @@ public readonly struct Rgba : IEquatable<Rgba>
 
   // ── channel accessors ──────────────────────────────────────────────────────
 
-  public byte RedByte   => (byte)(R & 0xFF);
+  public byte RedByte => (byte)(R & 0xFF);
   public byte GreenByte => (byte)(G & 0xFF);
-  public byte BlueByte  => (byte)(B & 0xFF);
+  public byte BlueByte => (byte)(B & 0xFF);
   public byte AlphaByte => (byte)(A & 0xFF);
 
-  public float RedF   => RedByte   / 255f;
+  public float RedF => RedByte / 255f;
   public float GreenF => GreenByte / 255f;
-  public float BlueF  => BlueByte  / 255f;
+  public float BlueF => BlueByte / 255f;
   public float AlphaF => AlphaByte / 255f;
 
   // ── metadata accessors ────────────────────────────────────────────────────
 
   public uint Meta =>
     (uint)(R >> 8) |
-    ((uint)(G >> 8) <<  8) |
+    ((uint)(G >> 8) << 8) |
     ((uint)(B >> 8) << 16) |
     ((uint)(A >> 8) << 24);
 
@@ -59,8 +59,8 @@ public readonly struct Rgba : IEquatable<Rgba>
     slot | ((uint)intent << 8);
 
   private static Rgba Pack(byte r, byte g, byte b, byte a, uint meta) => new Rgba(
-    (ushort)(r | (((meta >>  0) & 0xFF) << 8)),
-    (ushort)(g | (((meta >>  8) & 0xFF) << 8)),
+    (ushort)(r | (((meta >> 0) & 0xFF) << 8)),
+    (ushort)(g | (((meta >> 8) & 0xFF) << 8)),
     (ushort)(b | (((meta >> 16) & 0xFF) << 8)),
     (ushort)(a | (((meta >> 24) & 0xFF) << 8))
   );
@@ -129,18 +129,18 @@ public readonly struct Rgba : IEquatable<Rgba>
   /// <summary>Parse a CSS color name or hex string.</summary>
   public static Rgba FromCss(string name) => name.ToLowerInvariant() switch
   {
-    "transparent"   => FromValues(0f, 0f, 0f, 0f),
-    "black"         => FromHex("#000000"),
-    "white"         => FromHex("#FFFFFF"),
-    "red"           => FromHex("#FF0000"),
-    "green"         => FromHex("#008000"),
-    "blue"          => FromHex("#0000FF"),
-    "yellow"        => FromHex("#FFFF00"),
-    "cyan" or "aqua"=> FromHex("#00FFFF"),
+    "transparent" => FromValues(0f, 0f, 0f, 0f),
+    "black" => FromHex("#000000"),
+    "white" => FromHex("#FFFFFF"),
+    "red" => FromHex("#FF0000"),
+    "green" => FromHex("#008000"),
+    "blue" => FromHex("#0000FF"),
+    "yellow" => FromHex("#FFFF00"),
+    "cyan" or "aqua" => FromHex("#00FFFF"),
     "magenta" or "fuchsia" => FromHex("#FF00FF"),
-    "silver"        => FromHex("#C0C0C0"),
-    "gray" or "grey"=> FromHex("#808080"),
-    _               => FromHex(name),
+    "silver" => FromHex("#C0C0C0"),
+    "gray" or "grey" => FromHex("#808080"),
+    _ => FromHex(name),
   };
 
   // ── conversion helpers ────────────────────────────────────────────────────
@@ -155,9 +155,9 @@ public readonly struct Rgba : IEquatable<Rgba>
     float da = dst.AlphaF;
     float outA = sa + da * (1f - sa);
     if (outA < 1e-6f) return new Rgba(0, 0, 0, 0);
-    float r = (RedF   * sa + dst.RedF   * da * (1f - sa)) / outA;
+    float r = (RedF * sa + dst.RedF * da * (1f - sa)) / outA;
     float g = (GreenF * sa + dst.GreenF * da * (1f - sa)) / outA;
-    float b = (BlueF  * sa + dst.BlueF  * da * (1f - sa)) / outA;
+    float b = (BlueF * sa + dst.BlueF * da * (1f - sa)) / outA;
     return FromValues(r, g, b, outA);
   }
 
@@ -192,7 +192,7 @@ public readonly struct Rgba : IEquatable<Rgba>
   public bool Equals(Rgba other) => R == other.R && G == other.G && B == other.B && A == other.A;
   public override bool Equals(object? obj) => obj is Rgba other && Equals(other);
   public override int GetHashCode() => HashCode.Combine(R, G, B, A);
-  public static bool operator ==(Rgba a, Rgba b) =>  a.Equals(b);
+  public static bool operator ==(Rgba a, Rgba b) => a.Equals(b);
   public static bool operator !=(Rgba a, Rgba b) => !a.Equals(b);
 
   public override string ToString()
