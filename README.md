@@ -1,7 +1,7 @@
 # TermBlade
 
 <div align="center">
-    <img src="https://github.com/user-attachments/assets/dfbb1b6b-cc9a-4e66-afa1-fbd884ed829c" alt="TermBlade" height="120" />
+    <img src="/assets/TermBlade.png" alt="TermBlade" height="120" />
     <br/><br/>
     <em>Razor-sharp Terminal UIs</em>
     <br/><br/>
