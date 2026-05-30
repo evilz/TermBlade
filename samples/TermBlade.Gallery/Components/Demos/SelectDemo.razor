@@ -1,0 +1,20 @@
+@using TermBlade.Core.Renderables
+
+<Select Width="40" Height="6" Options="@Options" SelectedIndex="@SelectedIndex" SelectedIndexChanged="@OnChanged" AutoFocus="false" />
+
+@code {
+    private List<SelectOption> Options { get; } =
+    [
+        new() { Name = "Option A", Description = "First option", Value = "a" },
+        new() { Name = "Option B", Description = "Second option", Value = "b" },
+        new() { Name = "Option C", Description = "Third option", Value = "c" },
+    ];
+
+    private int SelectedIndex { get; set; }
+
+    private Task OnChanged(int index)
+    {
+        SelectedIndex = index;
+        return Task.CompletedTask;
+    }
+}

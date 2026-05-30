@@ -1,0 +1,12 @@
+<TabSelect Width="50" Tabs="@Tabs" SelectedIndex="@SelectedIndex" SelectedIndexChanged="@OnTabChanged" />
+
+@code {
+    private List<string> Tabs { get; } = ["Overview", "Details", "Help"];
+    private int SelectedIndex { get; set; }
+
+    private Task OnTabChanged(int index)
+    {
+        SelectedIndex = index;
+        return Task.CompletedTask;
+    }
+}

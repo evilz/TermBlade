@@ -1,0 +1,122 @@
+@inherits GalleryComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#0d1117" FlexDirection="FlexDirection.Column">
+
+    <Box Width="100%" Height="8" BackgroundColor="#0d1117" PaddingLeft="2" PaddingTop="1">
+        <AsciiFont Width="60" Height="4" Text="Gallery" Font="block" Color="#58a6ff" BackgroundColor="#0d1117" />
+        <Text Content="TermBlade Component Gallery" Fg="#8b949e" LayoutPosition="absolute" Left="2" Top="5" Width="40" Height="1" />
+        <Text Content="Repo: github.com/evilz/TermBlade" Fg="#58a6ff" LayoutPosition="absolute" Left="2" Top="6" Width="40" Height="1" />
+    </Box>
+
+    <Box Width="100%" FlexGrow="1" FlexDirection="FlexDirection.Row" BackgroundColor="#0d1117">
+
+        <Box Width="24" Height="100%" Border="true" BorderColor="#30363d" BackgroundColor="#0d1117" PaddingTop="1" PaddingBottom="1">
+            @for (var i = 0; i < Entries.Count; i++)
+            {
+                var isSelected = i == SelectedIndex;
+                var fg = isSelected ? "#ffffff" : "#8b949e";
+                var bg = isSelected ? "#1f6feb" : "#0d1117";
+                var label = GetEntryLabel(i);
+                var attrs = isSelected ? TextAttributes.Bold : TextAttributes.None;
+                <Box Width="22" Height="1" BackgroundColor="@bg">
+                    <Text Content="@label" Fg="@fg" Bg="@bg" Width="22" Height="1" Attributes="@attrs" />
+                </Box>
+            }
+        </Box>
+
+        <Box FlexGrow="1" Height="100%" FlexDirection="FlexDirection.Column" BackgroundColor="#0d1117" PaddingLeft="2" PaddingRight="2" PaddingTop="1">
+
+            <Text Content="@CurrentEntry.Name" Fg="#58a6ff" Width="80" Height="1" Attributes="@TextAttributes.Bold" />
+            <Text Content="@CurrentEntry.Description" Fg="#c9d1d9" Width="80" Height="1" />
+            <Text Content="@SourceLabel" Fg="#f0883e" Width="80" Height="1" />
+
+            <Box Width="100%" Height="@CodePanelHeight" Border="true" BorderColor="#30363d" Title=" Code " BackgroundColor="#161b22" PaddingLeft="1" PaddingRight="1" PaddingTop="0" PaddingBottom="0" MarginTop="1">
+                <Code Width="100%" Height="100%" Language="razor" ShowLineNumbers="true" Content="@CurrentEntry.RazorCode" />
+            </Box>
+
+            <Box Width="100%" FlexGrow="1" Border="true" BorderColor="#30363d" Title=" Preview " BackgroundColor="#161b22" PaddingLeft="1" PaddingRight="1" PaddingTop="1" PaddingBottom="1" MarginTop="1">
+                @PreviewFragment
+            </Box>
+        </Box>
+    </Box>
+
+    <Box Width="100%" Height="2" BackgroundColor="#161b22" PaddingLeft="2" PaddingRight="2">
+        <Text Content="Use ↑/↓ to navigate • Tab / Ctrl+Tab to change focus • Enter to select • Control+C to exit"
+              Fg="#8b949e" Width="100%" Height="1" />
+        <Text Content="@FooterVersion"
+              Fg="#484f58" Width="100%" Height="1" />
+    </Box>
+</Box>
+
+@code {
+    private IReadOnlyList<GalleryEntry> Entries => GalleryCatalog.Entries;
+
+    private int SelectedIndex { get; set; }
+
+    private GalleryEntry CurrentEntry => Entries[SelectedIndex];
+
+    private string SourceLabel => "Source Code: " + CurrentEntry.SourceFile;
+
+    private string FooterVersion => "TermBlade Gallery \u2022 .NET " + Environment.Version;
+
+    private string GetEntryLabel(int index)
+    {
+        var prefix = index == SelectedIndex ? "> " : "  ";
+        return prefix + Entries[index].Name;
+    }
+
+    private string CodePanelHeight
+    {
+        get
+        {
+            var lines = CurrentEntry.RazorCode.Split('\n').Length;
+            return Math.Min(Math.Max(lines + 2, 6), 18).ToString();
+        }
+    }
+
+    private RenderFragment PreviewFragment => SelectedIndex switch
+    {
+        0 => RenderComponent<BoxDemo>(),
+        1 => RenderComponent<TextDemo>(),
+        2 => RenderComponent<CodeDemo>(),
+        3 => RenderComponent<AsciiFontDemo>(),
+        4 => RenderComponent<SelectDemo>(),
+        5 => RenderComponent<InputDemo>(),
+        6 => RenderComponent<SliderDemo>(),
+        7 => RenderComponent<TabSelectDemo>(),
+        8 => RenderComponent<MarkdownDemo>(),
+        9 => RenderComponent<DiffDemo>(),
+        10 => RenderComponent<ScrollBoxDemo>(),
+        _ => RenderComponent<BoxDemo>(),
+    };
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#0d1117");
+        RegisterKeypress(HandleKeypress);
+    }
+
+    private void HandleKeypress(KeyEvent key)
+    {
+        switch (key.Name)
+        {
+            case "up":
+                key.PreventDefault();
+                SelectedIndex = (SelectedIndex - 1 + Entries.Count) % Entries.Count;
+                InvokeAsync(StateHasChanged);
+                break;
+            case "down":
+                key.PreventDefault();
+                SelectedIndex = (SelectedIndex + 1) % Entries.Count;
+                InvokeAsync(StateHasChanged);
+                break;
+        }
+    }
+
+    private static RenderFragment RenderComponent<TComponent>() where TComponent : Microsoft.AspNetCore.Components.IComponent
+        => builder =>
+        {
+            builder.OpenComponent<TComponent>(0);
+            builder.CloseComponent();
+        };
+}

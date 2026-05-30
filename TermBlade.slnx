@@ -2,6 +2,7 @@
   <Folder Name="/samples/">
     <Project Path="samples/TermBlade.Samples/TermBlade.Samples.csproj" />
     <Project Path="samples/TermBlade.Razor.Samples/TermBlade.Razor.Samples.csproj" />
+    <Project Path="samples/TermBlade.Gallery/TermBlade.Gallery.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/TermBlade.Core/TermBlade.Core.csproj" />
