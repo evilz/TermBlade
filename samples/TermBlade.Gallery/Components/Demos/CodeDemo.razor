@@ -1,0 +1,9 @@
+<Code Width="100%" Height="100%" Language="csharp" ShowLineNumbers="true" Content="@CodeContent" />
+
+@code {
+    private const string CodeContent = @"var host = Host.CreateDefaultBuilder(args)
+    .UseTermBladeRazor<MyApp>()
+    .Build();
+
+await host.RunAsync();";
+}

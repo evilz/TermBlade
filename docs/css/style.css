@@ -92,7 +92,8 @@ code { font-family: var(--font-mono); font-size: 0.9em; }
   font-weight: 700;
   font-size: 1.1rem;
 }
-.nav-logo { height: 32px; width: auto; }
+.nav-logo { height: 160px; width: auto; }
+.nav-title { display: none; }
 .nav-links { display: flex; align-items: center; gap: 1.5rem; }
 .nav-links a { color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; }
 .nav-links a:hover { color: var(--text-primary); }
@@ -112,8 +113,8 @@ code { font-family: var(--font-mono); font-size: 0.9em; }
   background: radial-gradient(ellipse at 50% 0%, rgba(63,185,80,0.08) 0%, transparent 60%);
 }
 .hero-content { max-width: 780px; margin: 0 auto; }
-.hero-logo { height: 100px; margin-bottom: 1rem; }
-.hero-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 0.25rem; }
+.hero-logo { width: 100%; margin-bottom: -16rem; }
+.hero-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 0.25rem; display: none; }
 .accent { color: var(--accent); }
 .hero-tagline {
   font-size: 1.2rem;

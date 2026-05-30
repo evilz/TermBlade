@@ -1,0 +1,13 @@
+<Diff Width="100%" Height="100%" OldText="@OldText" NewText="@NewText" ShowLineNumbers="true" />
+
+@code {
+    private const string OldText = @"public string Greet(string name)
+{
+    return $""Hello {name}"";
+}";
+    private const string NewText = @"public string Greet(string name)
+{
+    var message = $""Hello {name}!"";
+    return message;
+}";
+}
