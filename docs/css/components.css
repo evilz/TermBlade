@@ -107,10 +107,13 @@
 }
 .component-preview .terminal-body {
   font-family: "Symbols Nerd Font", "Hack Nerd Font", "FiraCode Nerd Font", "JetBrainsMono Nerd Font", var(--font-mono);
-  font-size: 0.82rem;
-  line-height: 1.5;
   color: var(--text-secondary);
   min-height: 60px;
+  font-size: 14px;
+  line-height: normal;
+  font-kerning: none;
+  white-space: pre;
+  letter-spacing: 0.0021089px
 }
 
 /* ---- Syntax colors for Razor code blocks ---- */
