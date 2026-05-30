@@ -103,6 +103,9 @@
   <section id="quickstart" class="section section-alt">
     <div class="container">
       <h2 class="section-title">Quick Start</h2>
+      <p>TermBlade offers two approaches to build terminal UIs. Use <strong>TermBlade.Core</strong> for low-level, imperative drawing with full control over cells, colors, and ANSI sequences. Use <strong>TermBlade.Razor</strong> for a declarative, component-based experience with familiar Razor syntax.</p>
+
+      <h3>Option A — Core API</h3>
 
       <div class="step">
         <h3><span class="step-number">1</span> Install the package</h3>
@@ -129,6 +132,32 @@ buf.DrawText(<span class="str">"Hello from TermBlade!"</span>, <span class="num"
         <h3><span class="step-number">3</span> Build &amp; run</h3>
         <pre class="code-block"><code>dotnet build
 dotnet run</code></pre>
+      </div>
+
+      <h3>Option B — Razor Components</h3>
+
+      <div class="step">
+        <h3><span class="step-number">1</span> Install the package</h3>
+        <pre class="code-block"><code>dotnet add package TermBlade.Razor</code></pre>
+      </div>
+
+      <div class="step">
+        <h3><span class="step-number">2</span> Create a component (<code>MyApp.razor</code>)</h3>
+        <pre class="code-block"><code>&lt;Box Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span> Border=<span class="str">"true"</span> BorderStyle=<span class="str">"rounded"</span> BorderColor=<span class="str">"#00c8ff"</span> BackgroundColor=<span class="str">"#000000"</span> Title=<span class="str">" My App "</span>&gt;
+    &lt;Text Content=<span class="str">"Hello from TermBlade!"</span> Fg=<span class="str">"#ffffff"</span> /&gt;
+&lt;/Box&gt;</code></pre>
+      </div>
+
+      <div class="step">
+        <h3><span class="step-number">3</span> Host and run (<code>Program.cs</code>)</h3>
+        <pre class="code-block"><code><span class="kw">using</span> TermBlade.Razor;
+
+<span class="kw">var</span> host = Host.CreateDefaultBuilder(args)
+    .UseTermBladeRazor&lt;MyApp&gt;()
+    .Build();
+
+<span class="kw">await</span> host.RunAsync();</code></pre>
+        <pre class="code-block"><code>dotnet run</code></pre>
       </div>
     </div>
   </section>
@@ -175,14 +204,16 @@ src/TermBlade.Razor/         # Razor host + component wrappers
 tests/TermBlade.Tests/       # xUnit test project (126 tests)
 
 samples/TermBlade.Samples/          # Sample console applications
-samples/TermBlade.Razor.Samples/    # Razor-hosted sample applications</code></pre>
+samples/TermBlade.Razor.Samples/    # Razor-hosted sample applications
+samples/TermBlade.Gallery/          # Interactive component gallery</code></pre>
 
       <h2 class="section-title" style="margin-top:3rem">Run Samples</h2>
       <pre class="code-block"><code><span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- layout   <span class="comment"># simple box layout</span>
 <span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- styled   <span class="comment"># text attributes</span>
 <span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- editor   <span class="comment"># edit buffer demo</span>
 <span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- scroll   <span class="comment"># scrolling content</span>
-<span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- input    <span class="comment"># keyboard input</span></code></pre>
+<span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- input    <span class="comment"># keyboard input</span>
+<span class="prompt">$</span> dotnet run --project samples/TermBlade.Gallery   <span class="comment"># interactive component gallery</span></code></pre>
     </div>
   </section>
 

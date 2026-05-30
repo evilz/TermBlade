@@ -93,11 +93,11 @@
                 <span class="terminal-dot green"></span>
                 <span class="terminal-title">text-preview</span>
               </div>
-              <pre class="terminal-body"><code>┌─────────────────────────┐
-│ Hello World!            │
-│ Bold text               │
-│ Colored text            │
-└─────────────────────────┘</code></pre>
+              <pre class="terminal-body"><code> Normal text
+ <b>Bold text</b>
+ <i>Italic text</i>
+ <u>Underline text</u>
+ <s>Strikethrough</s></code></pre>
             </div>
           </div>
           <div class="component-block">
@@ -105,6 +105,14 @@
             <pre class="code-block"><code>&lt;Text Content=<span class="str">"Hello World!"</span> Fg=<span class="str">"#ffffff"</span> Bg=<span class="str">"#000000"</span> /&gt;
 &lt;Text Content=<span class="str">"Bold text"</span> Fg=<span class="str">"#ffff64"</span> Attributes=<span class="kw">@(TextAttributes.Bold)</span> /&gt;
 &lt;Text Content=<span class="str">"Wrapped text content"</span> Fg=<span class="str">"#aabbcc"</span> Wrap=<span class="kw">"true"</span> TextAlign=<span class="str">"center"</span> /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(TextDemo.razor)</small></h3>
+            <pre class="code-block"><code>&lt;Text Content=<span class="str">"Normal text"</span> Fg=<span class="str">"#ffffff"</span> Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;
+&lt;Text Content=<span class="str">"Bold text"</span> Fg=<span class="str">"#ffff64"</span> Attributes=<span class="kw">"@(TextAttributes.Bold)"</span> Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;
+&lt;Text Content=<span class="str">"Italic text"</span> Fg=<span class="str">"#64ff64"</span> Attributes=<span class="kw">"@(TextAttributes.Italic)"</span> Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;
+&lt;Text Content=<span class="str">"Underline text"</span> Fg=<span class="str">"#ff6464"</span> Attributes=<span class="kw">"@(TextAttributes.Underline)"</span> Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;
+&lt;Text Content=<span class="str">"Strikethrough"</span> Fg=<span class="str">"#c8c8c8"</span> Attributes=<span class="kw">"@(TextAttributes.Strikethrough)"</span> Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;</code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -166,10 +174,11 @@
                 <span class="terminal-dot green"></span>
                 <span class="terminal-title">code-preview</span>
               </div>
-              <pre class="terminal-body"><code>  1 │ using System;
-  2 │ 
-  3 │ Console.WriteLine("Hello");
-  4 │ var x = 42;</code></pre>
+              <pre class="terminal-body"><code>  1 │ <span class="kw">var</span> host = Host.CreateDefaultBuilder(args)
+  2 │     .UseTermBladeRazor&lt;MyApp&gt;()
+  3 │     .Build();
+  4 │
+  5 │ <span class="kw">await</span> host.RunAsync();</code></pre>
             </div>
           </div>
           <div class="component-block">
@@ -178,6 +187,19 @@
       Language=<span class="str">"csharp"</span>
       ShowLineNumbers=<span class="str">"true"</span>
       Content=<span class="kw">"@sourceCode"</span> /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(CodeDemo.razor)</small></h3>
+            <pre class="code-block"><code>&lt;Code Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span> Language=<span class="str">"csharp"</span>
+      ShowLineNumbers=<span class="str">"true"</span> Content=<span class="kw">"@CodeContent"</span> /&gt;
+
+<span class="kw">@code</span> {
+    <span class="kw">private const string</span> CodeContent = <span class="str">@"var host = Host.CreateDefaultBuilder(args)
+    .UseTermBladeRazor&lt;MyApp&gt;()
+    .Build();
+
+await host.RunAsync();"</span>;
+}</code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -236,20 +258,37 @@
                 <span class="terminal-dot green"></span>
                 <span class="terminal-title">markdown-preview</span>
               </div>
-              <pre class="terminal-body"><code> # Welcome
- 
- This is **bold** and _italic_ text.
- 
- - Item one
- - Item two
- 
- &gt; A blockquote</code></pre>
+              <pre class="terminal-body"><code> <b># Markdown Demo</b>
+
+ • <b>Bold</b>, <i>italic</i>, <code>inline code</code>
+ • Unicode: ✅ 🚀 ✨
+
+ │ A blockquote example
+
+   Console.WriteLine("Hello");</code></pre>
             </div>
           </div>
           <div class="component-block">
             <h3>Usage</h3>
             <pre class="code-block"><code>&lt;Markdown Width=<span class="str">"100%"</span> FlexGrow=<span class="str">"1"</span>
           Content=<span class="kw">"@markdownText"</span> /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(MarkdownDemo.razor)</small></h3>
+            <pre class="code-block"><code>&lt;Markdown Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span> Content=<span class="kw">"@MarkdownContent"</span> /&gt;
+
+<span class="kw">@code</span> {
+    <span class="kw">private const string</span> MarkdownContent = <span class="str">@"# Markdown Demo
+
+- **Bold**, *italic*, \`inline code\`
+- Unicode: ✅ 🚀 ✨
+
+&gt; A blockquote example
+
+\`\`\`csharp
+Console.WriteLine(""Hello"");
+\`\`\`"</span>;
+}</code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -306,11 +345,12 @@
                 <span class="terminal-dot green"></span>
                 <span class="terminal-title">diff-preview</span>
               </div>
-              <pre class="terminal-body"><code>  1 │ - var name = "old";
-  2 │ + var name = "new";
-  3 │   var x = 1;
-  4 │ - Console.Write(name);
-  5 │ + Console.WriteLine(name);</code></pre>
+              <pre class="terminal-body"><code>  1 │   public string Greet(string name)
+  2 │   {
+  3 │ <span class="str">-     return $"Hello {name}";</span>
+  4 │ <span class="kw">+     var message = $"Hello {name}!";</span>
+  5 │ <span class="kw">+     return message;</span>
+  6 │   }</code></pre>
             </div>
           </div>
           <div class="component-block">
@@ -319,6 +359,24 @@
       OldText=<span class="kw">"@originalCode"</span>
       NewText=<span class="kw">"@modifiedCode"</span>
       ShowLineNumbers=<span class="str">"true"</span> /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(DiffDemo.razor)</small></h3>
+            <pre class="code-block"><code>&lt;Diff Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span>
+      OldText=<span class="kw">"@OldText"</span> NewText=<span class="kw">"@NewText"</span>
+      ShowLineNumbers=<span class="str">"true"</span> /&gt;
+
+<span class="kw">@code</span> {
+    <span class="kw">private const string</span> OldText = <span class="str">@"public string Greet(string name)
+{
+    return $""Hello {name}"";
+}"</span>;
+    <span class="kw">private const string</span> NewText = <span class="str">@"public string Greet(string name)
+{
+    var message = $""Hello {name}!"";
+    return message;
+}"</span>;
+}</code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -392,6 +450,13 @@
            Font=<span class="str">"block"</span>
            Color=<span class="str">"#c56aff"</span>
            BackgroundColor=<span class="str">"#1a1b26"</span> /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(AsciiFontDemo.razor)</small></h3>
+            <pre class="code-block"><code>&lt;AsciiFont Width=<span class="str">"60"</span> Height=<span class="str">"4"</span>
+           Text=<span class="str">"Gallery"</span>
+           Font=<span class="str">"block"</span>
+           Color=<span class="str">"#c56aff"</span> /&gt;</code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -597,9 +662,7 @@
                 <span class="terminal-dot green"></span>
                 <span class="terminal-title">input-preview</span>
               </div>
-              <pre class="terminal-body"><code>┌─ Name ─────────────────────────┐
-│ John Doe█                      │
-└────────────────────────────────┘</code></pre>
+              <pre class="terminal-body"><code> Type something here...█</code></pre>
             </div>
           </div>
           <div class="component-block">
@@ -613,6 +676,15 @@
        Width=<span class="str">"40"</span> Height=<span class="str">"1"</span>
        MaxLength=<span class="str">"50"</span>
        OnEnter=<span class="kw">"@(_ =&gt; Submit())"</span> /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(InputDemo.razor)</small></h3>
+            <pre class="code-block"><code>&lt;Input Value=<span class="str">""</span>
+       Placeholder=<span class="str">"Type something here..."</span>
+       PlaceholderColor=<span class="str">"#666666"</span>
+       CursorColor=<span class="str">"#ffff00"</span>
+       Fg=<span class="str">"#ffffff"</span> Bg=<span class="str">"#111827"</span>
+       Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;</code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -761,7 +833,7 @@
                 <span class="terminal-dot green"></span>
                 <span class="terminal-title">slider-preview</span>
               </div>
-              <pre class="terminal-body"><code> ───────────●──────── 65%</code></pre>
+              <pre class="terminal-body"><code> ────────────────────●──────────────────── 50%</code></pre>
             </div>
           </div>
           <div class="component-block">
@@ -772,6 +844,12 @@
         Min=<span class="str">"0"</span> Max=<span class="str">"100"</span> Step=<span class="str">"5"</span>
         ThumbColor=<span class="str">"#facc15"</span>
         AutoFocus=<span class="str">"true"</span> /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(SliderDemo.razor)</small></h3>
+            <pre class="code-block"><code>&lt;Slider Width=<span class="str">"40"</span> Height=<span class="str">"1"</span>
+        Value=<span class="str">"50"</span>
+        ThumbColor=<span class="str">"#facc15"</span> /&gt;</code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -837,12 +915,9 @@
                 <span class="terminal-dot green"></span>
                 <span class="terminal-title">select-preview</span>
               </div>
-              <pre class="terminal-body"><code> ┌────────────────────────┐
- │ ▸ Option A        ✓   │
- │   Option B             │
- │   Option C             │
- │   Option D             │
- └────────────────────────┘</code></pre>
+              <pre class="terminal-body"><code> ▸ Option A   First option    ✓
+   Option B   Second option
+   Option C   Third option</code></pre>
             </div>
           </div>
           <div class="component-block">
@@ -853,6 +928,33 @@
         SelectedIndexChanged=<span class="kw">"@OnChanged"</span>
         OnItemSelected=<span class="kw">"@OnPicked"</span>
         AutoFocus=<span class="str">"true"</span> /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(SelectDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="kw">@using</span> TermBlade.Core.Renderables
+
+&lt;Select Width=<span class="str">"40"</span> Height=<span class="str">"6"</span>
+        Options=<span class="kw">"@Options"</span>
+        SelectedIndex=<span class="kw">"@SelectedIndex"</span>
+        SelectedIndexChanged=<span class="kw">"@OnChanged"</span>
+        AutoFocus=<span class="str">"false"</span> /&gt;
+
+<span class="kw">@code</span> {
+    <span class="kw">private</span> List&lt;SelectOption&gt; Options { <span class="kw">get</span>; } =
+    [
+        <span class="kw">new</span>() { Name = <span class="str">"Option A"</span>, Description = <span class="str">"First option"</span>, Value = <span class="str">"a"</span> },
+        <span class="kw">new</span>() { Name = <span class="str">"Option B"</span>, Description = <span class="str">"Second option"</span>, Value = <span class="str">"b"</span> },
+        <span class="kw">new</span>() { Name = <span class="str">"Option C"</span>, Description = <span class="str">"Third option"</span>, Value = <span class="str">"c"</span> },
+    ];
+
+    <span class="kw">private int</span> SelectedIndex { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="kw">private</span> Task OnChanged(<span class="kw">int</span> index)
+    {
+        SelectedIndex = index;
+        <span class="kw">return</span> Task.CompletedTask;
+    }
+}</code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -917,9 +1019,9 @@
                 <span class="terminal-dot green"></span>
                 <span class="terminal-title">tabselect-preview</span>
               </div>
-              <pre class="terminal-body"><code> ┌──────┐┌──────┐┌──────┐
- │ Tab1 ││ Tab2 ││ Tab3 │
- └──────┘└──────┘└──────┘</code></pre>
+              <pre class="terminal-body"><code> ┌──────────┐┌──────────┐┌──────────┐
+ │ Overview ││ Details  ││   Help   │
+ └──────────┘└──────────┘└──────────┘</code></pre>
             </div>
           </div>
           <div class="component-block">
@@ -929,6 +1031,24 @@
            SelectedIndex=<span class="kw">"@activeTab"</span>
            SelectedIndexChanged=<span class="kw">"@OnTabChanged"</span>
            AutoFocus=<span class="str">"true"</span> /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(TabSelectDemo.razor)</small></h3>
+            <pre class="code-block"><code>&lt;TabSelect Width=<span class="str">"50"</span>
+           Tabs=<span class="kw">"@Tabs"</span>
+           SelectedIndex=<span class="kw">"@SelectedIndex"</span>
+           SelectedIndexChanged=<span class="kw">"@OnTabChanged"</span> /&gt;
+
+<span class="kw">@code</span> {
+    <span class="kw">private</span> List&lt;<span class="kw">string</span>&gt; Tabs { <span class="kw">get</span>; } = [<span class="str">"Overview"</span>, <span class="str">"Details"</span>, <span class="str">"Help"</span>];
+    <span class="kw">private int</span> SelectedIndex { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="kw">private</span> Task OnTabChanged(<span class="kw">int</span> index)
+    {
+        SelectedIndex = index;
+        <span class="kw">return</span> Task.CompletedTask;
+    }
+}</code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -992,11 +1112,13 @@
                 <span class="terminal-dot green"></span>
                 <span class="terminal-title">box-preview</span>
               </div>
-              <pre class="terminal-body"><code> ╭─ My Panel ─────────────╮
- │                         │
- │  Content goes here      │
- │                         │
- ╰─────────────────────────╯</code></pre>
+              <pre class="terminal-body"><code> ┌──────────────────────────────────────────────────────────┐
+ │ ┌────────────────┐ ┌────────────────┐ ┌────────────────┐│
+ │ │ Top / Left     │ │                │ │                ││
+ │ │                │ │ Center         │ │                ││
+ │ │                │ │                │ │ Bottom / Right ││
+ │ └────────────────┘ └────────────────┘ └────────────────┘│
+ └──────────────────────────────────────────────────────────┘</code></pre>
             </div>
           </div>
           <div class="component-block">
@@ -1009,6 +1131,32 @@
      Title=<span class="str">"My Panel"</span>
      PaddingTop=<span class="str">"1"</span> PaddingLeft=<span class="str">"2"</span>&gt;
     &lt;Text Content=<span class="str">"Content goes here"</span> Fg=<span class="str">"#ffffff"</span> /&gt;
+&lt;/Box&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(BoxDemo.razor)</small></h3>
+            <pre class="code-block"><code>&lt;Box Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span> Border=<span class="str">"true"</span>
+     BorderStyle=<span class="str">"single"</span> BorderColor=<span class="str">"#444444"</span>&gt;
+    &lt;Box Width=<span class="str">"18"</span> Height=<span class="str">"5"</span> Border=<span class="str">"true"</span>
+         BorderColor=<span class="str">"#58a6ff"</span>&gt;
+        &lt;Text Content=<span class="str">"Top / Left"</span> Fg=<span class="str">"#ffffff"</span>
+              LayoutPosition=<span class="str">"absolute"</span> Left=<span class="str">"1"</span> Top=<span class="str">"1"</span>
+              Width=<span class="str">"14"</span> Height=<span class="str">"1"</span> /&gt;
+    &lt;/Box&gt;
+    &lt;Box Width=<span class="str">"18"</span> Height=<span class="str">"5"</span> Border=<span class="str">"true"</span>
+         BorderColor=<span class="str">"#58a6ff"</span>
+         LayoutPosition=<span class="str">"absolute"</span> Left=<span class="str">"22"</span> Top=<span class="str">"0"</span>&gt;
+        &lt;Text Content=<span class="str">"Center"</span> Fg=<span class="str">"#ffffff"</span>
+              LayoutPosition=<span class="str">"absolute"</span> Left=<span class="str">"1"</span> Top=<span class="str">"2"</span>
+              Width=<span class="str">"14"</span> Height=<span class="str">"1"</span> /&gt;
+    &lt;/Box&gt;
+    &lt;Box Width=<span class="str">"18"</span> Height=<span class="str">"5"</span> Border=<span class="str">"true"</span>
+         BorderColor=<span class="str">"#58a6ff"</span>
+         LayoutPosition=<span class="str">"absolute"</span> Left=<span class="str">"44"</span> Top=<span class="str">"0"</span>&gt;
+        &lt;Text Content=<span class="str">"Bottom / Right"</span> Fg=<span class="str">"#ffffff"</span>
+              LayoutPosition=<span class="str">"absolute"</span> Left=<span class="str">"1"</span> Top=<span class="str">"3"</span>
+              Width=<span class="str">"14"</span> Height=<span class="str">"1"</span> /&gt;
+    &lt;/Box&gt;
 &lt;/Box&gt;</code></pre>
           </div>
           <div class="component-block">
@@ -1097,6 +1245,23 @@
     @foreach (var item in items) {
         &lt;Text Content=<span class="kw">"@item"</span> Fg=<span class="str">"#ffffff"</span> /&gt;
     }
+&lt;/ScrollBox&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ScrollBoxDemo.razor)</small></h3>
+            <pre class="code-block"><code>&lt;ScrollBox Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span>
+           ContentHeight=<span class="str">"30"</span>
+           ShowVerticalScrollbar=<span class="str">"true"</span>
+           Border=<span class="str">"true"</span>
+           BorderColor=<span class="str">"#7aa2f7"</span>
+           BackgroundColor=<span class="str">"#16161e"</span>
+           TrackColor=<span class="str">"#414868"</span>
+           ThumbColor=<span class="str">"#7aa2f7"</span>
+           AutoFocus=<span class="str">"false"</span>&gt;
+    &lt;Text Width=<span class="str">"60"</span> Height=<span class="str">"1"</span> Content=<span class="str">"Scrollable line 1"</span> Fg=<span class="str">"#7aa2f7"</span> /&gt;
+    &lt;Text Width=<span class="str">"60"</span> Height=<span class="str">"1"</span> Content=<span class="str">"Scrollable line 2"</span> Fg=<span class="str">"#9ece6a"</span> /&gt;
+    &lt;Text Width=<span class="str">"60"</span> Height=<span class="str">"1"</span> Content=<span class="str">"Scrollable line 3"</span> Fg=<span class="str">"#7aa2f7"</span> /&gt;
+    <span class="comment">&lt;!-- ... lines 4–20 ... --&gt;</span>
 &lt;/ScrollBox&gt;</code></pre>
           </div>
           <div class="component-block">
