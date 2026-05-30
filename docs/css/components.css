@@ -106,11 +106,23 @@
   margin: 0;
 }
 .component-preview .terminal-body {
+  font-family: "Symbols Nerd Font", "Hack Nerd Font", "FiraCode Nerd Font", "JetBrainsMono Nerd Font", var(--font-mono);
   font-size: 0.82rem;
   line-height: 1.5;
   color: var(--text-secondary);
   min-height: 60px;
 }
+
+/* ---- Syntax colors for Razor code blocks ---- */
+.component-section .code-block .tag   { color: #7ee787; }
+.component-section .code-block .attr  { color: #d2a8ff; }
+.component-section .code-block .str   { color: #a5d6ff; }
+.component-section .code-block .kw    { color: #ff7b72; }
+.component-section .code-block .punct { color: #8b949e; }
+.component-section .code-block .num   { color: #79c0ff; }
+.component-section .code-block .razor { color: #ffa657; }
+.component-section .code-block .type  { color: #d2a8ff; }
+.component-section .code-block .fn    { color: #d2a8ff; }
 
 /* ---- Parameter tables ---- */
 .component-section .components-table {

@@ -102,17 +102,17 @@
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Text Content=<span class="str">"Hello World!"</span> Fg=<span class="str">"#ffffff"</span> Bg=<span class="str">"#000000"</span> /&gt;
-&lt;Text Content=<span class="str">"Bold text"</span> Fg=<span class="str">"#ffff64"</span> Attributes=<span class="kw">@(TextAttributes.Bold)</span> /&gt;
-&lt;Text Content=<span class="str">"Wrapped text content"</span> Fg=<span class="str">"#aabbcc"</span> Wrap=<span class="kw">"true"</span> TextAlign=<span class="str">"center"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Hello World!"</span> <span class="attr">Fg</span>=<span class="str">"#ffffff"</span> <span class="attr">Bg</span>=<span class="str">"#000000"</span> <span class="punct">/&gt;</span>
+<span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Bold text"</span> <span class="attr">Fg</span>=<span class="str">"#ffff64"</span> <span class="attr">Attributes</span>=<span class="kw">@(TextAttributes.Bold)</span> <span class="punct">/&gt;</span>
+<span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Wrapped text content"</span> <span class="attr">Fg</span>=<span class="str">"#aabbcc"</span> <span class="attr">Wrap</span>=<span class="kw">"true"</span> <span class="attr">TextAlign</span>=<span class="str">"center"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(TextDemo.razor)</small></h3>
-            <pre class="code-block"><code>&lt;Text Content=<span class="str">"Normal text"</span> Fg=<span class="str">"#ffffff"</span> Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;
-&lt;Text Content=<span class="str">"Bold text"</span> Fg=<span class="str">"#ffff64"</span> Attributes=<span class="kw">"@(TextAttributes.Bold)"</span> Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;
-&lt;Text Content=<span class="str">"Italic text"</span> Fg=<span class="str">"#64ff64"</span> Attributes=<span class="kw">"@(TextAttributes.Italic)"</span> Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;
-&lt;Text Content=<span class="str">"Underline text"</span> Fg=<span class="str">"#ff6464"</span> Attributes=<span class="kw">"@(TextAttributes.Underline)"</span> Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;
-&lt;Text Content=<span class="str">"Strikethrough"</span> Fg=<span class="str">"#c8c8c8"</span> Attributes=<span class="kw">"@(TextAttributes.Strikethrough)"</span> Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Normal text"</span> <span class="attr">Fg</span>=<span class="str">"#ffffff"</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span>
+<span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Bold text"</span> <span class="attr">Fg</span>=<span class="str">"#ffff64"</span> <span class="attr">Attributes</span>=<span class="kw">"@(TextAttributes.Bold)"</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span>
+<span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Italic text"</span> <span class="attr">Fg</span>=<span class="str">"#64ff64"</span> <span class="attr">Attributes</span>=<span class="kw">"@(TextAttributes.Italic)"</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span>
+<span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Underline text"</span> <span class="attr">Fg</span>=<span class="str">"#ff6464"</span> <span class="attr">Attributes</span>=<span class="kw">"@(TextAttributes.Underline)"</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span>
+<span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Strikethrough"</span> <span class="attr">Fg</span>=<span class="str">"#c8c8c8"</span> <span class="attr">Attributes</span>=<span class="kw">"@(TextAttributes.Strikethrough)"</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -183,17 +183,17 @@
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Code Width=<span class="str">"100%"</span> Height=<span class="str">"18"</span>
-      Language=<span class="str">"csharp"</span>
-      ShowLineNumbers=<span class="str">"true"</span>
-      Content=<span class="kw">"@sourceCode"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Code</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"18"</span>
+      <span class="attr">Language</span>=<span class="str">"csharp"</span>
+      <span class="attr">ShowLineNumbers</span>=<span class="str">"true"</span>
+      <span class="attr">Content</span>=<span class="kw">"@sourceCode"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(CodeDemo.razor)</small></h3>
-            <pre class="code-block"><code>&lt;Code Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span> Language=<span class="str">"csharp"</span>
-      ShowLineNumbers=<span class="str">"true"</span> Content=<span class="kw">"@CodeContent"</span> /&gt;
+            <pre class="code-block"><code><span class="tag">&lt;Code</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span> <span class="attr">Language</span>=<span class="str">"csharp"</span>
+      <span class="attr">ShowLineNumbers</span>=<span class="str">"true"</span> <span class="attr">Content</span>=<span class="kw">"@CodeContent"</span> <span class="punct">/&gt;</span>
 
-<span class="kw">@code</span> {
+<span class="razor">@code</span> {
     <span class="kw">private const string</span> CodeContent = <span class="str">@"var host = Host.CreateDefaultBuilder(args)
     .UseTermBladeRazor&lt;MyApp&gt;()
     .Build();
@@ -270,14 +270,14 @@ await host.RunAsync();"</span>;
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Markdown Width=<span class="str">"100%"</span> FlexGrow=<span class="str">"1"</span>
-          Content=<span class="kw">"@markdownText"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Markdown</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">FlexGrow</span>=<span class="str">"1"</span>
+          <span class="attr">Content</span>=<span class="kw">"@markdownText"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(MarkdownDemo.razor)</small></h3>
-            <pre class="code-block"><code>&lt;Markdown Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span> Content=<span class="kw">"@MarkdownContent"</span> /&gt;
+            <pre class="code-block"><code><span class="tag">&lt;Markdown</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span> <span class="attr">Content</span>=<span class="kw">"@MarkdownContent"</span> <span class="punct">/&gt;</span>
 
-<span class="kw">@code</span> {
+<span class="razor">@code</span> {
     <span class="kw">private const string</span> MarkdownContent = <span class="str">@"# Markdown Demo
 
 - **Bold**, *italic*, \`inline code\`
@@ -355,18 +355,18 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Diff Width=<span class="str">"100%"</span> Height=<span class="str">"18"</span>
-      OldText=<span class="kw">"@originalCode"</span>
-      NewText=<span class="kw">"@modifiedCode"</span>
-      ShowLineNumbers=<span class="str">"true"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Diff</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"18"</span>
+      <span class="attr">OldText</span>=<span class="kw">"@originalCode"</span>
+      <span class="attr">NewText</span>=<span class="kw">"@modifiedCode"</span>
+      <span class="attr">ShowLineNumbers</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(DiffDemo.razor)</small></h3>
-            <pre class="code-block"><code>&lt;Diff Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span>
-      OldText=<span class="kw">"@OldText"</span> NewText=<span class="kw">"@NewText"</span>
-      ShowLineNumbers=<span class="str">"true"</span> /&gt;
+            <pre class="code-block"><code><span class="tag">&lt;Diff</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+      <span class="attr">OldText</span>=<span class="kw">"@OldText"</span> <span class="attr">NewText</span>=<span class="kw">"@NewText"</span>
+      <span class="attr">ShowLineNumbers</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span>
 
-<span class="kw">@code</span> {
+<span class="razor">@code</span> {
     <span class="kw">private const string</span> OldText = <span class="str">@"public string Greet(string name)
 {
     return $""Hello {name}"";
@@ -445,18 +445,18 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;AsciiFont Width=<span class="str">"42"</span> Height=<span class="str">"4"</span>
-           Text=<span class="str">"NOVA"</span>
-           Font=<span class="str">"block"</span>
-           Color=<span class="str">"#c56aff"</span>
-           BackgroundColor=<span class="str">"#1a1b26"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;AsciiFont</span> <span class="attr">Width</span>=<span class="str">"42"</span> <span class="attr">Height</span>=<span class="str">"4"</span>
+           <span class="attr">Text</span>=<span class="str">"NOVA"</span>
+           <span class="attr">Font</span>=<span class="str">"block"</span>
+           <span class="attr">Color</span>=<span class="str">"#c56aff"</span>
+           <span class="attr">BackgroundColor</span>=<span class="str">"#1a1b26"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(AsciiFontDemo.razor)</small></h3>
-            <pre class="code-block"><code>&lt;AsciiFont Width=<span class="str">"60"</span> Height=<span class="str">"4"</span>
-           Text=<span class="str">"Gallery"</span>
-           Font=<span class="str">"block"</span>
-           Color=<span class="str">"#c56aff"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;AsciiFont</span> <span class="attr">Width</span>=<span class="str">"60"</span> <span class="attr">Height</span>=<span class="str">"4"</span>
+           <span class="attr">Text</span>=<span class="str">"Gallery"</span>
+           <span class="attr">Font</span>=<span class="str">"block"</span>
+           <span class="attr">Color</span>=<span class="str">"#c56aff"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -527,10 +527,10 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;LineNumbers Width=<span class="str">"6"</span> Height=<span class="str">"16"</span>
-             LineCount=<span class="kw">"@lineCount"</span>
-             StartLine=<span class="str">"1"</span>
-             Bg=<span class="str">"#111827"</span> /&gt;</code></pre>
+            <pre class="code-block"><code>&lt;LineNumbers <span class="attr">Width</span>=<span class="str">"6"</span> <span class="attr">Height</span>=<span class="str">"16"</span>
+             <span class="attr">LineCount</span>=<span class="kw">"@lineCount"</span>
+             <span class="attr">StartLine</span>=<span class="str">"1"</span>
+             <span class="attr">Bg</span>=<span class="str">"#111827"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -601,9 +601,9 @@ Console.WriteLine(""Hello"");
           <div class="component-block">
             <h3>Usage</h3>
             <pre class="code-block"><code>&lt;FrameBuffer @ref=<span class="kw">"_frameBuffer"</span>
-             Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span>
-             PixelWidth=<span class="str">"120"</span>
-             PixelHeight=<span class="str">"40"</span> /&gt;</code></pre>
+             <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+             <span class="attr">PixelWidth</span>=<span class="str">"120"</span>
+             <span class="attr">PixelHeight</span>=<span class="str">"40"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -667,24 +667,24 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Input Value=<span class="kw">"@Name"</span>
-       ValueChanged=<span class="kw">"@(v =&gt; Name = v)"</span>
-       Placeholder=<span class="str">"Enter your name..."</span>
-       PlaceholderColor=<span class="str">"#666666"</span>
-       CursorColor=<span class="str">"#ffff00"</span>
-       Fg=<span class="str">"#ffffff"</span> Bg=<span class="str">"#001122"</span>
-       Width=<span class="str">"40"</span> Height=<span class="str">"1"</span>
-       MaxLength=<span class="str">"50"</span>
-       OnEnter=<span class="kw">"@(_ =&gt; Submit())"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Input</span> <span class="attr">Value</span>=<span class="kw">"@Name"</span>
+       <span class="attr">ValueChanged</span>=<span class="kw">"@(v =&gt; Name = v)"</span>
+       <span class="attr">Placeholder</span>=<span class="str">"Enter your name..."</span>
+       <span class="attr">PlaceholderColor</span>=<span class="str">"#666666"</span>
+       <span class="attr">CursorColor</span>=<span class="str">"#ffff00"</span>
+       <span class="attr">Fg</span>=<span class="str">"#ffffff"</span> <span class="attr">Bg</span>=<span class="str">"#001122"</span>
+       <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span>
+       <span class="attr">MaxLength</span>=<span class="str">"50"</span>
+       <span class="attr">OnEnter</span>=<span class="kw">"@(_ =&gt; Submit())"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(InputDemo.razor)</small></h3>
-            <pre class="code-block"><code>&lt;Input Value=<span class="str">""</span>
-       Placeholder=<span class="str">"Type something here..."</span>
-       PlaceholderColor=<span class="str">"#666666"</span>
-       CursorColor=<span class="str">"#ffff00"</span>
-       Fg=<span class="str">"#ffffff"</span> Bg=<span class="str">"#111827"</span>
-       Width=<span class="str">"40"</span> Height=<span class="str">"1"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Input</span> <span class="attr">Value</span>=<span class="str">""</span>
+       <span class="attr">Placeholder</span>=<span class="str">"Type something here..."</span>
+       <span class="attr">PlaceholderColor</span>=<span class="str">"#666666"</span>
+       <span class="attr">CursorColor</span>=<span class="str">"#ffff00"</span>
+       <span class="attr">Fg</span>=<span class="str">"#ffffff"</span> <span class="attr">Bg</span>=<span class="str">"#111827"</span>
+       <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -761,14 +761,14 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Textarea Value=<span class="kw">"@content"</span>
-          ValueChanged=<span class="kw">"@OnChanged"</span>
-          WrapMode=<span class="str">"word"</span>
-          Placeholder=<span class="str">"Write something..."</span>
-          Fg=<span class="str">"#e5e7eb"</span> Bg=<span class="str">"#111827"</span>
-          CursorColor=<span class="str">"#f59e0b"</span>
-          Width=<span class="str">"100%"</span> Height=<span class="str">"16"</span>
-          AutoFocus=<span class="str">"true"</span> /&gt;</code></pre>
+            <pre class="code-block"><code>&lt;Textarea <span class="attr">Value</span>=<span class="kw">"@content"</span>
+          <span class="attr">ValueChanged</span>=<span class="kw">"@OnChanged"</span>
+          <span class="attr">WrapMode</span>=<span class="str">"word"</span>
+          <span class="attr">Placeholder</span>=<span class="str">"Write something..."</span>
+          <span class="attr">Fg</span>=<span class="str">"#e5e7eb"</span> <span class="attr">Bg</span>=<span class="str">"#111827"</span>
+          <span class="attr">CursorColor</span>=<span class="str">"#f59e0b"</span>
+          <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"16"</span>
+          <span class="attr">AutoFocus</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -838,18 +838,18 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Slider Width=<span class="str">"40"</span> Height=<span class="str">"1"</span>
-        Value=<span class="kw">"@volume"</span>
-        ValueChanged=<span class="kw">"@OnVolumeChanged"</span>
-        Min=<span class="str">"0"</span> Max=<span class="str">"100"</span> Step=<span class="str">"5"</span>
-        ThumbColor=<span class="str">"#facc15"</span>
-        AutoFocus=<span class="str">"true"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Slider</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span>
+        <span class="attr">Value</span>=<span class="kw">"@volume"</span>
+        <span class="attr">ValueChanged</span>=<span class="kw">"@OnVolumeChanged"</span>
+        <span class="attr">Min</span>=<span class="str">"0"</span> <span class="attr">Max</span>=<span class="str">"100"</span> <span class="attr">Step</span>=<span class="str">"5"</span>
+        <span class="attr">ThumbColor</span>=<span class="str">"#facc15"</span>
+        <span class="attr">AutoFocus</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(SliderDemo.razor)</small></h3>
-            <pre class="code-block"><code>&lt;Slider Width=<span class="str">"40"</span> Height=<span class="str">"1"</span>
-        Value=<span class="str">"50"</span>
-        ThumbColor=<span class="str">"#facc15"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Slider</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span>
+        <span class="attr">Value</span>=<span class="str">"50"</span>
+        <span class="attr">ThumbColor</span>=<span class="str">"#facc15"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -922,24 +922,24 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Select Width=<span class="str">"40"</span> Height=<span class="str">"8"</span>
-        Options=<span class="kw">"@options"</span>
-        SelectedIndex=<span class="kw">"@selected"</span>
-        SelectedIndexChanged=<span class="kw">"@OnChanged"</span>
-        OnItemSelected=<span class="kw">"@OnPicked"</span>
-        AutoFocus=<span class="str">"true"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Select</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"8"</span>
+        <span class="attr">Options</span>=<span class="kw">"@options"</span>
+        <span class="attr">SelectedIndex</span>=<span class="kw">"@selected"</span>
+        <span class="attr">SelectedIndexChanged</span>=<span class="kw">"@OnChanged"</span>
+        <span class="attr">OnItemSelected</span>=<span class="kw">"@OnPicked"</span>
+        <span class="attr">AutoFocus</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(SelectDemo.razor)</small></h3>
-            <pre class="code-block"><code><span class="kw">@using</span> TermBlade.Core.Renderables
+            <pre class="code-block"><code><span class="razor">@using</span> TermBlade.Core.Renderables
 
-&lt;Select Width=<span class="str">"40"</span> Height=<span class="str">"6"</span>
-        Options=<span class="kw">"@Options"</span>
-        SelectedIndex=<span class="kw">"@SelectedIndex"</span>
-        SelectedIndexChanged=<span class="kw">"@OnChanged"</span>
-        AutoFocus=<span class="str">"false"</span> /&gt;
+<span class="tag">&lt;Select</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"6"</span>
+        <span class="attr">Options</span>=<span class="kw">"@Options"</span>
+        <span class="attr">SelectedIndex</span>=<span class="kw">"@SelectedIndex"</span>
+        <span class="attr">SelectedIndexChanged</span>=<span class="kw">"@OnChanged"</span>
+        <span class="attr">AutoFocus</span>=<span class="str">"false"</span> <span class="punct">/&gt;</span>
 
-<span class="kw">@code</span> {
+<span class="razor">@code</span> {
     <span class="kw">private</span> List&lt;SelectOption&gt; Options { <span class="kw">get</span>; } =
     [
         <span class="kw">new</span>() { Name = <span class="str">"Option A"</span>, Description = <span class="str">"First option"</span>, Value = <span class="str">"a"</span> },
@@ -1026,20 +1026,20 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;TabSelect Width=<span class="str">"50"</span>
-           Tabs=<span class="kw">"@tabNames"</span>
-           SelectedIndex=<span class="kw">"@activeTab"</span>
-           SelectedIndexChanged=<span class="kw">"@OnTabChanged"</span>
-           AutoFocus=<span class="str">"true"</span> /&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;TabSelect</span> <span class="attr">Width</span>=<span class="str">"50"</span>
+           <span class="attr">Tabs</span>=<span class="kw">"@tabNames"</span>
+           <span class="attr">SelectedIndex</span>=<span class="kw">"@activeTab"</span>
+           <span class="attr">SelectedIndexChanged</span>=<span class="kw">"@OnTabChanged"</span>
+           <span class="attr">AutoFocus</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(TabSelectDemo.razor)</small></h3>
-            <pre class="code-block"><code>&lt;TabSelect Width=<span class="str">"50"</span>
-           Tabs=<span class="kw">"@Tabs"</span>
-           SelectedIndex=<span class="kw">"@SelectedIndex"</span>
-           SelectedIndexChanged=<span class="kw">"@OnTabChanged"</span> /&gt;
+            <pre class="code-block"><code><span class="tag">&lt;TabSelect</span> <span class="attr">Width</span>=<span class="str">"50"</span>
+           <span class="attr">Tabs</span>=<span class="kw">"@Tabs"</span>
+           <span class="attr">SelectedIndex</span>=<span class="kw">"@SelectedIndex"</span>
+           <span class="attr">SelectedIndexChanged</span>=<span class="kw">"@OnTabChanged"</span> <span class="punct">/&gt;</span>
 
-<span class="kw">@code</span> {
+<span class="razor">@code</span> {
     <span class="kw">private</span> List&lt;<span class="kw">string</span>&gt; Tabs { <span class="kw">get</span>; } = [<span class="str">"Overview"</span>, <span class="str">"Details"</span>, <span class="str">"Help"</span>];
     <span class="kw">private int</span> SelectedIndex { <span class="kw">get</span>; <span class="kw">set</span>; }
 
@@ -1123,41 +1123,41 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Box Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span>
-     BackgroundColor=<span class="str">"#000000"</span>
-     Border=<span class="str">"true"</span>
-     BorderStyle=<span class="str">"rounded"</span>
-     BorderColor=<span class="str">"#ffc800"</span>
-     Title=<span class="str">"My Panel"</span>
-     PaddingTop=<span class="str">"1"</span> PaddingLeft=<span class="str">"2"</span>&gt;
-    &lt;Text Content=<span class="str">"Content goes here"</span> Fg=<span class="str">"#ffffff"</span> /&gt;
-&lt;/Box&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Box</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+     <span class="attr">BackgroundColor</span>=<span class="str">"#000000"</span>
+     <span class="attr">Border</span>=<span class="str">"true"</span>
+     <span class="attr">BorderStyle</span>=<span class="str">"rounded"</span>
+     <span class="attr">BorderColor</span>=<span class="str">"#ffc800"</span>
+     <span class="attr">Title</span>=<span class="str">"My Panel"</span>
+     <span class="attr">PaddingTop</span>=<span class="str">"1"</span> <span class="attr">PaddingLeft</span>=<span class="str">"2"</span>&gt;
+    <span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Content goes here"</span> <span class="attr">Fg</span>=<span class="str">"#ffffff"</span> <span class="punct">/&gt;</span>
+<span class="tag">&lt;/Box&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(BoxDemo.razor)</small></h3>
-            <pre class="code-block"><code>&lt;Box Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span> Border=<span class="str">"true"</span>
-     BorderStyle=<span class="str">"single"</span> BorderColor=<span class="str">"#444444"</span>&gt;
-    &lt;Box Width=<span class="str">"18"</span> Height=<span class="str">"5"</span> Border=<span class="str">"true"</span>
-         BorderColor=<span class="str">"#58a6ff"</span>&gt;
-        &lt;Text Content=<span class="str">"Top / Left"</span> Fg=<span class="str">"#ffffff"</span>
-              LayoutPosition=<span class="str">"absolute"</span> Left=<span class="str">"1"</span> Top=<span class="str">"1"</span>
-              Width=<span class="str">"14"</span> Height=<span class="str">"1"</span> /&gt;
-    &lt;/Box&gt;
-    &lt;Box Width=<span class="str">"18"</span> Height=<span class="str">"5"</span> Border=<span class="str">"true"</span>
-         BorderColor=<span class="str">"#58a6ff"</span>
-         LayoutPosition=<span class="str">"absolute"</span> Left=<span class="str">"22"</span> Top=<span class="str">"0"</span>&gt;
-        &lt;Text Content=<span class="str">"Center"</span> Fg=<span class="str">"#ffffff"</span>
-              LayoutPosition=<span class="str">"absolute"</span> Left=<span class="str">"1"</span> Top=<span class="str">"2"</span>
-              Width=<span class="str">"14"</span> Height=<span class="str">"1"</span> /&gt;
-    &lt;/Box&gt;
-    &lt;Box Width=<span class="str">"18"</span> Height=<span class="str">"5"</span> Border=<span class="str">"true"</span>
-         BorderColor=<span class="str">"#58a6ff"</span>
-         LayoutPosition=<span class="str">"absolute"</span> Left=<span class="str">"44"</span> Top=<span class="str">"0"</span>&gt;
-        &lt;Text Content=<span class="str">"Bottom / Right"</span> Fg=<span class="str">"#ffffff"</span>
-              LayoutPosition=<span class="str">"absolute"</span> Left=<span class="str">"1"</span> Top=<span class="str">"3"</span>
-              Width=<span class="str">"14"</span> Height=<span class="str">"1"</span> /&gt;
-    &lt;/Box&gt;
-&lt;/Box&gt;</code></pre>
+            <pre class="code-block"><code><span class="tag">&lt;Box</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span> <span class="attr">Border</span>=<span class="str">"true"</span>
+     <span class="attr">BorderStyle</span>=<span class="str">"single"</span> <span class="attr">BorderColor</span>=<span class="str">"#444444"</span>&gt;
+    <span class="tag">&lt;Box</span> <span class="attr">Width</span>=<span class="str">"18"</span> <span class="attr">Height</span>=<span class="str">"5"</span> <span class="attr">Border</span>=<span class="str">"true"</span>
+         <span class="attr">BorderColor</span>=<span class="str">"#58a6ff"</span>&gt;
+        <span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Top / Left"</span> <span class="attr">Fg</span>=<span class="str">"#ffffff"</span>
+              <span class="attr">LayoutPosition</span>=<span class="str">"absolute"</span> <span class="attr">Left</span>=<span class="str">"1"</span> <span class="attr">Top</span>=<span class="str">"1"</span>
+              <span class="attr">Width</span>=<span class="str">"14"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span>
+    <span class="tag">&lt;/Box&gt;</span>
+    <span class="tag">&lt;Box</span> <span class="attr">Width</span>=<span class="str">"18"</span> <span class="attr">Height</span>=<span class="str">"5"</span> <span class="attr">Border</span>=<span class="str">"true"</span>
+         <span class="attr">BorderColor</span>=<span class="str">"#58a6ff"</span>
+         <span class="attr">LayoutPosition</span>=<span class="str">"absolute"</span> <span class="attr">Left</span>=<span class="str">"22"</span> <span class="attr">Top</span>=<span class="str">"0"</span>&gt;
+        <span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Center"</span> <span class="attr">Fg</span>=<span class="str">"#ffffff"</span>
+              <span class="attr">LayoutPosition</span>=<span class="str">"absolute"</span> <span class="attr">Left</span>=<span class="str">"1"</span> <span class="attr">Top</span>=<span class="str">"2"</span>
+              <span class="attr">Width</span>=<span class="str">"14"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span>
+    <span class="tag">&lt;/Box&gt;</span>
+    <span class="tag">&lt;Box</span> <span class="attr">Width</span>=<span class="str">"18"</span> <span class="attr">Height</span>=<span class="str">"5"</span> <span class="attr">Border</span>=<span class="str">"true"</span>
+         <span class="attr">BorderColor</span>=<span class="str">"#58a6ff"</span>
+         <span class="attr">LayoutPosition</span>=<span class="str">"absolute"</span> <span class="attr">Left</span>=<span class="str">"44"</span> <span class="attr">Top</span>=<span class="str">"0"</span>&gt;
+        <span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="str">"Bottom / Right"</span> <span class="attr">Fg</span>=<span class="str">"#ffffff"</span>
+              <span class="attr">LayoutPosition</span>=<span class="str">"absolute"</span> <span class="attr">Left</span>=<span class="str">"1"</span> <span class="attr">Top</span>=<span class="str">"3"</span>
+              <span class="attr">Width</span>=<span class="str">"14"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span>
+    <span class="tag">&lt;/Box&gt;</span>
+<span class="tag">&lt;/Box&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -1234,35 +1234,35 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;ScrollBox Width=<span class="str">"100%"</span> FlexGrow=<span class="str">"1"</span>
-           BackgroundColor=<span class="str">"#16161e"</span>
-           Border=<span class="str">"true"</span>
-           BorderColor=<span class="str">"#7aa2f7"</span>
-           ContentWidth=<span class="str">"180"</span>
-           ContentHeight=<span class="kw">"@totalHeight"</span>
-           ShowVerticalScrollbar=<span class="str">"true"</span>
-           AutoFocus=<span class="str">"true"</span>&gt;
+            <pre class="code-block"><code><span class="tag">&lt;ScrollBox</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">FlexGrow</span>=<span class="str">"1"</span>
+           <span class="attr">BackgroundColor</span>=<span class="str">"#16161e"</span>
+           <span class="attr">Border</span>=<span class="str">"true"</span>
+           <span class="attr">BorderColor</span>=<span class="str">"#7aa2f7"</span>
+           <span class="attr">ContentWidth</span>=<span class="str">"180"</span>
+           <span class="attr">ContentHeight</span>=<span class="kw">"@totalHeight"</span>
+           <span class="attr">ShowVerticalScrollbar</span>=<span class="str">"true"</span>
+           <span class="attr">AutoFocus</span>=<span class="str">"true"</span>&gt;
     @foreach (var item in items) {
-        &lt;Text Content=<span class="kw">"@item"</span> Fg=<span class="str">"#ffffff"</span> /&gt;
+        <span class="tag">&lt;Text</span> <span class="attr">Content</span>=<span class="kw">"@item"</span> <span class="attr">Fg</span>=<span class="str">"#ffffff"</span> <span class="punct">/&gt;</span>
     }
-&lt;/ScrollBox&gt;</code></pre>
+<span class="tag">&lt;/ScrollBox&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(ScrollBoxDemo.razor)</small></h3>
-            <pre class="code-block"><code>&lt;ScrollBox Width=<span class="str">"100%"</span> Height=<span class="str">"100%"</span>
-           ContentHeight=<span class="str">"30"</span>
-           ShowVerticalScrollbar=<span class="str">"true"</span>
-           Border=<span class="str">"true"</span>
-           BorderColor=<span class="str">"#7aa2f7"</span>
-           BackgroundColor=<span class="str">"#16161e"</span>
-           TrackColor=<span class="str">"#414868"</span>
-           ThumbColor=<span class="str">"#7aa2f7"</span>
-           AutoFocus=<span class="str">"false"</span>&gt;
-    &lt;Text Width=<span class="str">"60"</span> Height=<span class="str">"1"</span> Content=<span class="str">"Scrollable line 1"</span> Fg=<span class="str">"#7aa2f7"</span> /&gt;
-    &lt;Text Width=<span class="str">"60"</span> Height=<span class="str">"1"</span> Content=<span class="str">"Scrollable line 2"</span> Fg=<span class="str">"#9ece6a"</span> /&gt;
-    &lt;Text Width=<span class="str">"60"</span> Height=<span class="str">"1"</span> Content=<span class="str">"Scrollable line 3"</span> Fg=<span class="str">"#7aa2f7"</span> /&gt;
+            <pre class="code-block"><code><span class="tag">&lt;ScrollBox</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+           <span class="attr">ContentHeight</span>=<span class="str">"30"</span>
+           <span class="attr">ShowVerticalScrollbar</span>=<span class="str">"true"</span>
+           <span class="attr">Border</span>=<span class="str">"true"</span>
+           <span class="attr">BorderColor</span>=<span class="str">"#7aa2f7"</span>
+           <span class="attr">BackgroundColor</span>=<span class="str">"#16161e"</span>
+           <span class="attr">TrackColor</span>=<span class="str">"#414868"</span>
+           <span class="attr">ThumbColor</span>=<span class="str">"#7aa2f7"</span>
+           <span class="attr">AutoFocus</span>=<span class="str">"false"</span>&gt;
+    <span class="tag">&lt;Text</span> <span class="attr">Width</span>=<span class="str">"60"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Content</span>=<span class="str">"Scrollable line 1"</span> <span class="attr">Fg</span>=<span class="str">"#7aa2f7"</span> <span class="punct">/&gt;</span>
+    <span class="tag">&lt;Text</span> <span class="attr">Width</span>=<span class="str">"60"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Content</span>=<span class="str">"Scrollable line 2"</span> <span class="attr">Fg</span>=<span class="str">"#9ece6a"</span> <span class="punct">/&gt;</span>
+    <span class="tag">&lt;Text</span> <span class="attr">Width</span>=<span class="str">"60"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Content</span>=<span class="str">"Scrollable line 3"</span> <span class="attr">Fg</span>=<span class="str">"#7aa2f7"</span> <span class="punct">/&gt;</span>
     <span class="comment">&lt;!-- ... lines 4–20 ... --&gt;</span>
-&lt;/ScrollBox&gt;</code></pre>
+<span class="tag">&lt;/ScrollBox&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -1342,12 +1342,12 @@ Console.WriteLine(""Hello"");
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;ScrollBar Orientation=<span class="str">"vertical"</span>
-           ScrollPosition=<span class="kw">"@pos"</span>
-           ScrollSize=<span class="str">"100"</span>
-           ViewportSize=<span class="str">"10"</span>
-           TrackColor=<span class="str">"#333333"</span>
-           ThumbColor=<span class="str">"#888888"</span> /&gt;</code></pre>
+            <pre class="code-block"><code>&lt;ScrollBar <span class="attr">Orientation</span>=<span class="str">"vertical"</span>
+           <span class="attr">ScrollPosition</span>=<span class="kw">"@pos"</span>
+           <span class="attr">ScrollSize</span>=<span class="str">"100"</span>
+           <span class="attr">ViewportSize</span>=<span class="str">"10"</span>
+           <span class="attr">TrackColor</span>=<span class="str">"#333333"</span>
+           <span class="attr">ThumbColor</span>=<span class="str">"#888888"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -1419,11 +1419,11 @@ Console.WriteLine(""Hello"");
           <div class="component-block">
             <h3>Usage</h3>
             <pre class="code-block"><code>&lt;ConsoleOverlay @ref=<span class="kw">"_overlay"</span>
-                Position=<span class="kw">"OverlayPosition.BottomRight"</span>
-                MaxLines=<span class="str">"10"</span>
-                MaxWidth=<span class="str">"60"</span> /&gt;
+                <span class="attr">Position</span>=<span class="kw">"OverlayPosition.BottomRight"</span>
+                <span class="attr">MaxLines</span>=<span class="str">"10"</span>
+                <span class="attr">MaxWidth</span>=<span class="str">"60"</span> <span class="punct">/&gt;</span>
 
-@code {
+<span class="razor">@code</span> {
     _overlay.Renderable.Log(<span class="str">"App started"</span>);
     _overlay.Renderable.Warn(<span class="str">"Low memory"</span>);
     _overlay.Renderable.Error(<span class="str">"Connection timeout"</span>);
