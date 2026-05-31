@@ -26,7 +26,8 @@ var hostBuilder = sample switch
   "slider" => builder.UseTermBladeRazor<SliderSample>(),
   "tabs" => builder.UseTermBladeRazor<TabsSample>(),
   "console" => builder.UseTermBladeRazor<ConsoleSample>(),
-  _ => throw new InvalidOperationException($"Unknown sample: '{sample}'. Available samples: layout, styled, editor, scroll, input, keypress, ascii, framebuffer, code, markdown, diff, select, slider, tabs, console")
+  "treeview" => builder.UseTermBladeRazor<TreeViewSample>(),
+  _ => throw new InvalidOperationException($"Unknown sample: '{sample}'. Available samples: layout, styled, editor, scroll, input, keypress, ascii, framebuffer, code, markdown, diff, select, slider, tabs, console, treeview")
 };
 
 var host = hostBuilder.Build();
