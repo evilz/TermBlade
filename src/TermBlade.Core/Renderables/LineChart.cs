@@ -122,7 +122,7 @@ public class LineChartRenderable : Renderable
       {
         double progress = Math.Clamp(_elapsed / AnimationDuration, 0, 1);
         progress = 1 - (1 - progress) * (1 - progress); // ease-out
-        visiblePoints = Math.Max(2, (int)(Data.Count * progress));
+        visiblePoints = Math.Clamp((int)(Data.Count * progress), 1, Data.Count);
         if (progress >= 1.0)
           _animationComplete = true;
         else
@@ -169,7 +169,7 @@ public class LineChartRenderable : Renderable
         {
           buffer.SetCell(chartX + cx, chartY + cy, BrailleBase + pattern, lineFg, bg);
         }
-        else if (fillFg.HasValue)
+        else if (fillFg.HasValue && Data.Count > 1)
         {
           // Check if this cell is below the line for area fill
           // Find the approximate Y position of the line at this column
@@ -197,7 +197,7 @@ public class LineChartRenderable : Renderable
       int labelCount = Math.Min(chartH, 6);
       for (int i = 0; i < labelCount; i++)
       {
-        double ratio = (double)i / (labelCount - 1);
+        double ratio = labelCount == 1 ? 0 : (double)i / (labelCount - 1);
         double val = dataMax - ratio * (dataMax - dataMin);
         string label = FormatValue(val).PadLeft(yAxisWidth - 1);
         int ly = chartY + (int)(ratio * (chartH - 1));

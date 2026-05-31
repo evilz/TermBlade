@@ -37,6 +37,9 @@ public class PieChartRenderable : Renderable
   public IReadOnlyList<string> Palette { get; set; } =
     ["#58a6ff", "#3fb950", "#f0883e", "#f85149", "#bc8cff", "#79c0ff", "#d2a8ff", "#56d364"];
 
+  private static readonly IReadOnlyList<string> DefaultPalette =
+    ["#58a6ff", "#3fb950", "#f0883e", "#f85149", "#bc8cff", "#79c0ff", "#d2a8ff", "#56d364"];
+
   /// <summary>Inner radius ratio (0 = full pie, &gt;0 = doughnut). Subclasses override.</summary>
   protected virtual double InnerRadiusRatio => 0;
 
@@ -77,14 +80,7 @@ public class PieChartRenderable : Renderable
     // Reserve space for legends on the right
     int legendWidth = 0;
     if (ShowLabels)
-    {
-      foreach (var s in Data)
-      {
-        int len = (s.Label?.Length ?? 0) + (ShowPercentages ? 8 : 2); // "■ Label 12.3%"
-        if (len > legendWidth) legendWidth = len;
-      }
-      legendWidth += 2; // gap
-    }
+      legendWidth = GetLegendWidth();
 
     int chartW = w - legendWidth;
     if (chartW <= 0) chartW = w;
@@ -112,9 +108,10 @@ public class PieChartRenderable : Renderable
 
     // Resolve colors
     var colors = new Rgba[Data.Count];
+    var palette = Palette.Count > 0 ? Palette : DefaultPalette;
     for (int i = 0; i < Data.Count; i++)
     {
-      var css = Data[i].Color ?? Palette[i % Palette.Count];
+      var css = Data[i].Color ?? palette[i % palette.Count];
       colors[i] = Rgba.FromCss(css);
     }
 
@@ -199,7 +196,7 @@ public class PieChartRenderable : Renderable
       for (int i = 0; i < Data.Count && legendY + i < y + h; i++)
       {
         double pct = Math.Max(0, Data[i].Value) / total * 100;
-        string label = Data[i].Label ?? $"Slice {i + 1}";
+        string label = GetLegendLabel(i);
         string line = ShowPercentages ? $"■ {label} {pct:F1}%" : $"■ {label}";
 
         if (legendX + line.Length > x + w)
@@ -223,4 +220,17 @@ public class PieChartRenderable : Renderable
     if (a < 0) a += 2 * Math.PI;
     return a;
   }
+
+  protected int GetLegendWidth()
+  {
+    int legendWidth = 0;
+    for (int i = 0; i < Data.Count; i++)
+    {
+      int len = GetLegendLabel(i).Length + (ShowPercentages ? 8 : 2); // "■ Label 12.3%"
+      if (len > legendWidth) legendWidth = len;
+    }
+    return legendWidth > 0 ? legendWidth + 2 : 0; // gap
+  }
+
+  protected string GetLegendLabel(int index) => Data[index].Label ?? $"Slice {index + 1}";
 }

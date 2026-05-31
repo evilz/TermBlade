@@ -35,14 +35,7 @@ public class DoughnutChartRenderable : PieChartRenderable
     // Estimate chart area (same logic as base)
     int legendWidth = 0;
     if (ShowLabels)
-    {
-      foreach (var s in Data)
-      {
-        int len = (s.Label?.Length ?? 0) + (ShowPercentages ? 8 : 2);
-        if (len > legendWidth) legendWidth = len;
-      }
-      legendWidth += 2;
-    }
+      legendWidth = GetLegendWidth();
     int chartW = w - legendWidth;
     if (chartW <= 0) chartW = w;
 

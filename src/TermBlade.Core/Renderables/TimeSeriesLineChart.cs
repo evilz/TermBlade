@@ -123,7 +123,7 @@ public class TimeSeriesLineChartRenderable : Renderable
       {
         double progress = Math.Clamp(_elapsed / AnimationDuration, 0, 1);
         progress = 1 - (1 - progress) * (1 - progress);
-        visiblePoints = Math.Max(2, (int)(Data.Count * progress));
+        visiblePoints = Math.Clamp((int)(Data.Count * progress), 1, Data.Count);
         if (progress >= 1.0)
           _animationComplete = true;
         else
@@ -194,7 +194,7 @@ public class TimeSeriesLineChartRenderable : Renderable
       int labelCount = Math.Min(chartH, 6);
       for (int i = 0; i < labelCount; i++)
       {
-        double ratio = (double)i / (labelCount - 1);
+        double ratio = labelCount == 1 ? 0 : (double)i / (labelCount - 1);
         double val = dataMax - ratio * (dataMax - dataMin);
         string label = FormatValue(val).PadLeft(yAxisWidth - 1);
         int ly = chartY + (int)(ratio * (chartH - 1));
@@ -203,7 +203,7 @@ public class TimeSeriesLineChartRenderable : Renderable
     }
 
     // X-axis time labels
-    if (ShowXAxis)
+    if (ShowXAxis && Data.Count > 1)
     {
       int labelY = chartY + chartH;
       int maxLabels = chartW / 8;

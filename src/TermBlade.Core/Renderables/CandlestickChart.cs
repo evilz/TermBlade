@@ -157,9 +157,8 @@ public class CandlestickChartRenderable : Renderable
       {
         for (int by = bodyTop; by <= bodyBottom; by++)
         {
-          char ch = isBull ? '█' : '█';
           for (int bx = 0; bx < CandleWidth && cx + bx < x + w; bx++)
-            buffer.SetCell(cx + bx, by, ch, candleFg, bg);
+            buffer.SetCell(cx + bx, by, '█', candleFg, bg);
         }
       }
 
@@ -177,7 +176,7 @@ public class CandlestickChartRenderable : Renderable
       int labelCount = Math.Min(chartH, 8);
       for (int i = 0; i < labelCount; i++)
       {
-        double ratio = (double)i / (labelCount - 1);
+        double ratio = labelCount == 1 ? 0 : (double)i / (labelCount - 1);
         double val = priceMax - ratio * range;
         string label = FormatPrice(val).PadLeft(yAxisWidth - 1);
         int ly = chartY + (int)(ratio * (chartH - 1));
@@ -190,10 +189,10 @@ public class CandlestickChartRenderable : Renderable
     {
       int labelY = chartY + chartH;
       int maxLabels = chartW / 10;
-      int labelCount = Math.Clamp(maxLabels, 2, visibleCandles);
+      int labelCount = visibleCandles == 1 ? 1 : Math.Clamp(maxLabels, 2, visibleCandles);
       for (int i = 0; i < labelCount; i++)
       {
-        double ratio = (double)i / (labelCount - 1);
+        double ratio = labelCount == 1 ? 0 : (double)i / (labelCount - 1);
         int dataIdx = startIdx + (int)(ratio * (visibleCandles - 1));
         dataIdx = Math.Clamp(dataIdx, 0, Data.Count - 1);
         var candle = Data[dataIdx];
