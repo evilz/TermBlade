@@ -42,6 +42,12 @@ public class CandlestickChartRenderable : Renderable
   /// <summary>Optional maximum Y value. Auto-scales if null.</summary>
   public double? MaxValue { get; set; }
 
+  /// <summary>Duration of the intro animation in seconds. 0 disables animation.</summary>
+  public double AnimationDuration { get; set; }
+
+  private double _elapsed;
+  private bool _animationComplete;
+
   public CandlestickChartRenderable(CliRenderer? renderer) : base(renderer) { }
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)
@@ -89,7 +95,25 @@ public class CandlestickChartRenderable : Renderable
 
     // How many candles fit
     int totalCandleWidth = CandleWidth + CandleGap;
-    int visibleCandles = Math.Min(Data.Count, chartW / Math.Max(1, totalCandleWidth));
+    int maxVisibleCandles = Math.Min(Data.Count, chartW / Math.Max(1, totalCandleWidth));
+
+    // Animation: progressive reveal of candles
+    int visibleCandles = maxVisibleCandles;
+    if (AnimationDuration > 0)
+    {
+      _elapsed += deltaTime;
+      if (!_animationComplete)
+      {
+        double progress = Math.Clamp(_elapsed / AnimationDuration, 0, 1);
+        progress = 1 - (1 - progress) * (1 - progress); // ease-out
+        visibleCandles = Math.Max(1, (int)(maxVisibleCandles * progress));
+        if (progress >= 1.0)
+          _animationComplete = true;
+        else
+          RequestRender();
+      }
+    }
+
     int startIdx = Math.Max(0, Data.Count - visibleCandles);
 
     for (int i = 0; i < visibleCandles; i++)

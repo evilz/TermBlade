@@ -88,6 +88,16 @@ public static class GalleryCatalog
             "Financial OHLC candlestick chart with bull/bear coloring.",
             "Components/Demos/CandlestickChartDemo.razor",
             ReadDemo("CandlestickChartDemo.razor")),
+
+        new("PieChart",
+            "Pie chart with proportional slices and sweep animation.",
+            "Components/Demos/PieChartDemo.razor",
+            ReadDemo("PieChartDemo.razor")),
+
+        new("DoughnutChart",
+            "Doughnut chart with hollow center and optional center label.",
+            "Components/Demos/DoughnutChartDemo.razor",
+            ReadDemo("DoughnutChartDemo.razor")),
     ];
 
   public static IReadOnlyList<GalleryEntry> Entries => _entries;

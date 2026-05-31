@@ -20,6 +20,7 @@ public sealed class TimeSeriesLineChart : RenderableComponentBase<TimeSeriesLine
   [Parameter] public string TimeFormat { get; set; } = "HH:mm";
   [Parameter] public double? MinValue { get; set; }
   [Parameter] public double? MaxValue { get; set; }
+  [Parameter] public double AnimationDuration { get; set; }
 
   protected override TimeSeriesLineChartRenderable CreateRenderable(CliRenderer renderer) => new(renderer);
 
@@ -36,5 +37,6 @@ public sealed class TimeSeriesLineChart : RenderableComponentBase<TimeSeriesLine
     renderable.TimeFormat = TimeFormat;
     renderable.MinValue = MinValue;
     renderable.MaxValue = MaxValue;
+    renderable.AnimationDuration = AnimationDuration;
   }
 }

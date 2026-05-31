@@ -42,6 +42,12 @@ public class TimeSeriesLineChartRenderable : Renderable
   /// <summary>Optional maximum Y value. Auto-scales if null.</summary>
   public double? MaxValue { get; set; }
 
+  /// <summary>Duration of the intro animation in seconds. 0 disables animation.</summary>
+  public double AnimationDuration { get; set; }
+
+  private double _elapsed;
+  private bool _animationComplete;
+
   public TimeSeriesLineChartRenderable(CliRenderer? renderer) : base(renderer) { }
 
   private static readonly int[] BrailleDotBits = [0x01, 0x02, 0x04, 0x40, 0x08, 0x10, 0x20, 0x80];
@@ -108,8 +114,25 @@ public class TimeSeriesLineChartRenderable : Renderable
     // Create braille grid
     var braille = new int[chartW * chartH];
 
+    // Animation: progressive reveal
+    int visiblePoints = Data.Count;
+    if (AnimationDuration > 0)
+    {
+      _elapsed += deltaTime;
+      if (!_animationComplete)
+      {
+        double progress = Math.Clamp(_elapsed / AnimationDuration, 0, 1);
+        progress = 1 - (1 - progress) * (1 - progress);
+        visiblePoints = Math.Max(2, (int)(Data.Count * progress));
+        if (progress >= 1.0)
+          _animationComplete = true;
+        else
+          RequestRender();
+      }
+    }
+
     // Draw line segments
-    for (int i = 0; i < Data.Count - 1; i++)
+    for (int i = 0; i < visiblePoints - 1; i++)
     {
       int x0 = pointsX[i], x1 = pointsX[i + 1];
       int y0 = pointsY[i], y1 = pointsY[i + 1];

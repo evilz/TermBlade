@@ -19,6 +19,7 @@ public sealed class BarChart : RenderableComponentBase<BarChartRenderable>
   [Parameter] public int BarGap { get; set; } = 1;
   [Parameter] public int BarWidth { get; set; } = 3;
   [Parameter] public double? MaxValue { get; set; }
+  [Parameter] public double AnimationDuration { get; set; }
 
   protected override BarChartRenderable CreateRenderable(CliRenderer renderer) => new(renderer);
 
@@ -34,5 +35,6 @@ public sealed class BarChart : RenderableComponentBase<BarChartRenderable>
     renderable.BarGap = BarGap;
     renderable.BarWidth = BarWidth;
     renderable.MaxValue = MaxValue;
+    renderable.AnimationDuration = AnimationDuration;
   }
 }

@@ -39,6 +39,12 @@ public class LineChartRenderable : Renderable
   /// <summary>Optional maximum value for Y axis. If null, auto-scales.</summary>
   public double? MaxValue { get; set; }
 
+  /// <summary>Duration of the intro animation in seconds. 0 disables animation.</summary>
+  public double AnimationDuration { get; set; }
+
+  private double _elapsed;
+  private bool _animationComplete;
+
   public LineChartRenderable(CliRenderer? renderer) : base(renderer) { }
 
   // Braille patterns: each cell is 2x4 dots (2 cols, 4 rows)
@@ -107,8 +113,25 @@ public class LineChartRenderable : Renderable
     // Fill area under line if requested
     Rgba? fillFg = FillColor != null ? Rgba.FromCss(FillColor) : null;
 
+    // Animation: progressive reveal of data points
+    int visiblePoints = Data.Count;
+    if (AnimationDuration > 0)
+    {
+      _elapsed += deltaTime;
+      if (!_animationComplete)
+      {
+        double progress = Math.Clamp(_elapsed / AnimationDuration, 0, 1);
+        progress = 1 - (1 - progress) * (1 - progress); // ease-out
+        visiblePoints = Math.Max(2, (int)(Data.Count * progress));
+        if (progress >= 1.0)
+          _animationComplete = true;
+        else
+          RequestRender();
+      }
+    }
+
     // Draw line segments between data points using Braille
-    for (int i = 0; i < Data.Count - 1; i++)
+    for (int i = 0; i < visiblePoints - 1; i++)
     {
       double x0 = (double)i / (Data.Count - 1) * (dotsW - 1);
       double x1 = (double)(i + 1) / (Data.Count - 1) * (dotsW - 1);

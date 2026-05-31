@@ -48,6 +48,12 @@ public class HeatMapRenderable : Renderable
   /// <summary>Optional maximum value. Auto-scales if null.</summary>
   public double? MaxValue { get; set; }
 
+  /// <summary>Duration of the intro animation in seconds. 0 disables animation.</summary>
+  public double AnimationDuration { get; set; }
+
+  private double _elapsed;
+  private bool _animationComplete;
+
   public HeatMapRenderable(CliRenderer? renderer) : base(renderer) { }
 
   // Block characters for intensity: ░ ▒ ▓ █
@@ -109,6 +115,22 @@ public class HeatMapRenderable : Renderable
       }
     }
 
+    // Animation: fade-in by scaling ratio toward zero
+    double animScale = 1.0;
+    if (AnimationDuration > 0)
+    {
+      _elapsed += deltaTime;
+      if (!_animationComplete)
+      {
+        animScale = Math.Clamp(_elapsed / AnimationDuration, 0, 1);
+        animScale = 1 - (1 - animScale) * (1 - animScale); // ease-out
+        if (animScale >= 1.0)
+          _animationComplete = true;
+        else
+          RequestRender();
+      }
+    }
+
     // Render cells
     for (int r = 0; r < rows; r++)
     {
@@ -128,7 +150,7 @@ public class HeatMapRenderable : Renderable
         if (cx >= x + w) break;
 
         double ratio = (Data[r][c] - dataMin) / (dataMax - dataMin);
-        ratio = Math.Clamp(ratio, 0, 1);
+        ratio = Math.Clamp(ratio * animScale, 0, 1);
 
         var cellColor = InterpolateColor(lowRgba, midRgba, highRgba, ratio);
 

@@ -19,6 +19,7 @@ public sealed class LineChart : RenderableComponentBase<LineChartRenderable>
   [Parameter] public string? Title { get; set; }
   [Parameter] public double? MinValue { get; set; }
   [Parameter] public double? MaxValue { get; set; }
+  [Parameter] public double AnimationDuration { get; set; }
 
   protected override LineChartRenderable CreateRenderable(CliRenderer renderer) => new(renderer);
 
@@ -34,5 +35,6 @@ public sealed class LineChart : RenderableComponentBase<LineChartRenderable>
     renderable.Title = Title;
     renderable.MinValue = MinValue;
     renderable.MaxValue = MaxValue;
+    renderable.AnimationDuration = AnimationDuration;
   }
 }

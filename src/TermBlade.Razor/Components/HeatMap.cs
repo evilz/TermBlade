@@ -22,6 +22,7 @@ public sealed class HeatMap : RenderableComponentBase<HeatMapRenderable>
   [Parameter] public int CellHeight { get; set; } = 1;
   [Parameter] public double? MinValue { get; set; }
   [Parameter] public double? MaxValue { get; set; }
+  [Parameter] public double AnimationDuration { get; set; }
 
   protected override HeatMapRenderable CreateRenderable(CliRenderer renderer) => new(renderer);
 
@@ -40,5 +41,6 @@ public sealed class HeatMap : RenderableComponentBase<HeatMapRenderable>
     renderable.CellHeight = CellHeight;
     renderable.MinValue = MinValue;
     renderable.MaxValue = MaxValue;
+    renderable.AnimationDuration = AnimationDuration;
   }
 }

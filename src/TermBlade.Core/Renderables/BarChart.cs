@@ -39,6 +39,12 @@ public class BarChartRenderable : Renderable
   /// <summary>Optional maximum value for the axis. If null, auto-scales to data max.</summary>
   public double? MaxValue { get; set; }
 
+  /// <summary>Duration of the intro animation in seconds. 0 disables animation.</summary>
+  public double AnimationDuration { get; set; }
+
+  private double _elapsed;
+  private bool _animationComplete;
+
   public BarChartRenderable(CliRenderer? renderer) : base(renderer) { }
 
   // Block characters for fractional bar rendering (eighths from empty to full)
@@ -54,6 +60,22 @@ public class BarChartRenderable : Renderable
     var labelFg = Rgba.FromCss(LabelColor);
     var bg = BackgroundColor != null ? Rgba.FromCss(BackgroundColor) : Rgba.FromInts(0, 0, 0, 0);
 
+    // Animation progress
+    double animScale = 1.0;
+    if (AnimationDuration > 0)
+    {
+      _elapsed += deltaTime;
+      if (!_animationComplete)
+      {
+        animScale = Math.Clamp(_elapsed / AnimationDuration, 0, 1);
+        animScale = 1 - (1 - animScale) * (1 - animScale); // ease-out
+        if (animScale >= 1.0)
+          _animationComplete = true;
+        else
+          RequestRender();
+      }
+    }
+
     double max = MaxValue ?? 0;
     foreach (var v in Data)
       if (v > max) max = v;
@@ -61,19 +83,19 @@ public class BarChartRenderable : Renderable
 
     if (Sparkline)
     {
-      RenderSparkline(buffer, x, y, w, h, barFg, bg, max);
+      RenderSparkline(buffer, x, y, w, h, barFg, bg, max, animScale);
     }
     else if (Orientation == "horizontal")
     {
-      RenderHorizontal(buffer, x, y, w, h, barFg, labelFg, bg, max);
+      RenderHorizontal(buffer, x, y, w, h, barFg, labelFg, bg, max, animScale);
     }
     else
     {
-      RenderVertical(buffer, x, y, w, h, barFg, labelFg, bg, max);
+      RenderVertical(buffer, x, y, w, h, barFg, labelFg, bg, max, animScale);
     }
   }
 
-  private void RenderSparkline(RenderBuffer buffer, int x, int y, int w, int h, Rgba fg, Rgba bg, double max)
+  private void RenderSparkline(RenderBuffer buffer, int x, int y, int w, int h, Rgba fg, Rgba bg, double max, double animScale)
   {
     bool isVertical = Orientation != "horizontal";
 
@@ -83,7 +105,7 @@ public class BarChartRenderable : Renderable
       int count = Math.Min(Data.Count, w);
       for (int i = 0; i < count; i++)
       {
-        double ratio = Data[i] / max;
+        double ratio = Data[i] / max * animScale;
         double fullHeight = ratio * h;
         int fullBlocks = (int)fullHeight;
         int fractional = (int)((fullHeight - fullBlocks) * 8);
@@ -109,7 +131,7 @@ public class BarChartRenderable : Renderable
       int count = Math.Min(Data.Count, h);
       for (int i = 0; i < count; i++)
       {
-        double ratio = Data[i] / max;
+        double ratio = Data[i] / max * animScale;
         double fullWidth = ratio * w;
         int fullBlocks = (int)fullWidth;
         int fractional = (int)((fullWidth - fullBlocks) * 8);
@@ -130,7 +152,7 @@ public class BarChartRenderable : Renderable
     }
   }
 
-  private void RenderVertical(RenderBuffer buffer, int x, int y, int w, int h, Rgba barFg, Rgba labelFg, Rgba bg, double max)
+  private void RenderVertical(RenderBuffer buffer, int x, int y, int w, int h, Rgba barFg, Rgba labelFg, Rgba bg, double max, double animScale)
   {
     // Reserve 1 row at bottom for labels if available
     bool hasLabels = Labels != null && Labels.Count > 0;
@@ -143,7 +165,7 @@ public class BarChartRenderable : Renderable
     for (int i = 0; i < count; i++)
     {
       int bx = x + i * totalBarWidth;
-      double ratio = Data[i] / max;
+      double ratio = Data[i] / max * animScale;
       double fullHeight = ratio * chartHeight;
       int fullBlocks = (int)fullHeight;
       int fractional = (int)((fullHeight - fullBlocks) * 8);
@@ -173,7 +195,7 @@ public class BarChartRenderable : Renderable
     }
   }
 
-  private void RenderHorizontal(RenderBuffer buffer, int x, int y, int w, int h, Rgba barFg, Rgba labelFg, Rgba bg, double max)
+  private void RenderHorizontal(RenderBuffer buffer, int x, int y, int w, int h, Rgba barFg, Rgba labelFg, Rgba bg, double max, double animScale)
   {
     // Reserve space for labels on the left
     int labelWidth = 0;
@@ -193,7 +215,7 @@ public class BarChartRenderable : Renderable
     for (int i = 0; i < count; i++)
     {
       int by = y + i * totalBarHeight;
-      double ratio = Data[i] / max;
+      double ratio = Data[i] / max * animScale;
       double fullWidth = ratio * chartWidth;
       int fullBlocks = (int)fullWidth;
       int fractional = (int)((fullWidth - fullBlocks) * 8);
