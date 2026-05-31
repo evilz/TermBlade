@@ -1,0 +1,104 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#0f172a" PaddingTop="1" PaddingLeft="2" PaddingRight="2">
+    <Box Width="80" Height="26" Border="true" BorderColor="#7aa2f7" Title=" TreeView Sample " BackgroundColor="#111827">
+        <Text Content="↑↓ navigate  ←→ collapse/expand  Space checkbox  Enter activate" Fg="#64748b" LayoutPosition="absolute" Left="2" Top="1" Width="70" Height="1" />
+        <TreeView Width="40" Height="16" LayoutPosition="absolute" Left="2" Top="3"
+                  Nodes="@Nodes"
+                  CheckboxMode="true"
+                  OnSelectionChanged="@OnSelectionChanged"
+                  OnNodeToggled="@OnNodeToggled"
+                  OnNodeChecked="@OnNodeChecked"
+                  OnNodeActivated="@OnNodeActivated"
+                  AutoFocus="true" />
+        <Text Content="@Status" Fg="#a5f3fc" LayoutPosition="absolute" Left="2" Top="21" Width="70" Height="3" />
+    </Box>
+</Box>
+
+@code {
+    private List<TreeNode> Nodes { get; } =
+    [
+        new TreeNode
+        {
+            Label = "src",
+            IsExpanded = true,
+            Children =
+            [
+                new TreeNode
+                {
+                    Label = "TermBlade.Core",
+                    IsExpanded = true,
+                    Children =
+                    [
+                        new TreeNode { Label = "Renderables" },
+                        new TreeNode { Label = "Rendering" },
+                        new TreeNode { Label = "Layout" },
+                        new TreeNode { Label = "Input" }
+                    ]
+                },
+                new TreeNode
+                {
+                    Label = "TermBlade.Razor",
+                    IsExpanded = false,
+                    Children =
+                    [
+                        new TreeNode { Label = "Components" },
+                        new TreeNode { Label = "Hosting" }
+                    ]
+                }
+            ]
+        },
+        new TreeNode
+        {
+            Label = "tests",
+            IsExpanded = true,
+            Children =
+            [
+                new TreeNode { Label = "TermBlade.Tests" }
+            ]
+        },
+        new TreeNode
+        {
+            Label = "samples",
+            IsExpanded = false,
+            Children =
+            [
+                new TreeNode { Label = "TermBlade.Samples" },
+                new TreeNode { Label = "TermBlade.Razor.Samples" },
+                new TreeNode { Label = "TermBlade.Gallery" }
+            ]
+        }
+    ];
+
+    private string Status { get; set; } = "Navigate the tree with arrow keys";
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#0f172a");
+        RegisterExitKeys();
+    }
+
+    private Task OnSelectionChanged(TreeNode node)
+    {
+        Status = $"Selected: {node.Label}";
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private Task OnNodeToggled(TreeNode node)
+    {
+        Status = $"{node.Label} {(node.IsExpanded ? "expanded" : "collapsed")}";
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private Task OnNodeChecked(TreeNode node)
+    {
+        Status = $"Checked: {node.Label} = {node.CheckState}";
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private Task OnNodeActivated(TreeNode node)
+    {
+        Status = $"Activated: {node.Label}";
+        return InvokeAsync(StateHasChanged);
+    }
+}
