@@ -63,6 +63,31 @@ public static class GalleryCatalog
             "Scrollable container with vertical and horizontal scrollbars.",
             "Components/Demos/ScrollBoxDemo.razor",
             ReadDemo("ScrollBoxDemo.razor")),
+
+        new("BarChart",
+            "Vertical and horizontal bar charts with sparkline mode.",
+            "Components/Demos/BarChartDemo.razor",
+            ReadDemo("BarChartDemo.razor")),
+
+        new("LineChart",
+            "Line chart with Braille sub-cell resolution and area fill.",
+            "Components/Demos/LineChartDemo.razor",
+            ReadDemo("LineChartDemo.razor")),
+
+        new("TimeSeriesLineChart",
+            "Time-series line chart with timestamp X-axis labels.",
+            "Components/Demos/TimeSeriesLineChartDemo.razor",
+            ReadDemo("TimeSeriesLineChartDemo.razor")),
+
+        new("HeatMap",
+            "2D heat map grid with configurable color gradients.",
+            "Components/Demos/HeatMapDemo.razor",
+            ReadDemo("HeatMapDemo.razor")),
+
+        new("CandlestickChart",
+            "Financial OHLC candlestick chart with bull/bear coloring.",
+            "Components/Demos/CandlestickChartDemo.razor",
+            ReadDemo("CandlestickChartDemo.razor")),
     ];
 
   public static IReadOnlyList<GalleryEntry> Entries => _entries;

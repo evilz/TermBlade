@@ -1,0 +1,19 @@
+<HeatMap Width="60" Height="10" Data="@HeatData"
+         RowLabels="@Rows" ColumnLabels="@Cols"
+         LowColor="#0d1117" MidColor="#1f6feb" HighColor="#f0883e"
+         CellWidth="5" CellHeight="1" ShowValues="true" />
+
+@code {
+    private static readonly IReadOnlyList<string> Rows = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    private static readonly IReadOnlyList<string> Cols = ["00h", "04h", "08h", "12h", "16h", "20h"];
+
+    private static readonly IReadOnlyList<IReadOnlyList<double>> HeatData = [
+        (IReadOnlyList<double>)[2, 1, 5, 8, 7, 3],
+        (IReadOnlyList<double>)[1, 2, 6, 9, 8, 4],
+        (IReadOnlyList<double>)[3, 1, 7, 10, 9, 5],
+        (IReadOnlyList<double>)[2, 2, 6, 8, 7, 3],
+        (IReadOnlyList<double>)[1, 1, 5, 7, 6, 2],
+        (IReadOnlyList<double>)[4, 3, 3, 5, 4, 6],
+        (IReadOnlyList<double>)[5, 4, 2, 4, 3, 7],
+    ];
+}

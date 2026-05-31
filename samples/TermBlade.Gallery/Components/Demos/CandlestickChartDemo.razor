@@ -1,0 +1,22 @@
+@using TermBlade.Core.Renderables
+
+<CandlestickChart Width="60" Height="15" Data="@CandleData"
+                  BullColor="#3fb950" BearColor="#f85149"
+                  CandleWidth="3" CandleGap="1" />
+
+@code {
+    private static readonly IReadOnlyList<CandlestickPoint> CandleData = [
+        new(100, 105, 98,  103, "Jan"),
+        new(103, 108, 101, 96,  "Feb"),
+        new(96,  102, 94,  99,  "Mar"),
+        new(99,  110, 97,  108, "Apr"),
+        new(108, 115, 106, 104, "May"),
+        new(104, 109, 100, 107, "Jun"),
+        new(107, 118, 105, 116, "Jul"),
+        new(116, 120, 112, 110, "Aug"),
+        new(110, 114, 106, 113, "Sep"),
+        new(113, 122, 111, 120, "Oct"),
+        new(120, 125, 117, 115, "Nov"),
+        new(115, 119, 108, 118, "Dec"),
+    ];
+}
