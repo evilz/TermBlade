@@ -1,0 +1,24 @@
+<Box Width="100%" Height="100%" FlexDirection="FlexDirection.Row" BackgroundColor="#0d1117">
+    <Box Width="50%" Height="100%" FlexDirection="FlexDirection.Column">
+        <Box Width="100%" Height="1">
+            <Text Content="Vertical Sparkline" Fg="#58a6ff" Width="30" Height="1" Attributes="@TextAttributes.Bold" />
+        </Box>
+        <BarChart Width="100%" Height="8" Data="@SparkData" Sparkline="true" BarColor="#58a6ff" />
+        <Box Width="100%" Height="1" MarginTop="1">
+            <Text Content="Horizontal Sparkline" Fg="#f0883e" Width="30" Height="1" Attributes="@TextAttributes.Bold" />
+        </Box>
+        <BarChart Width="100%" Height="5" Data="@SparkData" Sparkline="true" Orientation="horizontal" BarColor="#f0883e" />
+    </Box>
+    <Box Width="50%" Height="100%" FlexDirection="FlexDirection.Column">
+        <Box Width="100%" Height="1">
+            <Text Content="Vertical Bar Chart" Fg="#3fb950" Width="30" Height="1" Attributes="@TextAttributes.Bold" />
+        </Box>
+        <BarChart Width="100%" FlexGrow="1" Data="@BarData" Labels="@BarLabels" BarColor="#3fb950" BarWidth="3" BarGap="1" />
+    </Box>
+</Box>
+
+@code {
+    private static readonly IReadOnlyList<double> SparkData = [3, 7, 5, 12, 8, 15, 10, 18, 6, 14, 20, 9, 16, 11, 22];
+    private static readonly IReadOnlyList<double> BarData = [45, 72, 38, 91, 56, 83, 25, 67];
+    private static readonly IReadOnlyList<string> BarLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Avg"];
+}

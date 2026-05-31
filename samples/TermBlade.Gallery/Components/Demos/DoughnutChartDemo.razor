@@ -1,0 +1,26 @@
+<Box Width="100%" Height="100%" FlexDirection="FlexDirection.Column" BackgroundColor="#0d1117">
+    <Box Width="100%" Height="1">
+        <Text Content="Doughnut Chart" Fg="#58a6ff" Width="30" Height="1" Attributes="@TextAttributes.Bold" />
+    </Box>
+    <Box Width="100%" FlexGrow="1" FlexDirection="FlexDirection.Row">
+        <DoughnutChart Width="50%" Height="100%" Data="@DonutData" AnimationDuration="1.5"
+                       CenterLabel="100%" InnerRadius="0.5" />
+        <Box FlexGrow="1" FlexDirection="FlexDirection.Column">
+            <Box Width="100%" Height="1">
+                <Text Content="Thin Ring" Fg="#f0883e" Width="30" Height="1" Attributes="@TextAttributes.Bold" />
+            </Box>
+            <DoughnutChart Width="100%" FlexGrow="1" Data="@DonutData" InnerRadius="0.7"
+                           CenterLabel="Tasks" CenterLabelColor="#c9d1d9" />
+        </Box>
+    </Box>
+</Box>
+
+@code {
+    private static readonly IReadOnlyList<PieSlice> DonutData =
+    [
+        new PieSlice(40, "Complete", "#3fb950"),
+        new PieSlice(30, "In Progress", "#58a6ff"),
+        new PieSlice(20, "Pending", "#f0883e"),
+        new PieSlice(10, "Blocked", "#f85149"),
+    ];
+}
