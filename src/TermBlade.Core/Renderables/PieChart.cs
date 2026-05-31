@@ -89,16 +89,17 @@ public class PieChartRenderable : Renderable
     int chartW = w - legendWidth;
     if (chartW <= 0) chartW = w;
 
-    // Terminal cells are roughly 2:1 aspect ratio; compensate
-    double radiusX = (chartW - 2) / 2.0;
-    double radiusY = (h - 2) / 2.0;
-    double radius = Math.Min(radiusX, radiusY);
+    // Half-block rendering: each terminal cell represents 2 vertical sub-pixels.
+    // Because terminal cells are roughly 2:1 (height ≈ 2× width), each sub-pixel
+    // is approximately square, so equal radii in sub-pixel space produce a circle.
+    int subH = h * 2;
+    double maxRx = (chartW - 1) / 2.0;
+    double maxRy = (subH - 1) / 2.0;
+    double radius = Math.Min(maxRx, maxRy);
     if (radius < 1) return;
 
-    double cx = x + chartW / 2.0;
-    double cy = y + h / 2.0;
-
-    double innerRadius = radius * InnerRadiusRatio;
+    double cxLocal = chartW / 2.0;
+    double cyLocal = subH / 2.0;
 
     // Build slice angles
     var angles = new double[Data.Count + 1];
@@ -117,40 +118,75 @@ public class PieChartRenderable : Renderable
       colors[i] = Rgba.FromCss(css);
     }
 
-    // Render circle cell by cell
-    for (int row = 0; row < h; row++)
+    // Build sub-pixel grid: -1 = background, >=0 = slice index
+    var grid = new int[chartW * subH];
+    Array.Fill(grid, -1);
+
+    for (int sy = 0; sy < subH; sy++)
     {
-      for (int col = 0; col < chartW; col++)
+      for (int sx = 0; sx < chartW; sx++)
       {
-        // Map cell to unit circle space (aspect-corrected)
-        double px = (col - (cx - x)) / (radius * 2); // terminal chars are ~2:1
-        double py = (row - (cy - y)) / radius;
-        double dist = Math.Sqrt(px * px + py * py);
+        double nx = (sx - cxLocal) / radius;
+        double ny = (sy - cyLocal) / radius;
+        double dist = Math.Sqrt(nx * nx + ny * ny);
 
         if (dist > 1.0 || dist < InnerRadiusRatio)
           continue;
 
-        double angle = Math.Atan2(py, px);
+        double angle = Math.Atan2(ny, nx);
 
-        // Find which slice this angle falls in
         for (int i = 0; i < Data.Count; i++)
         {
-          // Normalize angle comparison
           double a = NormalizeAngle(angle);
           double a0 = NormalizeAngle(angles[i]);
           double a1 = NormalizeAngle(angles[i + 1]);
 
           bool inSlice;
-          if (a0 <= a1)
+          if (a0 < a1)
             inSlice = a >= a0 && a < a1;
-          else
+          else if (a0 > a1)
             inSlice = a >= a0 || a < a1; // wraps around
+          else
+            continue; // zero-width slice
 
           if (inSlice)
           {
-            buffer.SetCell(x + col, y + row, '█', colors[i], bg);
+            grid[sy * chartW + sx] = i;
             break;
           }
+        }
+      }
+    }
+
+    // Render cells using half-block characters for smooth edges
+    for (int row = 0; row < h; row++)
+    {
+      int topSy = row * 2;
+      int botSy = row * 2 + 1;
+
+      for (int col = 0; col < chartW; col++)
+      {
+        int topSlice = grid[topSy * chartW + col];
+        int botSlice = botSy < subH ? grid[botSy * chartW + col] : -1;
+
+        if (topSlice < 0 && botSlice < 0)
+          continue;
+
+        if (topSlice >= 0 && botSlice >= 0 && topSlice == botSlice)
+        {
+          buffer.SetCell(x + col, y + row, '█', colors[topSlice], bg);
+        }
+        else if (topSlice >= 0 && botSlice >= 0)
+        {
+          buffer.SetCell(x + col, y + row, '▀', colors[topSlice], colors[botSlice]);
+        }
+        else if (topSlice >= 0)
+        {
+          buffer.SetCell(x + col, y + row, '▀', colors[topSlice], bg);
+        }
+        else
+        {
+          buffer.SetCell(x + col, y + row, '▄', colors[botSlice], bg);
         }
       }
     }
