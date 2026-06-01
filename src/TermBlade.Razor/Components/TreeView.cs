@@ -7,7 +7,6 @@ namespace TermBlade.Razor.Components;
 public sealed class TreeView : RenderableComponentBase<TreeViewRenderable>
 {
   [Parameter] public List<TreeNode> Nodes { get; set; } = [];
-  [Parameter] public bool MultiSelect { get; set; } = true;
   [Parameter] public bool AllowLetterBasedNavigation { get; set; } = true;
   [Parameter] public bool CheckboxMode { get; set; } = false;
   [Parameter] public string? Fg { get; set; }
@@ -66,7 +65,6 @@ public sealed class TreeView : RenderableComponentBase<TreeViewRenderable>
   protected override void ApplyParameters(TreeViewRenderable renderable)
   {
     renderable.Nodes = Nodes;
-    renderable.MultiSelect = MultiSelect;
     renderable.AllowLetterBasedNavigation = AllowLetterBasedNavigation;
     renderable.CheckboxMode = CheckboxMode;
     renderable.Fg = Fg;

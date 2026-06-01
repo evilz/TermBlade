@@ -43,9 +43,15 @@ public class TreeViewTests
     var tree = CreateTree();
 
     // Root1 (expanded), Child1.1, Child1.2, Root2 (collapsed), Root3
-    Assert.Equal(5, tree.SelectedIndex >= 0 ? 5 : 5);
-    Assert.NotNull(tree.SelectedNode);
     Assert.Equal("Root1", tree.SelectedNode!.Label);
+    tree.HandleKey(new KeyEvent { Name = "down" });
+    Assert.Equal("Child1.1", tree.SelectedNode!.Label);
+    tree.HandleKey(new KeyEvent { Name = "down" });
+    Assert.Equal("Child1.2", tree.SelectedNode!.Label);
+    tree.HandleKey(new KeyEvent { Name = "down" });
+    Assert.Equal("Root2", tree.SelectedNode!.Label);
+    tree.HandleKey(new KeyEvent { Name = "down" });
+    Assert.Equal("Root3", tree.SelectedNode!.Label);
   }
 
   [Fact]
@@ -218,6 +224,18 @@ public class TreeViewTests
   }
 
   [Fact]
+  public void Checkbox_PrintableSpaceCharacter_TogglesUncheckedToChecked()
+  {
+    var tree = CreateTree();
+    tree.CheckboxMode = true;
+    var node = tree.SelectedNode!;
+    Assert.Equal(CheckState.Unchecked, node.CheckState);
+
+    tree.HandleKey(new KeyEvent { Name = " ", Key = " ", Char = ' ' });
+    Assert.Equal(CheckState.Checked, node.CheckState);
+  }
+
+  [Fact]
   public void Checkbox_Space_TogglesCheckedToUnchecked()
   {
     var tree = CreateTree();
@@ -323,6 +341,35 @@ public class TreeViewTests
   }
 
   [Fact]
+  public void Filter_ShowsMatchingDescendantsEvenWhenAncestorCollapsed()
+  {
+    var tree = new TreeViewRenderable(null)
+    {
+      Filter = "Child1",
+      Nodes =
+      [
+        new TreeNode
+        {
+          Label = "Root1",
+          IsExpanded = false,
+          Children =
+          [
+            new TreeNode { Label = "Child1.1" },
+            new TreeNode { Label = "Child1.2" }
+          ]
+        }
+      ]
+    };
+    tree.RebuildFlatList();
+
+    Assert.Equal("Root1", tree.SelectedNode!.Label);
+    tree.HandleKey(new KeyEvent { Name = "down" });
+    Assert.Equal("Child1.1", tree.SelectedNode!.Label);
+    tree.HandleKey(new KeyEvent { Name = "down" });
+    Assert.Equal("Child1.2", tree.SelectedNode!.Label);
+  }
+
+  [Fact]
   public void LetterNavigation_JumpsToMatchingNode()
   {
     var tree = CreateTree();
@@ -370,5 +417,24 @@ public class TreeViewTests
     tree.HandleKey(new KeyEvent { Name = "right" });
     Assert.NotNull(toggled);
     Assert.Equal("Root2", ((TreeNode)toggled!).Label);
+  }
+
+  [Fact]
+  public void MouseClick_SelectsClickedRow()
+  {
+    var tree = CreateTree();
+    tree.HandleMouse(new MouseEvent { X = 0, Y = 3, Button = MouseButton.Left, Pressed = true });
+    Assert.Equal("Root2", tree.SelectedNode!.Label);
+  }
+
+  [Fact]
+  public void MouseClick_OnCheckbox_TogglesNode()
+  {
+    var tree = CreateTree();
+    tree.CheckboxMode = true;
+    Assert.Equal(CheckState.Unchecked, tree.SelectedNode!.CheckState);
+
+    tree.HandleMouse(new MouseEvent { X = 4, Y = 0, Button = MouseButton.Left, Pressed = true });
+    Assert.Equal(CheckState.Checked, tree.SelectedNode!.CheckState);
   }
 }

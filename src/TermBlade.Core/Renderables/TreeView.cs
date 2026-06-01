@@ -24,14 +24,13 @@ public class TreeNode
 public class TreeViewRenderable : Renderable
 {
   public List<TreeNode> Nodes { get; set; } = new();
-  public bool MultiSelect { get; set; } = true;
   public bool AllowLetterBasedNavigation { get; set; } = true;
   public bool CheckboxMode { get; set; } = false;
   public string? Fg { get; set; }
   public string? SelectedBg { get; set; } = "#0055aa";
   public string? Filter { get; set; }
 
-  private readonly record struct FlatNode(TreeNode Node, int Depth, bool IsLast, bool[] ParentIsLast);
+  private readonly record struct FlatNode(TreeNode Node, int Depth, bool IsLast, bool[] ParentIsLast, bool IsExpandedInView);
 
   private List<FlatNode> _flatNodes = new();
   private int _selectedIndex = 0;
@@ -89,9 +88,10 @@ public class TreeViewRenderable : Renderable
           continue;
       }
 
-      _flatNodes.Add(new FlatNode(node, depth, isLast, parentIsLast));
+      bool isExpandedInView = node.Children.Count > 0 && (node.IsExpanded || filter != null);
+      _flatNodes.Add(new FlatNode(node, depth, isLast, parentIsLast, isExpandedInView));
 
-      if (node.IsExpanded && node.Children.Count > 0)
+      if (isExpandedInView)
       {
         bool[] childParentIsLast = [.. parentIsLast, isLast];
         BuildFlatListRecursive(node.Children, depth + 1, childParentIsLast);
@@ -161,7 +161,7 @@ public class TreeViewRenderable : Renderable
 
       case "left":
         {
-          var (node, depth, _, _) = _flatNodes[_selectedIndex];
+          var (node, depth, _, _, _) = _flatNodes[_selectedIndex];
           if (node.IsExpanded && node.Children.Count > 0)
           {
             node.IsExpanded = false;
@@ -204,6 +204,7 @@ public class TreeViewRenderable : Renderable
         }
 
       case "space":
+      case " ":
         if (CheckboxMode)
         {
           ToggleCheckbox(_flatNodes[_selectedIndex].Node);
@@ -217,6 +218,48 @@ public class TreeViewRenderable : Renderable
           HandleLetterNavigation(key.Char.Value);
         break;
     }
+  }
+
+  public override void HandleMouse(MouseEvent mouse)
+  {
+    if (mouse.Button != MouseButton.Left || !mouse.Pressed)
+      return;
+
+    if (_dirty) RebuildFlatList();
+    if (_flatNodes.Count == 0)
+      return;
+
+    int column = mouse.X - ScreenX;
+    if (column < 0 || (ComputedWidth > 0 && column >= ComputedWidth))
+      return;
+
+    int row = mouse.Y - ScreenY;
+    if (row < 0 || (ComputedHeight > 0 && row >= ComputedHeight))
+      return;
+
+    int idx = row + _scrollOffset;
+    if (idx < 0 || idx >= _flatNodes.Count)
+      return;
+
+    bool selectionChanged = _selectedIndex != idx;
+    _selectedIndex = idx;
+    EnsureVisible();
+
+    var flatNode = _flatNodes[idx];
+    if (CheckboxMode)
+    {
+      int checkboxColumn = flatNode.Depth * 3 + 4;
+      if (column == checkboxColumn)
+      {
+        ToggleCheckbox(flatNode.Node);
+        Emit("nodeChecked", flatNode.Node);
+      }
+    }
+
+    if (selectionChanged)
+      Emit("selectionChanged", SelectedNode);
+
+    RequestRender();
   }
 
   private void HandleLetterNavigation(char ch)
@@ -303,14 +346,13 @@ public class TreeViewRenderable : Renderable
     var fg = Fg != null ? Rgba.FromCss(Fg) : Rgba.FromInts(220, 220, 220);
     var bg = Rgba.FromInts(0, 0, 0);
     var selBg = SelectedBg != null ? Rgba.FromCss(SelectedBg) : Rgba.FromInts(0, 85, 170);
-    var dimFg = Rgba.FromInts(120, 120, 120);
 
     for (int row = 0; row < h; row++)
     {
       int idx = row + _scrollOffset;
       if (idx >= _flatNodes.Count) break;
 
-      var (node, depth, isLast, parentIsLast) = _flatNodes[idx];
+      var (node, depth, isLast, parentIsLast, isExpandedInView) = _flatNodes[idx];
       bool isSelected = idx == _selectedIndex;
       var rowBg = isSelected ? selBg : bg;
 
@@ -327,13 +369,14 @@ public class TreeViewRenderable : Renderable
 
       // Expand/collapse indicator
       if (node.Children.Count > 0)
-        sb.Append(node.IsExpanded ? '▼' : '▶');
+        sb.Append(isExpandedInView ? '▼' : '▶');
       else
         sb.Append(' ');
 
       // Checkbox glyph
       if (CheckboxMode)
       {
+        sb.Append(' ');
         sb.Append(node.CheckState switch
         {
           CheckState.Checked => "☑",
@@ -350,22 +393,7 @@ public class TreeViewRenderable : Renderable
       if (text.Length > w)
         text = text[..w];
 
-      var lineFg = isSelected ? fg : fg;
-      // Dim the tree structure characters for non-selected rows
-      if (!isSelected && depth > 0)
-      {
-        // Draw the prefix in dim color, then the rest in normal fg
-        int prefixLen = depth * 3 + 2; // ancestor markers + branch
-        var prefix = text[..Math.Min(prefixLen, text.Length)];
-        var rest = text.Length > prefixLen ? text[prefixLen..] : "";
-        buffer.DrawText(x, y + row, prefix, dimFg, rowBg);
-        if (rest.Length > 0)
-          buffer.DrawText(x + prefixLen, y + row, rest, fg, rowBg);
-      }
-      else
-      {
-        buffer.DrawText(x, y + row, text, fg, rowBg);
-      }
+      buffer.DrawText(x, y + row, text, fg, rowBg);
     }
 
     // Scroll indicator
