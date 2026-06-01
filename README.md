@@ -72,6 +72,8 @@ dotnet run --project samples/TermBlade.Samples -- input    # keyboard input
 dotnet run --project samples/TermBlade.Razor.Samples -- layout   # Razor-hosted layout demo
 dotnet run --project samples/TermBlade.Razor.Samples -- editor   # Razor-hosted editor demo
 dotnet run --project samples/TermBlade.Razor.Samples -- console  # Razor-hosted overlay demo
+dotnet run --project samples/TermBlade.Razor.Samples -- calendar # Razor-hosted calendar demo
+dotnet run --project samples/TermBlade.Gallery                 # Interactive component gallery (includes Calendar demo)
 ```
 
 ## Documentation

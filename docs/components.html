@@ -58,6 +58,7 @@
             <a href="#asciifont">AsciiFont</a>
             <a href="#linenumbers">LineNumbers</a>
             <a href="#framebuffer">FrameBuffer</a>
+            <a href="#calendar">Calendar</a>
           </div>
           <div class="sidebar-group">
             <h3>Input Components</h3>
@@ -646,6 +647,62 @@ Console.WriteLine(""Hello"");
               </table>
             </div>
           </details>
+        </section>
+
+        <section id="calendar" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Content Component</p>
+            <h2>Calendar</h2>
+            <p>Renders a monthly calendar grid with configurable day colors and date highlighting.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">calendar-preview</span>
+              </div>
+              <pre class="terminal-body"><code>      June 2007
+ Su Mo Tu We Th Fr Sa
+                 1  2
+  3  4  5  6  7  8  9
+ 10 11 12 13 14 15 16
+ 17 18 19 20 21 22 23
+ 24 25 26 27 28 29 30</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;Calendar</span> <span class="attr">DisplayMonth</span>=<span class="kw">"@new DateOnly(2025, 9, 1)"</span>
+          <span class="attr">HighlightedDate</span>=<span class="kw">"@DateOnly.FromDateTime(DateTime.Today)"</span>
+          <span class="attr">DayNameColor</span>=<span class="str">"#00c000"</span>
+          <span class="attr">HighlightColor</span>=<span class="str">"#cc0000"</span>
+          <span class="attr">ShowOtherMonthDays</span>=<span class="kw">"false"</span>
+          <span class="attr">Width</span>=<span class="str">"20"</span> <span class="attr">Height</span>=<span class="str">"8"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>DisplayMonth</code></td><td><code>DateOnly</code></td><td><code>DateOnly.FromDateTime(DateTime.Today)</code></td><td>Month to render.</td></tr>
+                  <tr><td><code>HighlightedDate</code></td><td><code>DateOnly?</code></td><td><code>DateOnly.FromDateTime(DateTime.Today)</code></td><td>Date to highlight using <code>HighlightColor</code>.</td></tr>
+                  <tr><td><code>TitleColor</code></td><td><code>string</code></td><td><code>"#ffffff"</code></td><td>Color for month and year title text.</td></tr>
+                  <tr><td><code>TitleAlignment</code></td><td><code>string</code></td><td><code>"center"</code></td><td>Title alignment: left, center, or right.</td></tr>
+                  <tr><td><code>DayNameColor</code></td><td><code>string</code></td><td><code>"#00c000"</code></td><td>Color for day name headers (<code>Su</code> to <code>Sa</code>).</td></tr>
+                  <tr><td><code>DayColor</code></td><td><code>string</code></td><td><code>"#ffffff"</code></td><td>Color for days in the active month.</td></tr>
+                  <tr><td><code>OtherMonthDayColor</code></td><td><code>string</code></td><td><code>"#555555"</code></td><td>Color for leading/trailing days when <code>ShowOtherMonthDays</code> is enabled.</td></tr>
+                  <tr><td><code>HighlightColor</code></td><td><code>string</code></td><td><code>"#ff0000"</code></td><td>Color for the highlighted date.</td></tr>
+                  <tr><td><code>BackgroundColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Background color for the calendar.</td></tr>
+                  <tr><td><code>AlternateRowBackgroundColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Optional background color for alternating week rows.</td></tr>
+                  <tr><td><code>ShowOtherMonthDays</code></td><td><code>bool</code></td><td><code>true</code></td><td>Whether to render adjacent-month days in partial weeks.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
         <section id="input" class="component-section feature-card">

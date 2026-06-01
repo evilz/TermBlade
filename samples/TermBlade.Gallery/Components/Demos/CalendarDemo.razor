@@ -1,0 +1,31 @@
+<Box Width="100%" Height="100%" FlexDirection="FlexDirection.Row" BackgroundColor="#0d1117">
+    <Box Width="50%" Height="100%" FlexDirection="FlexDirection.Column" PaddingLeft="2" PaddingTop="1">
+        <Text Content="Current month" Fg="#58a6ff" Height="1" Attributes="@TextAttributes.Bold" />
+        <Text Content="Today is highlighted in red" Fg="#8b949e" Height="1" />
+        <Calendar DisplayMonth="@_today"
+                  HighlightedDate="@_today"
+                  DayNameColor="#00c000"
+                  HighlightColor="#cc0000"
+                  ShowOtherMonthDays="false"
+                  MarginTop="1"
+                  Width="20" Height="8" />
+    </Box>
+    <Box Width="50%" Height="100%" FlexDirection="FlexDirection.Column" PaddingLeft="2" PaddingTop="1">
+        <Text Content="Custom month with other-month days" Fg="#58a6ff" Height="1" Attributes="@TextAttributes.Bold" />
+        <Text Content="Alternating rows + highlighted date" Fg="#8b949e" Height="1" />
+        <Calendar DisplayMonth="@_june2007"
+                  HighlightedDate="@_june29"
+                  DayNameColor="#00c000"
+                  HighlightColor="#5588ff"
+                  ShowOtherMonthDays="true"
+                  AlternateRowBackgroundColor="#1a2230"
+                  MarginTop="1"
+                  Width="20" Height="8" />
+    </Box>
+</Box>
+
+@code {
+    private static readonly DateOnly _today = DateOnly.FromDateTime(DateTime.Today);
+    private static readonly DateOnly _june2007 = new DateOnly(2007, 6, 1);
+    private static readonly DateOnly _june29 = new DateOnly(2007, 6, 29);
+}
