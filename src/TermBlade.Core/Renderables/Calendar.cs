@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
@@ -61,14 +62,40 @@ public class CalendarRenderable : Renderable
   {
     int x = ScreenX, y = ScreenY, w = ComputedWidth, h = ComputedHeight;
     if (w <= 0 || h <= 0) return;
+    int contentWidth = Math.Min(GridWidth, w);
+    if (contentWidth <= 0) return;
 
-    var bg = BackgroundColor != null ? Rgba.FromCss(BackgroundColor) : Rgba.FromInts(0, 0, 0, 0);
+    var transparentBg = Rgba.FromInts(0, 0, 0, 0);
+    var bg = BackgroundColor != null ? Rgba.FromCss(BackgroundColor) : transparentBg;
     var altBg = AlternateRowBackgroundColor != null ? Rgba.FromCss(AlternateRowBackgroundColor) : bg;
     var titleFg = Rgba.FromCss(TitleColor);
     var dayNameFg = Rgba.FromCss(DayNameColor);
     var dayFg = Rgba.FromCss(DayColor);
     var otherFg = Rgba.FromCss(OtherMonthDayColor);
     var highlightFg = Rgba.FromCss(HighlightColor);
+
+    void DrawBoundedText(int drawX, int drawY, string text, Rgba fg, Rgba preferredBg, TextAttributes attrs = TextAttributes.None)
+    {
+      int maxX = x + contentWidth;
+      int col = drawX;
+      foreach (var rune in text.EnumerateRunes())
+      {
+        if (col >= maxX) break;
+
+        int runeWidth = CellBuffer.RuneWidth(rune);
+        if (col + runeWidth > maxX) break;
+
+        var cellBg = preferredBg.AlphaByte > 0
+            ? preferredBg
+            : buffer.GetCell(col, drawY)?.Bg ?? Rgba.FromInts(0, 0, 0);
+
+        buffer.SetCell(col, drawY, rune.Value, fg, cellBg, attrs);
+        if (runeWidth == 2 && col + 1 < maxX)
+          buffer.SetCell(col + 1, drawY, 0, fg, cellBg, attrs);
+
+        col += runeWidth;
+      }
+    }
 
     // Background fill
     if (BackgroundColor != null && bg.AlphaByte > 0)
@@ -78,13 +105,15 @@ public class CalendarRenderable : Renderable
     if (h > 0)
     {
       var title = DisplayMonth.ToString("MMMM yyyy");
+      if (title.Length > contentWidth)
+        title = title[..contentWidth];
       int titleX = TitleAlignment switch
       {
-        "right" => x + Math.Max(0, GridWidth - title.Length),
+        "right" => x + Math.Max(0, contentWidth - title.Length),
         "left" => x,
-        _ => x + Math.Max(0, (GridWidth - title.Length) / 2), // "center"
+        _ => x + Math.Max(0, (contentWidth - title.Length) / 2), // "center"
       };
-      buffer.DrawText(titleX, y, title, titleFg, bg, TextAttributes.Bold);
+      DrawBoundedText(titleX, y, title, titleFg, bg, TextAttributes.Bold);
     }
 
     // ── Row 1: Day-of-week header ────────────────────────────────────────────
@@ -93,7 +122,8 @@ public class CalendarRenderable : Renderable
       for (int col = 0; col < 7; col++)
       {
         int cellX = x + col * 3;
-        buffer.DrawText(cellX, y + 1, DayHeaders[col], dayNameFg, bg);
+        if (cellX + 2 > x + contentWidth) break;
+        DrawBoundedText(cellX, y + 1, DayHeaders[col], dayNameFg, bg);
       }
     }
 
@@ -114,7 +144,7 @@ public class CalendarRenderable : Renderable
       // Alternating row background
       var rowBg = (row % 2 == 1 && AlternateRowBackgroundColor != null) ? altBg : bg;
       if (AlternateRowBackgroundColor != null && row % 2 == 1)
-        buffer.FillRect(x, rowY, Math.Min(GridWidth, w), 1, rowBg);
+        buffer.FillRect(x, rowY, contentWidth, 1, rowBg);
 
       for (int col = 0; col < 7; col++)
       {
@@ -125,7 +155,7 @@ public class CalendarRenderable : Renderable
           continue;
 
         int cellX = x + col * 3;
-        if (cellX + 2 > x + w) break;
+        if (cellX + 2 > x + contentWidth) break;
 
         var dayStr = date.Day.ToString().PadLeft(2);
 
@@ -137,7 +167,7 @@ public class CalendarRenderable : Renderable
         else
           fg = dayFg;
 
-        buffer.DrawText(cellX, rowY, dayStr, fg, rowBg);
+        DrawBoundedText(cellX, rowY, dayStr, fg, rowBg);
       }
     }
   }

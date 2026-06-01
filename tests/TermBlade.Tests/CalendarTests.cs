@@ -1,4 +1,6 @@
+using System.Globalization;
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Layout;
 using TermBlade.Core.Renderables;
 using TermBlade.Core.Rendering;
 
@@ -10,14 +12,14 @@ public class CalendarTests
   private static RenderBuffer RenderCalendar(CalendarRenderable calendar, int width, int height)
   {
     // Wire up a root layout node so FlexLayout.Calculate populates ComputedWidth/Height.
-    var root = new Core.Layout.FlexNode
+    var root = new FlexNode
     {
-      FlexDirection = Core.Layout.FlexDirection.Column,
+      FlexDirection = FlexDirection.Column,
     };
-    calendar.LayoutNode.Width = Core.Layout.LayoutDimension.Fixed(width);
-    calendar.LayoutNode.Height = Core.Layout.LayoutDimension.Fixed(height);
+    calendar.LayoutNode.Width = LayoutDimension.Fixed(width);
+    calendar.LayoutNode.Height = LayoutDimension.Fixed(height);
     root.AddChild(calendar.LayoutNode);
-    Core.Layout.FlexLayout.Calculate(root, width, height);
+    FlexLayout.Calculate(root, width, height);
 
     var buffer = new RenderBuffer(width, height);
     calendar.Render(buffer, 0);
@@ -54,7 +56,7 @@ public class CalendarTests
     var buffer = RenderCalendar(calendar, 20, 8);
     var title = GetRow(buffer, 0);
 
-    Assert.Contains("June", title);
+    Assert.Contains(calendar.DisplayMonth.ToString("MMMM", CultureInfo.CurrentCulture), title);
     Assert.Contains("2007", title);
   }
 
@@ -227,15 +229,21 @@ public class CalendarTests
 
     var buffer = RenderCalendar(calendar, 20, 9);
 
-    // All 29 days should appear somewhere in the buffer
-    for (int day = 1; day <= 29; day++)
+    // Collect all day values from their exact 2-character day cells to avoid substring false positives.
+    var seenDays = new HashSet<int>();
+    for (int row = 2; row < buffer.Height; row++)
     {
-      var dayStr = day.ToString().PadLeft(2);
-      bool found = false;
-      for (int row = 2; row < buffer.Height && !found; row++)
-        if (GetRow(buffer, row).Contains(dayStr))
-          found = true;
-      Assert.True(found, $"Day {day} not found in calendar output");
+      var line = GetRow(buffer, row);
+      for (int col = 0; col < 7; col++)
+      {
+        int cellX = col * 3;
+        if (cellX + 1 >= line.Length) break;
+        if (int.TryParse(line.Substring(cellX, 2).Trim(), out var parsedDay))
+          seenDays.Add(parsedDay);
+      }
     }
+
+    for (int day = 1; day <= 29; day++)
+      Assert.Contains(day, seenDays);
   }
 }
