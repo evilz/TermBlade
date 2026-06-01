@@ -98,6 +98,11 @@ public static class GalleryCatalog
             "Doughnut chart with hollow center and optional center label.",
             "Components/Demos/DoughnutChartDemo.razor",
             ReadDemo("DoughnutChartDemo.razor")),
+
+        new("TreeView",
+            "Hierarchical tree with expand/collapse, checkboxes, filtering and mouse interaction.",
+            "Components/Demos/TreeViewDemo.razor",
+            ReadDemo("TreeViewDemo.razor")),
     ];
 
   public static IReadOnlyList<GalleryEntry> Entries => _entries;

@@ -1,0 +1,54 @@
+<TreeView Width="52" Height="10"
+          Nodes="@Nodes"
+          CheckboxMode="true"
+          OnSelectionChanged="@OnSelectionChanged"
+          OnNodeChecked="@OnNodeChecked"
+          OnNodeActivated="@OnNodeActivated" />
+
+<Text Content="@Status" Fg="#a5f3fc" Width="52" Height="1" MarginTop="1" />
+
+@code {
+    private List<TreeNode> Nodes { get; } =
+    [
+        new TreeNode
+        {
+            Label = "src",
+            IsExpanded = true,
+            Children =
+            [
+                new TreeNode { Label = "TermBlade.Core" },
+                new TreeNode { Label = "TermBlade.Razor" }
+            ]
+        },
+        new TreeNode
+        {
+            Label = "samples",
+            IsExpanded = true,
+            Children =
+            [
+                new TreeNode { Label = "TermBlade.Samples" },
+                new TreeNode { Label = "TermBlade.Gallery" }
+            ]
+        }
+    ];
+
+    private string Status { get; set; } = "Use arrows, Enter, Space, and mouse click";
+
+    private Task OnSelectionChanged(TreeNode node)
+    {
+        Status = $"Selected: {node.Label}";
+        return Task.CompletedTask;
+    }
+
+    private Task OnNodeChecked(TreeNode node)
+    {
+        Status = $"Checked: {node.Label} = {node.CheckState}";
+        return Task.CompletedTask;
+    }
+
+    private Task OnNodeActivated(TreeNode node)
+    {
+        Status = $"Activated: {node.Label}";
+        return Task.CompletedTask;
+    }
+}
