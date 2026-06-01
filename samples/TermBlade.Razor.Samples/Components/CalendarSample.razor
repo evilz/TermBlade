@@ -1,0 +1,39 @@
+@inherits SampleComponentBase
+
+<Box Width="100%" Height="100%" BackgroundColor="#0d1b2e" PaddingTop="1" PaddingLeft="4">
+    <Text Content="Calendar Widget (Press 'q' to quit)" Fg="#ffffff" Attributes="@TextAttributes.Bold"
+          LayoutPosition="absolute" Left="4" Top="1" Width="50" Height="1" />
+
+    <Calendar DisplayMonth="@_leftMonth"
+              HighlightedDate="@_today"
+              DayNameColor="#00c000"
+              DayColor="#ffffff"
+              HighlightColor="#cc0000"
+              ShowOtherMonthDays="false"
+              LayoutPosition="absolute" Left="4" Top="3"
+              Width="20" Height="8" />
+
+    <Calendar DisplayMonth="@_rightMonth"
+              HighlightedDate="@_rightHighlight"
+              DayNameColor="#00c000"
+              DayColor="#ffffff"
+              OtherMonthDayColor="#555555"
+              HighlightColor="#5588ff"
+              ShowOtherMonthDays="true"
+              AlternateRowBackgroundColor="#1a2a40"
+              LayoutPosition="absolute" Left="36" Top="3"
+              Width="20" Height="8" />
+</Box>
+
+@code {
+    private readonly DateOnly _today = DateOnly.FromDateTime(DateTime.Today);
+    private readonly DateOnly _leftMonth = DateOnly.FromDateTime(DateTime.Today);
+    private readonly DateOnly _rightMonth = new DateOnly(2007, 6, 1);
+    private readonly DateOnly _rightHighlight = new DateOnly(2007, 6, 29);
+
+    protected override void OnInitialized()
+    {
+        SetBackground("#0d1b2e");
+        RegisterExitKeys();
+    }
+}

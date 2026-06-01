@@ -103,6 +103,11 @@ public static class GalleryCatalog
             "Hierarchical tree with expand/collapse, checkboxes, filtering and mouse interaction.",
             "Components/Demos/TreeViewDemo.razor",
             ReadDemo("TreeViewDemo.razor")),
+
+        new("Calendar",
+            "Monthly calendar widget with highlighted date and alternating row backgrounds.",
+            "Components/Demos/CalendarDemo.razor",
+            ReadDemo("CalendarDemo.razor")),
     ];
 
   public static IReadOnlyList<GalleryEntry> Entries => _entries;
