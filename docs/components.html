@@ -65,6 +65,7 @@
             <a href="#textarea">Textarea</a>
             <a href="#slider">Slider</a>
             <a href="#select">Select</a>
+            <a href="#treeview">TreeView</a>
             <a href="#tabselect">TabSelect</a>
           </div>
           <div class="sidebar-group">
@@ -971,6 +972,87 @@ Console.WriteLine(""Hello"");
                   <tr><td><code>ShowScrollIndicator</code></td><td><code>bool</code></td><td><code>true</code></td><td>Whether to show scroll indicators.</td></tr>
                   <tr><td><code>SelectedBg</code></td><td><code>string?</code></td><td><code>"#0055aa"</code></td><td>Background color of the selected item.</td></tr>
                   <tr><td><code>Fg</code></td><td><code>string?</code></td><td><code>null</code></td><td>Text foreground color.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Id</code></td><td><code>string?</code></td><td><code>null</code></td><td>Unique identifier.</td></tr>
+                  <tr><td><code>Width</code></td><td><code>string?</code></td><td><code>null</code></td><td>Width (e.g. <code>"100%"</code>, <code>"40"</code>).</td></tr>
+                  <tr><td><code>Height</code></td><td><code>string?</code></td><td><code>null</code></td><td>Height.</td></tr>
+                  <tr><td><code>FlexDirection</code></td><td><code>FlexDirection?</code></td><td><code>null</code></td><td>Flex layout direction.</td></tr>
+                  <tr><td><code>AlignItems</code></td><td><code>AlignItems?</code></td><td><code>null</code></td><td>Cross-axis alignment.</td></tr>
+                  <tr><td><code>JustifyContent</code></td><td><code>JustifyContent?</code></td><td><code>null</code></td><td>Main-axis alignment.</td></tr>
+                  <tr><td><code>FlexGrow</code></td><td><code>float?</code></td><td><code>null</code></td><td>Flex grow factor.</td></tr>
+                  <tr><td><code>FlexShrink</code></td><td><code>float?</code></td><td><code>null</code></td><td>Flex shrink factor.</td></tr>
+                  <tr><td><code>LayoutPosition</code></td><td><code>string?</code></td><td><code>null</code></td><td>Position type.</td></tr>
+                  <tr><td><code>Top</code> / <code>Left</code> / <code>Right</code> / <code>Bottom</code></td><td><code>int?</code></td><td><code>null</code></td><td>Position offsets.</td></tr>
+                  <tr><td><code>PaddingTop</code> / <code>PaddingRight</code> / <code>PaddingBottom</code> / <code>PaddingLeft</code></td><td><code>int?</code></td><td><code>null</code></td><td>Padding.</td></tr>
+                  <tr><td><code>MarginTop</code> / <code>MarginRight</code> / <code>MarginBottom</code> / <code>MarginLeft</code></td><td><code>int?</code></td><td><code>null</code></td><td>Margin.</td></tr>
+                  <tr><td><code>ZIndex</code></td><td><code>int?</code></td><td><code>null</code></td><td>Stacking order.</td></tr>
+                  <tr><td><code>Visible</code></td><td><code>bool?</code></td><td><code>null</code></td><td>Visibility toggle.</td></tr>
+                  <tr><td><code>Opacity</code></td><td><code>float?</code></td><td><code>null</code></td><td>Opacity (0.0 to 1.0).</td></tr>
+                  <tr><td><code>Focusable</code></td><td><code>bool?</code></td><td><code>null</code></td><td>Whether the component can receive focus.</td></tr>
+                  <tr><td><code>AutoFocus</code></td><td><code>bool</code></td><td><code>false</code></td><td>Whether to auto-focus on mount.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </section>
+
+        <section id="treeview" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Input Component</p>
+            <h2>TreeView</h2>
+            <p>Displays hierarchical data with expand/collapse navigation, tri-state checkboxes, and filtering.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">treeview-preview</span>
+              </div>
+              <pre class="terminal-body"><code>├─▼ [x] src
+│  ├─  [x] TermBlade.Core
+│  └─  [ ] TermBlade.Razor
+└─▶ [ ] samples</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;TreeView</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"12"</span>
+          <span class="attr">Nodes</span>=<span class="kw">"@nodes"</span>
+          <span class="attr">CheckboxMode</span>=<span class="str">"true"</span>
+          <span class="attr">Filter</span>=<span class="kw">"@searchText"</span>
+          <span class="attr">OnSelectionChanged</span>=<span class="kw">"@OnSelected"</span>
+          <span class="attr">OnNodeToggled</span>=<span class="kw">"@OnToggled"</span>
+          <span class="attr">OnNodeChecked</span>=<span class="kw">"@OnChecked"</span>
+          <span class="attr">OnNodeActivated</span>=<span class="kw">"@OnActivated"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Nodes</code></td><td><code>List&lt;TreeNode&gt;</code></td><td><code>[]</code></td><td>Top-level tree nodes to render.</td></tr>
+                  <tr><td><code>CheckboxMode</code></td><td><code>bool</code></td><td><code>false</code></td><td>Enables tri-state checkbox rendering and toggling with Space/mouse.</td></tr>
+                  <tr><td><code>Filter</code></td><td><code>string?</code></td><td><code>null</code></td><td>Case-insensitive filter text; matching descendants and ancestor paths stay visible.</td></tr>
+                  <tr><td><code>AllowLetterBasedNavigation</code></td><td><code>bool</code></td><td><code>true</code></td><td>Typed letters jump to next matching node label.</td></tr>
+                  <tr><td><code>Fg</code></td><td><code>string?</code></td><td><code>null</code></td><td>Default foreground color for rows.</td></tr>
+                  <tr><td><code>SelectedBg</code></td><td><code>string?</code></td><td><code>"#0055aa"</code></td><td>Background color for the selected row.</td></tr>
+                  <tr><td><code>OnSelectionChanged</code></td><td><code>EventCallback&lt;TreeNode&gt;</code></td><td><code>-</code></td><td>Raised when the selected node changes.</td></tr>
+                  <tr><td><code>OnNodeToggled</code></td><td><code>EventCallback&lt;TreeNode&gt;</code></td><td><code>-</code></td><td>Raised when a node expands or collapses.</td></tr>
+                  <tr><td><code>OnNodeChecked</code></td><td><code>EventCallback&lt;TreeNode&gt;</code></td><td><code>-</code></td><td>Raised when checkbox state changes.</td></tr>
+                  <tr><td><code>OnNodeActivated</code></td><td><code>EventCallback&lt;TreeNode&gt;</code></td><td><code>-</code></td><td>Raised when Enter activates a leaf node.</td></tr>
                 </tbody>
               </table>
             </div>

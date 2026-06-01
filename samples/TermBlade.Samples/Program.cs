@@ -54,9 +54,12 @@ switch (sample)
   case "console":
     TermBlade.Samples.ConsoleDemoSample.Run();
     break;
+  case "treeview":
+    TermBlade.Samples.TreeViewSample.Run();
+    break;
   default:
     Console.WriteLine($"Unknown sample: '{sample}'");
-    Console.WriteLine("Available samples: layout, styled, editor, scroll, input, keypress, ascii, nova, framebuffer, code, markdown, diff, select, slider, tabs, console");
+    Console.WriteLine("Available samples: layout, styled, editor, scroll, input, keypress, ascii, nova, framebuffer, code, markdown, diff, select, slider, tabs, console, treeview");
     Environment.Exit(1);
     break;
 }
