@@ -66,8 +66,11 @@
             <a href="#textarea">Textarea</a>
             <a href="#slider">Slider</a>
             <a href="#select">Select</a>
+            <a href="#multiselect">MultiSelect</a>
+            <a href="#confirm">Confirm</a>
             <a href="#treeview">TreeView</a>
             <a href="#tabselect">TabSelect</a>
+            <a href="#spinner">Spinner</a>
           </div>
           <div class="sidebar-group">
             <h3>Container Components</h3>
@@ -829,6 +832,14 @@ Console.WriteLine(""Hello"");
           <span class="attr">AutoFocus</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
+            <h3>Demo Source <small>(TextareaDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;Textarea</span> <span class="attr">Value</span>=<span class="str">"Hello, TermBlade!"</span>
+          <span class="attr">Placeholder</span>=<span class="str">"Type here..."</span>
+          <span class="attr">Fg</span>=<span class="str">"#e5e7eb"</span> <span class="attr">Bg</span>=<span class="str">"#111827"</span>
+          <span class="attr">CursorColor</span>=<span class="str">"#f59e0b"</span>
+          <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"5"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
             <h3>Parameters</h3>
             <div class="table-wrapper">
               <table class="components-table">
@@ -1579,6 +1590,266 @@ Console.WriteLine(""Hello"");
                   <tr><td><code>MaxLines</code></td><td><code>int</code></td><td><code>10</code></td><td>Maximum number of visible log lines.</td></tr>
                   <tr><td><code>MaxWidth</code></td><td><code>int</code></td><td><code>60</code></td><td>Maximum width of the overlay in characters.</td></tr>
                   <tr><td><code>Lines</code></td><td><code>IReadOnlyList&lt;string&gt;?</code></td><td><code>null</code></td><td>Pre-populated log lines.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Id</code></td><td><code>string?</code></td><td><code>null</code></td><td>Unique identifier.</td></tr>
+                  <tr><td><code>Width</code></td><td><code>string?</code></td><td><code>null</code></td><td>Width (e.g. <code>"100%"</code>, <code>"40"</code>).</td></tr>
+                  <tr><td><code>Height</code></td><td><code>string?</code></td><td><code>null</code></td><td>Height.</td></tr>
+                  <tr><td><code>FlexDirection</code></td><td><code>FlexDirection?</code></td><td><code>null</code></td><td>Flex layout direction.</td></tr>
+                  <tr><td><code>AlignItems</code></td><td><code>AlignItems?</code></td><td><code>null</code></td><td>Cross-axis alignment.</td></tr>
+                  <tr><td><code>JustifyContent</code></td><td><code>JustifyContent?</code></td><td><code>null</code></td><td>Main-axis alignment.</td></tr>
+                  <tr><td><code>FlexGrow</code></td><td><code>float?</code></td><td><code>null</code></td><td>Flex grow factor.</td></tr>
+                  <tr><td><code>FlexShrink</code></td><td><code>float?</code></td><td><code>null</code></td><td>Flex shrink factor.</td></tr>
+                  <tr><td><code>LayoutPosition</code></td><td><code>string?</code></td><td><code>null</code></td><td>Position type.</td></tr>
+                  <tr><td><code>Top</code> / <code>Left</code> / <code>Right</code> / <code>Bottom</code></td><td><code>int?</code></td><td><code>null</code></td><td>Position offsets.</td></tr>
+                  <tr><td><code>PaddingTop</code> / <code>PaddingRight</code> / <code>PaddingBottom</code> / <code>PaddingLeft</code></td><td><code>int?</code></td><td><code>null</code></td><td>Padding.</td></tr>
+                  <tr><td><code>MarginTop</code> / <code>MarginRight</code> / <code>MarginBottom</code> / <code>MarginLeft</code></td><td><code>int?</code></td><td><code>null</code></td><td>Margin.</td></tr>
+                  <tr><td><code>ZIndex</code></td><td><code>int?</code></td><td><code>null</code></td><td>Stacking order.</td></tr>
+                  <tr><td><code>Visible</code></td><td><code>bool?</code></td><td><code>null</code></td><td>Visibility toggle.</td></tr>
+                  <tr><td><code>Opacity</code></td><td><code>float?</code></td><td><code>null</code></td><td>Opacity (0.0 to 1.0).</td></tr>
+                  <tr><td><code>Focusable</code></td><td><code>bool?</code></td><td><code>null</code></td><td>Whether the component can receive focus.</td></tr>
+                  <tr><td><code>AutoFocus</code></td><td><code>bool</code></td><td><code>false</code></td><td>Whether to auto-focus on mount.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </section>
+
+        <section id="confirm" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Input Component</p>
+            <h2>Confirm</h2>
+            <p>A yes/no confirmation prompt with keyboard navigation.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">confirm-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Do you want to continue?
+ <b> Yes </b>  No </code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;Confirm</span> <span class="attr">Message</span>=<span class="str">"Do you want to continue?"</span>
+         <span class="attr">Value</span>=<span class="kw">"@confirmed"</span>
+         <span class="attr">ValueChanged</span>=<span class="kw">"@OnChanged"</span>
+         <span class="attr">OnConfirmed</span>=<span class="kw">"@OnConfirmed"</span>
+         <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"2"</span>
+         <span class="attr">AutoFocus</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ConfirmDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;Confirm</span> <span class="attr">Message</span>=<span class="str">"Do you want to continue?"</span>
+         <span class="attr">Value</span>=<span class="str">"true"</span>
+         <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"2"</span>
+         <span class="attr">AutoFocus</span>=<span class="str">"false"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Message</code></td><td><code>string</code></td><td><code>"Are you sure?"</code></td><td>The confirmation message to display.</td></tr>
+                  <tr><td><code>Value</code></td><td><code>bool</code></td><td><code>false</code></td><td>Current selection (true = Yes, false = No).</td></tr>
+                  <tr><td><code>ValueChanged</code></td><td><code>EventCallback&lt;bool&gt;</code></td><td><code>-</code></td><td>Callback when the value toggles (two-way binding).</td></tr>
+                  <tr><td><code>OnConfirmed</code></td><td><code>EventCallback&lt;bool&gt;</code></td><td><code>-</code></td><td>Callback when the user presses Enter, Y, or N.</td></tr>
+                  <tr><td><code>YesLabel</code></td><td><code>string</code></td><td><code>"Yes"</code></td><td>Label for the affirmative button.</td></tr>
+                  <tr><td><code>NoLabel</code></td><td><code>string</code></td><td><code>"No"</code></td><td>Label for the negative button.</td></tr>
+                  <tr><td><code>Fg</code></td><td><code>string?</code></td><td><code>null</code></td><td>Foreground color.</td></tr>
+                  <tr><td><code>Bg</code></td><td><code>string?</code></td><td><code>null</code></td><td>Background color.</td></tr>
+                  <tr><td><code>ActiveBg</code></td><td><code>string?</code></td><td><code>"#0055aa"</code></td><td>Background color of the active button.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Id</code></td><td><code>string?</code></td><td><code>null</code></td><td>Unique identifier.</td></tr>
+                  <tr><td><code>Width</code></td><td><code>string?</code></td><td><code>null</code></td><td>Width (e.g. <code>"100%"</code>, <code>"40"</code>).</td></tr>
+                  <tr><td><code>Height</code></td><td><code>string?</code></td><td><code>null</code></td><td>Height.</td></tr>
+                  <tr><td><code>FlexDirection</code></td><td><code>FlexDirection?</code></td><td><code>null</code></td><td>Flex layout direction.</td></tr>
+                  <tr><td><code>AlignItems</code></td><td><code>AlignItems?</code></td><td><code>null</code></td><td>Cross-axis alignment.</td></tr>
+                  <tr><td><code>JustifyContent</code></td><td><code>JustifyContent?</code></td><td><code>null</code></td><td>Main-axis alignment.</td></tr>
+                  <tr><td><code>FlexGrow</code></td><td><code>float?</code></td><td><code>null</code></td><td>Flex grow factor.</td></tr>
+                  <tr><td><code>FlexShrink</code></td><td><code>float?</code></td><td><code>null</code></td><td>Flex shrink factor.</td></tr>
+                  <tr><td><code>LayoutPosition</code></td><td><code>string?</code></td><td><code>null</code></td><td>Position type.</td></tr>
+                  <tr><td><code>Top</code> / <code>Left</code> / <code>Right</code> / <code>Bottom</code></td><td><code>int?</code></td><td><code>null</code></td><td>Position offsets.</td></tr>
+                  <tr><td><code>PaddingTop</code> / <code>PaddingRight</code> / <code>PaddingBottom</code> / <code>PaddingLeft</code></td><td><code>int?</code></td><td><code>null</code></td><td>Padding.</td></tr>
+                  <tr><td><code>MarginTop</code> / <code>MarginRight</code> / <code>MarginBottom</code> / <code>MarginLeft</code></td><td><code>int?</code></td><td><code>null</code></td><td>Margin.</td></tr>
+                  <tr><td><code>ZIndex</code></td><td><code>int?</code></td><td><code>null</code></td><td>Stacking order.</td></tr>
+                  <tr><td><code>Visible</code></td><td><code>bool?</code></td><td><code>null</code></td><td>Visibility toggle.</td></tr>
+                  <tr><td><code>Opacity</code></td><td><code>float?</code></td><td><code>null</code></td><td>Opacity (0.0 to 1.0).</td></tr>
+                  <tr><td><code>Focusable</code></td><td><code>bool?</code></td><td><code>null</code></td><td>Whether the component can receive focus.</td></tr>
+                  <tr><td><code>AutoFocus</code></td><td><code>bool</code></td><td><code>false</code></td><td>Whether to auto-focus on mount.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </section>
+
+        <section id="spinner" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Content Component</p>
+            <h2>Spinner</h2>
+            <p>An animated spinner indicator with customizable frames and title.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">spinner-preview</span>
+              </div>
+              <pre class="terminal-body"><code> ⠹ Loading data...</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;Spinner</span> <span class="attr">Title</span>=<span class="str">"Loading data..."</span>
+         <span class="attr">SpinnerColor</span>=<span class="str">"#58a6ff"</span>
+         <span class="attr">Fg</span>=<span class="str">"#c9d1d9"</span>
+         <span class="attr">IsSpinning</span>=<span class="str">"true"</span>
+         <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(SpinnerDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;Spinner</span> <span class="attr">Title</span>=<span class="str">"Loading data..."</span>
+         <span class="attr">SpinnerColor</span>=<span class="str">"#58a6ff"</span>
+         <span class="attr">Fg</span>=<span class="str">"#c9d1d9"</span>
+         <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Title</code></td><td><code>string</code></td><td><code>""</code></td><td>Text displayed next to the spinner.</td></tr>
+                  <tr><td><code>Frames</code></td><td><code>string[]?</code></td><td><code>Braille dots</code></td><td>Array of spinner frame characters.</td></tr>
+                  <tr><td><code>Interval</code></td><td><code>double</code></td><td><code>0.08</code></td><td>Seconds between frame advances.</td></tr>
+                  <tr><td><code>Fg</code></td><td><code>string?</code></td><td><code>null</code></td><td>Foreground color for the title text.</td></tr>
+                  <tr><td><code>Bg</code></td><td><code>string?</code></td><td><code>null</code></td><td>Background color.</td></tr>
+                  <tr><td><code>SpinnerColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Color of the spinner character.</td></tr>
+                  <tr><td><code>IsSpinning</code></td><td><code>bool</code></td><td><code>true</code></td><td>Whether the spinner is active.</td></tr>
+                  <tr><td><code>CompletedText</code></td><td><code>string?</code></td><td><code>null</code></td><td>Text shown when spinning stops. Defaults to ✔ + Title.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Id</code></td><td><code>string?</code></td><td><code>null</code></td><td>Unique identifier.</td></tr>
+                  <tr><td><code>Width</code></td><td><code>string?</code></td><td><code>null</code></td><td>Width (e.g. <code>"100%"</code>, <code>"40"</code>).</td></tr>
+                  <tr><td><code>Height</code></td><td><code>string?</code></td><td><code>null</code></td><td>Height.</td></tr>
+                  <tr><td><code>FlexDirection</code></td><td><code>FlexDirection?</code></td><td><code>null</code></td><td>Flex layout direction.</td></tr>
+                  <tr><td><code>AlignItems</code></td><td><code>AlignItems?</code></td><td><code>null</code></td><td>Cross-axis alignment.</td></tr>
+                  <tr><td><code>JustifyContent</code></td><td><code>JustifyContent?</code></td><td><code>null</code></td><td>Main-axis alignment.</td></tr>
+                  <tr><td><code>FlexGrow</code></td><td><code>float?</code></td><td><code>null</code></td><td>Flex grow factor.</td></tr>
+                  <tr><td><code>FlexShrink</code></td><td><code>float?</code></td><td><code>null</code></td><td>Flex shrink factor.</td></tr>
+                  <tr><td><code>LayoutPosition</code></td><td><code>string?</code></td><td><code>null</code></td><td>Position type.</td></tr>
+                  <tr><td><code>Top</code> / <code>Left</code> / <code>Right</code> / <code>Bottom</code></td><td><code>int?</code></td><td><code>null</code></td><td>Position offsets.</td></tr>
+                  <tr><td><code>PaddingTop</code> / <code>PaddingRight</code> / <code>PaddingBottom</code> / <code>PaddingLeft</code></td><td><code>int?</code></td><td><code>null</code></td><td>Padding.</td></tr>
+                  <tr><td><code>MarginTop</code> / <code>MarginRight</code> / <code>MarginBottom</code> / <code>MarginLeft</code></td><td><code>int?</code></td><td><code>null</code></td><td>Margin.</td></tr>
+                  <tr><td><code>ZIndex</code></td><td><code>int?</code></td><td><code>null</code></td><td>Stacking order.</td></tr>
+                  <tr><td><code>Visible</code></td><td><code>bool?</code></td><td><code>null</code></td><td>Visibility toggle.</td></tr>
+                  <tr><td><code>Opacity</code></td><td><code>float?</code></td><td><code>null</code></td><td>Opacity (0.0 to 1.0).</td></tr>
+                  <tr><td><code>Focusable</code></td><td><code>bool?</code></td><td><code>null</code></td><td>Whether the component can receive focus.</td></tr>
+                  <tr><td><code>AutoFocus</code></td><td><code>bool</code></td><td><code>false</code></td><td>Whether to auto-focus on mount.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </section>
+
+        <section id="multiselect" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Input Component</p>
+            <h2>MultiSelect</h2>
+            <p>A selection list allowing multiple items to be toggled on or off.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">multiselect-preview</span>
+              </div>
+              <pre class="terminal-body"><code> [x] Option A
+ [ ] Option B
+ [x] Option C
+ [ ] Option D</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="razor">@using</span> TermBlade.Core.Renderables
+
+<span class="tag">&lt;MultiSelect</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"6"</span>
+             <span class="attr">Options</span>=<span class="kw">"@Options"</span>
+             <span class="attr">OnSelectionChanged</span>=<span class="kw">"@OnChanged"</span>
+             <span class="attr">AutoFocus</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(MultiSelectDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="razor">@using</span> TermBlade.Core.Renderables
+
+<span class="tag">&lt;MultiSelect</span> <span class="attr">Width</span>=<span class="str">"40"</span> <span class="attr">Height</span>=<span class="str">"6"</span>
+             <span class="attr">Options</span>=<span class="kw">"@Options"</span>
+             <span class="attr">AutoFocus</span>=<span class="str">"false"</span> <span class="punct">/&gt;</span>
+
+<span class="razor">@code</span> {
+    <span class="kw">private</span> List&lt;SelectOption&gt; Options { <span class="kw">get</span>; } =
+    [
+        <span class="kw">new</span>() { Name = <span class="str">"Option A"</span>, Description = <span class="str">"First option"</span>, Value = <span class="str">"a"</span> },
+        <span class="kw">new</span>() { Name = <span class="str">"Option B"</span>, Description = <span class="str">"Second option"</span>, Value = <span class="str">"b"</span> },
+        <span class="kw">new</span>() { Name = <span class="str">"Option C"</span>, Description = <span class="str">"Third option"</span>, Value = <span class="str">"c"</span> },
+        <span class="kw">new</span>() { Name = <span class="str">"Option D"</span>, Description = <span class="str">"Fourth option"</span>, Value = <span class="str">"d"</span> },
+    ];
+}</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Options</code></td><td><code>List&lt;SelectOption&gt;</code></td><td><code>[]</code></td><td>List of selectable options.</td></tr>
+                  <tr><td><code>SelectedIndices</code></td><td><code>HashSet&lt;int&gt;</code></td><td><code>[]</code></td><td>Set of currently selected option indices.</td></tr>
+                  <tr><td><code>SelectedIndicesChanged</code></td><td><code>EventCallback&lt;List&lt;int&gt;&gt;</code></td><td><code>-</code></td><td>Callback when selection changes (two-way binding).</td></tr>
+                  <tr><td><code>OnSelectionChanged</code></td><td><code>EventCallback&lt;List&lt;int&gt;&gt;</code></td><td><code>-</code></td><td>Callback when selection changes.</td></tr>
+                  <tr><td><code>OnConfirmed</code></td><td><code>EventCallback&lt;List&lt;int&gt;&gt;</code></td><td><code>-</code></td><td>Callback when the user presses Enter to confirm.</td></tr>
+                  <tr><td><code>ShowDescription</code></td><td><code>bool</code></td><td><code>true</code></td><td>Whether to show option descriptions.</td></tr>
+                  <tr><td><code>ShowScrollIndicator</code></td><td><code>bool</code></td><td><code>true</code></td><td>Whether to show the scroll indicator.</td></tr>
+                  <tr><td><code>CursorBg</code></td><td><code>string?</code></td><td><code>"#333333"</code></td><td>Background color of the cursor row.</td></tr>
+                  <tr><td><code>SelectedBg</code></td><td><code>string?</code></td><td><code>"#0055aa"</code></td><td>Background color of selected rows.</td></tr>
+                  <tr><td><code>Fg</code></td><td><code>string?</code></td><td><code>null</code></td><td>Foreground text color.</td></tr>
                 </tbody>
               </table>
             </div>
