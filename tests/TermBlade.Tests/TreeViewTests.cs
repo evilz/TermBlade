@@ -434,7 +434,20 @@ public class TreeViewTests
     tree.CheckboxMode = true;
     Assert.Equal(CheckState.Unchecked, tree.SelectedNode!.CheckState);
 
-    tree.HandleMouse(new MouseEvent { X = 4, Y = 0, Button = MouseButton.Left, Pressed = true });
+    tree.HandleMouse(new MouseEvent { X = 5, Y = 0, Button = MouseButton.Left, Pressed = true });
     Assert.Equal(CheckState.Checked, tree.SelectedNode!.CheckState);
+  }
+
+  [Fact]
+  public void MouseClick_OnExpandIndicator_TogglesNode()
+  {
+    var tree = CreateTree();
+    Assert.True(tree.SelectedNode!.IsExpanded);
+
+    tree.HandleMouse(new MouseEvent { X = 2, Y = 0, Button = MouseButton.Left, Pressed = true });
+    Assert.False(tree.SelectedNode!.IsExpanded);
+
+    tree.HandleMouse(new MouseEvent { X = 2, Y = 0, Button = MouseButton.Left, Pressed = true });
+    Assert.True(tree.SelectedNode!.IsExpanded);
   }
 }

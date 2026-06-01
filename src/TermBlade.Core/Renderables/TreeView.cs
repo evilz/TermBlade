@@ -246,10 +246,21 @@ public class TreeViewRenderable : Renderable
     EnsureVisible();
 
     var flatNode = _flatNodes[idx];
+    bool toggledNode = false;
+
+    int expandColumn = flatNode.Depth * 3 + 2;
+    if (flatNode.Node.Children.Count > 0 && column == expandColumn)
+    {
+      flatNode.Node.IsExpanded = !flatNode.Node.IsExpanded;
+      RebuildFlatList();
+      Emit("nodeToggled", flatNode.Node);
+      toggledNode = true;
+    }
+
     if (CheckboxMode)
     {
-      int checkboxColumn = flatNode.Depth * 3 + 4;
-      if (column == checkboxColumn)
+      int checkboxColumnStart = flatNode.Depth * 3 + 4;
+      if (column >= checkboxColumnStart && column <= checkboxColumnStart + 2)
       {
         ToggleCheckbox(flatNode.Node);
         Emit("nodeChecked", flatNode.Node);
@@ -259,7 +270,8 @@ public class TreeViewRenderable : Renderable
     if (selectionChanged)
       Emit("selectionChanged", SelectedNode);
 
-    RequestRender();
+    if (selectionChanged || toggledNode || CheckboxMode)
+      RequestRender();
   }
 
   private void HandleLetterNavigation(char ch)
@@ -379,9 +391,9 @@ public class TreeViewRenderable : Renderable
         sb.Append(' ');
         sb.Append(node.CheckState switch
         {
-          CheckState.Checked => "☑",
-          CheckState.Indeterminate => "☒",
-          _ => "☐"
+          CheckState.Checked => "[x]",
+          CheckState.Indeterminate => "[-]",
+          _ => "[ ]"
         });
       }
 
