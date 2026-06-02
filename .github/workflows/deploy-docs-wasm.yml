@@ -1,0 +1,79 @@
+name: Deploy Docs to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/TermBlade.Docs.Wasm/**"
+      - "src/TermBlade.Core/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: docs/TermBlade.Docs.Wasm/package-lock.json
+
+      - name: Install npm dependencies
+        working-directory: docs/TermBlade.Docs.Wasm
+        run: npm ci
+
+      - name: Build JS bundle
+        working-directory: docs/TermBlade.Docs.Wasm
+        run: npm run build
+
+      - name: Publish Blazor WASM app
+        run: dotnet publish docs/TermBlade.Docs.Wasm/TermBlade.Docs.Wasm.csproj -c Release -o publish
+
+      # Blazor WASM output is in wwwroot subfolder
+      - name: Prepare GitHub Pages artifact
+        run: |
+          # Copy published wwwroot to output
+          cp -r publish/wwwroot pages-output
+
+          # GitHub Pages requires .nojekyll to serve files starting with underscore
+          touch pages-output/.nojekyll
+
+          # Update base href for GitHub Pages (repository name)
+          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          sed -i "s|<base href=\"/\" />|<base href=\"/${REPO_NAME}/\" />|g" pages-output/index.html
+
+          # Add 404.html for SPA routing support
+          cp pages-output/index.html pages-output/404.html
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages-output
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

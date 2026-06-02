@@ -51,6 +51,7 @@ src/TermBlade.Razor/           # Razor host + component wrappers for renderables
 tests/TermBlade.Tests/         # xUnit test project (126 tests)
 samples/TermBlade.Samples/    # Sample console applications
 samples/TermBlade.Razor.Samples/ # Razor-hosted sample console applications
+docs/TermBlade.Docs.Wasm/     # Interactive docs (Blazor WASM + xterm.js)
 ```
 
 ## Build & Test
@@ -79,6 +80,26 @@ dotnet run --project samples/TermBlade.Gallery                 # Interactive com
 ## Documentation
 
 Visit the [TermBlade documentation site](https://evilz.github.io/TermBlade/) for detailed guides and API reference.
+
+### Interactive Documentation (xterm.js + Blazor WASM)
+
+An interactive terminal-based documentation app is available in `docs/TermBlade.Docs.Wasm/`.
+It uses **xterm.js** as a rendering surface and **Blazor WebAssembly** for a fake shell
+that demonstrates TermBlade components with ANSI output — no backend, no OS access.
+
+```bash
+# Run locally
+cd docs/TermBlade.Docs.Wasm
+npm install && npm run build
+dotnet run
+```
+
+The interactive docs are automatically deployed to GitHub Pages. To enable deployment:
+
+1. Go to **Settings → Pages** in your repository.
+2. Under **Source**, select **GitHub Actions**.
+
+See [`docs/TermBlade.Docs.Wasm/README.md`](docs/TermBlade.Docs.Wasm/README.md) for details.
 
 ## Key Types
 

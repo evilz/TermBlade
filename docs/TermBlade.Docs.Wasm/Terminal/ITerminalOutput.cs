@@ -6,7 +6,7 @@ namespace TermBlade.Docs.Wasm.Terminal;
 /// </summary>
 public interface ITerminalOutput
 {
-    Task WriteAsync(string text);
-    Task WriteLineAsync(string text);
-    Task ClearAsync();
+  Task WriteAsync(string text);
+  Task WriteLineAsync(string text);
+  Task ClearAsync();
 }
