@@ -1,0 +1,13 @@
+@using TermBlade.Core.Renderables
+
+<MultiSelect Width="40" Height="6" Options="@Options" AutoFocus="false" />
+
+@code {
+    private List<SelectOption> Options { get; } =
+    [
+        new() { Name = "Option A", Description = "First option", Value = "a" },
+        new() { Name = "Option B", Description = "Second option", Value = "b" },
+        new() { Name = "Option C", Description = "Third option", Value = "c" },
+        new() { Name = "Option D", Description = "Fourth option", Value = "d" },
+    ];
+}

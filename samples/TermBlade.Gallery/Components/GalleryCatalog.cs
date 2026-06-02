@@ -108,6 +108,26 @@ public static class GalleryCatalog
             "Monthly calendar widget with highlighted date and alternating row backgrounds.",
             "Components/Demos/CalendarDemo.razor",
             ReadDemo("CalendarDemo.razor")),
+
+        new("Textarea",
+            "Multi-line text editor with word wrapping and cursor navigation.",
+            "Components/Demos/TextareaDemo.razor",
+            ReadDemo("TextareaDemo.razor")),
+
+        new("Confirm",
+            "A yes/no confirmation prompt with keyboard navigation.",
+            "Components/Demos/ConfirmDemo.razor",
+            ReadDemo("ConfirmDemo.razor")),
+
+        new("Spinner",
+            "An animated spinner indicator with customizable frames and title.",
+            "Components/Demos/SpinnerDemo.razor",
+            ReadDemo("SpinnerDemo.razor")),
+
+        new("MultiSelect",
+            "A selection list allowing multiple items to be toggled on or off.",
+            "Components/Demos/MultiSelectDemo.razor",
+            ReadDemo("MultiSelectDemo.razor")),
     ];
 
   public static IReadOnlyList<GalleryEntry> Entries => _entries;
