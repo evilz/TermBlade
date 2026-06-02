@@ -1,0 +1,63 @@
+@page "/terminal"
+@using TermBlade.Docs.Wasm.Terminal
+@using TermBlade.Docs.Wasm.Terminal.Commands
+@using TermBlade.Docs.Wasm.Terminal.Interop
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<PageTitle>TermBlade — Interactive Terminal</PageTitle>
+
+<div class="terminal-page">
+    <div class="terminal-header">
+        <h1>🗡️ TermBlade</h1>
+        <span class="subtitle">Interactive Documentation Terminal</span>
+    </div>
+    <div class="terminal-container">
+        <div id="xterm-container" style="width:100%;height:100%;"></div>
+    </div>
+</div>
+
+@code {
+    private XtermInterop? _xterm;
+    private FakeShell? _shell;
+    private DotNetObjectReference<TerminalPage>? _dotnetRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        _dotnetRef = DotNetObjectReference.Create(this);
+        _xterm = new XtermInterop(JS);
+        await _xterm.InitAsync("xterm-container", DotNetObjectReference.Create<object>(this));
+
+        _shell = new FakeShell();
+        _shell.SetOutput(_xterm);
+
+        // Register commands
+        _shell.RegisterCommand(new HelpCommand(_shell));
+        _shell.RegisterCommand(new ClearCommand());
+        _shell.RegisterCommand(new ComponentsCommand());
+        _shell.RegisterCommand(new DemoCommand());
+        _shell.RegisterCommand(new AboutCommand());
+
+        await _shell.StartAsync();
+        await _xterm.FocusAsync();
+    }
+
+    [JSInvokable]
+    public async Task OnTerminalData(string data)
+    {
+        if (_shell is not null)
+        {
+            await _shell.ProcessInputAsync(data);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_xterm is not null)
+            await _xterm.DisposeAsync();
+
+        _dotnetRef?.Dispose();
+    }
+}
