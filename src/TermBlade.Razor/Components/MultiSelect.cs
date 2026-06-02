@@ -8,9 +8,9 @@ public sealed class MultiSelect : RenderableComponentBase<MultiSelectRenderable>
 {
   [Parameter] public List<SelectOption> Options { get; set; } = [];
   [Parameter] public HashSet<int> SelectedIndices { get; set; } = [];
-  [Parameter] public EventCallback<List<int>> SelectedIndicesChanged { get; set; }
-  [Parameter] public EventCallback<List<int>> OnSelectionChanged { get; set; }
-  [Parameter] public EventCallback<List<int>> OnConfirmed { get; set; }
+  [Parameter] public EventCallback<HashSet<int>> SelectedIndicesChanged { get; set; }
+  [Parameter] public EventCallback<HashSet<int>> OnSelectionChanged { get; set; }
+  [Parameter] public EventCallback<HashSet<int>> OnConfirmed { get; set; }
   [Parameter] public bool ShowDescription { get; set; } = true;
   [Parameter] public bool ShowScrollIndicator { get; set; } = true;
   [Parameter] public string? CursorBg { get; set; } = "#333333";
@@ -26,10 +26,11 @@ public sealed class MultiSelect : RenderableComponentBase<MultiSelectRenderable>
       if (data is not List<int> indices) return;
       DispatchEvent(async () =>
       {
+        var indexSet = new HashSet<int>(indices);
         if (SelectedIndicesChanged.HasDelegate)
-          await SelectedIndicesChanged.InvokeAsync(indices).ConfigureAwait(false);
+          await SelectedIndicesChanged.InvokeAsync(indexSet).ConfigureAwait(false);
         if (OnSelectionChanged.HasDelegate)
-          await OnSelectionChanged.InvokeAsync(indices).ConfigureAwait(false);
+          await OnSelectionChanged.InvokeAsync(indexSet).ConfigureAwait(false);
       });
     });
 
@@ -38,8 +39,9 @@ public sealed class MultiSelect : RenderableComponentBase<MultiSelectRenderable>
       if (data is not List<int> indices) return;
       DispatchEvent(async () =>
       {
+        var indexSet = new HashSet<int>(indices);
         if (OnConfirmed.HasDelegate)
-          await OnConfirmed.InvokeAsync(indices).ConfigureAwait(false);
+          await OnConfirmed.InvokeAsync(indexSet).ConfigureAwait(false);
       });
     });
   }

@@ -59,6 +59,7 @@
             <a href="#linenumbers">LineNumbers</a>
             <a href="#framebuffer">FrameBuffer</a>
             <a href="#calendar">Calendar</a>
+            <a href="#spinner">Spinner</a>
           </div>
           <div class="sidebar-group">
             <h3>Input Components</h3>
@@ -70,7 +71,6 @@
             <a href="#confirm">Confirm</a>
             <a href="#treeview">TreeView</a>
             <a href="#tabselect">TabSelect</a>
-            <a href="#spinner">Spinner</a>
           </div>
           <div class="sidebar-group">
             <h3>Container Components</h3>
@@ -1842,9 +1842,9 @@ Console.WriteLine(""Hello"");
                 <tbody>
                   <tr><td><code>Options</code></td><td><code>List&lt;SelectOption&gt;</code></td><td><code>[]</code></td><td>List of selectable options.</td></tr>
                   <tr><td><code>SelectedIndices</code></td><td><code>HashSet&lt;int&gt;</code></td><td><code>[]</code></td><td>Set of currently selected option indices.</td></tr>
-                  <tr><td><code>SelectedIndicesChanged</code></td><td><code>EventCallback&lt;List&lt;int&gt;&gt;</code></td><td><code>-</code></td><td>Callback when selection changes (two-way binding).</td></tr>
-                  <tr><td><code>OnSelectionChanged</code></td><td><code>EventCallback&lt;List&lt;int&gt;&gt;</code></td><td><code>-</code></td><td>Callback when selection changes.</td></tr>
-                  <tr><td><code>OnConfirmed</code></td><td><code>EventCallback&lt;List&lt;int&gt;&gt;</code></td><td><code>-</code></td><td>Callback when the user presses Enter to confirm.</td></tr>
+                  <tr><td><code>SelectedIndicesChanged</code></td><td><code>EventCallback&lt;HashSet&lt;int&gt;&gt;</code></td><td><code>-</code></td><td>Callback when selection changes (two-way binding).</td></tr>
+                  <tr><td><code>OnSelectionChanged</code></td><td><code>EventCallback&lt;HashSet&lt;int&gt;&gt;</code></td><td><code>-</code></td><td>Callback when selection changes.</td></tr>
+                  <tr><td><code>OnConfirmed</code></td><td><code>EventCallback&lt;HashSet&lt;int&gt;&gt;</code></td><td><code>-</code></td><td>Callback when the user presses Enter to confirm.</td></tr>
                   <tr><td><code>ShowDescription</code></td><td><code>bool</code></td><td><code>true</code></td><td>Whether to show option descriptions.</td></tr>
                   <tr><td><code>ShowScrollIndicator</code></td><td><code>bool</code></td><td><code>true</code></td><td>Whether to show the scroll indicator.</td></tr>
                   <tr><td><code>CursorBg</code></td><td><code>string?</code></td><td><code>"#333333"</code></td><td>Background color of the cursor row.</td></tr>

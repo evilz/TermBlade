@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
@@ -43,6 +44,7 @@ public class SpinnerRenderable : Renderable
     }
 
     if (Frames.Length == 0) return;
+    if (_frameIndex < 0 || _frameIndex >= Frames.Length) _frameIndex = 0;
 
     _elapsed += deltaTime;
     if (_elapsed >= Interval)
@@ -55,14 +57,37 @@ public class SpinnerRenderable : Renderable
     buffer.DrawText(x, y, frame, spinnerFg, bg);
 
     var title = Title;
-    var titleX = x + frame.Length + 1;
-    var maxLen = w - frame.Length - 1;
+    var frameWidth = GetCellWidth(frame);
+    var titleX = x + frameWidth + 1;
+    var maxLen = w - frameWidth - 1;
     if (maxLen > 0 && title.Length > 0)
     {
-      if (title.Length > maxLen) title = title[..maxLen];
+      title = TruncateToCellWidth(title, maxLen);
       buffer.DrawText(titleX, y, title, fg, bg);
     }
+  }
 
-    RequestRender();
+  private static int GetCellWidth(string text)
+  {
+    int width = 0;
+    foreach (var rune in text.EnumerateRunes())
+      width += CellBuffer.RuneWidth(rune);
+    return width;
+  }
+
+  private static string TruncateToCellWidth(string text, int maxWidth)
+  {
+    if (maxWidth <= 0 || string.IsNullOrEmpty(text)) return string.Empty;
+    int width = 0;
+    int length = 0;
+    foreach (var rune in text.EnumerateRunes())
+    {
+      int runeWidth = CellBuffer.RuneWidth(rune);
+      if (width + runeWidth > maxWidth) break;
+      width += runeWidth;
+      length += rune.Utf16SequenceLength;
+    }
+
+    return text.Length == length ? text : text[..length];
   }
 }

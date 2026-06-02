@@ -38,12 +38,18 @@ public class ConfirmTests
   public void HandleKey_Y_SetsValueTrue()
   {
     var confirm = new ConfirmRenderable(null);
-    bool? emitted = null;
-    confirm.On("confirmed", data => emitted = data is bool b && b);
+    bool emitted = false;
+    bool fired = false;
+    confirm.On("confirmed", data =>
+    {
+      fired = true;
+      emitted = data is bool b && b;
+    });
 
     confirm.HandleKey(new KeyEvent { Name = "y" });
 
     Assert.True(confirm.Value);
+    Assert.True(fired);
     Assert.True(emitted);
   }
 
@@ -52,12 +58,18 @@ public class ConfirmTests
   {
     var confirm = new ConfirmRenderable(null);
     confirm.Value = true;
-    bool? emitted = null;
-    confirm.On("confirmed", data => emitted = data is bool b && b);
+    bool emitted = false;
+    bool fired = false;
+    confirm.On("confirmed", data =>
+    {
+      fired = true;
+      emitted = data is bool b && b;
+    });
 
     confirm.HandleKey(new KeyEvent { Name = "n" });
 
     Assert.False(confirm.Value);
+    Assert.True(fired);
     Assert.False(emitted);
   }
 

@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Input;
 using TermBlade.Core.Rendering;
 
@@ -45,7 +46,7 @@ public class MultiSelectRenderable : Renderable
         }
         break;
       case "space":
-        if (CursorIndex < Options.Count)
+        if (CursorIndex >= 0 && CursorIndex < Options.Count)
         {
           if (!SelectedIndices.Remove(CursorIndex))
             SelectedIndices.Add(CursorIndex);
@@ -70,6 +71,7 @@ public class MultiSelectRenderable : Renderable
   {
     int x = ScreenX, y = ScreenY, w = ComputedWidth, h = ComputedHeight;
     if (w <= 0 || h <= 0) return;
+    NormalizeState(h);
 
     var fg = Fg != null ? Rgba.FromCss(Fg) : Rgba.FromInts(255, 255, 255);
     var bg = Rgba.FromInts(0, 0, 0);
@@ -90,9 +92,10 @@ public class MultiSelectRenderable : Renderable
       buffer.FillRect(x, y + row, w, 1, rowBg);
 
       var check = isSelected ? "[x] " : "[ ] ";
-      var name = opt.Name;
-      var text = check + name;
-      if (text.Length > w) text = text[..w];
+      var text = check + opt.Name;
+      if (ShowDescription && !string.IsNullOrEmpty(opt.Description))
+        text += $" - {opt.Description}";
+      text = TruncateToCellWidth(text, w);
       buffer.DrawText(x, y + row, text, fg, rowBg);
     }
 
@@ -108,5 +111,38 @@ public class MultiSelectRenderable : Renderable
       }
       buffer.SetCell(scrollX, y + thumbY, '█', Rgba.FromInts(150, 150, 150), Rgba.FromInts(40, 40, 40));
     }
+  }
+
+  private void NormalizeState(int height)
+  {
+    if (Options.Count == 0)
+    {
+      CursorIndex = 0;
+      _scrollOffset = 0;
+      SelectedIndices.RemoveWhere(i => i < 0);
+      return;
+    }
+
+    CursorIndex = Math.Clamp(CursorIndex, 0, Options.Count - 1);
+    _scrollOffset = Math.Clamp(_scrollOffset, 0, Math.Max(0, Options.Count - height));
+    EnsureVisible();
+    SelectedIndices.RemoveWhere(i => i < 0 || i >= Options.Count);
+  }
+
+  private static string TruncateToCellWidth(string text, int maxWidth)
+  {
+    if (maxWidth <= 0 || string.IsNullOrEmpty(text)) return string.Empty;
+
+    int width = 0;
+    int length = 0;
+    foreach (var rune in text.EnumerateRunes())
+    {
+      int runeWidth = CellBuffer.RuneWidth(rune);
+      if (width + runeWidth > maxWidth) break;
+      width += runeWidth;
+      length += rune.Utf16SequenceLength;
+    }
+
+    return text.Length == length ? text : text[..length];
   }
 }
