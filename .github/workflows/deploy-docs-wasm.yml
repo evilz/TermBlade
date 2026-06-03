@@ -1,10 +1,14 @@
-name: Deploy to GitHub Pages
+name: Deploy Docs to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
-      - "docs/**"
+      - "docs/TermBlade.Docs.Wasm/**"
+      - "docs/components.html"
+      - "docs/css/components.css"
+      - "docs/js/component-previews.js"
+      - "src/TermBlade.Core/**"
   workflow_dispatch:
 
 permissions:
@@ -17,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -38,15 +42,15 @@ jobs:
           cache: "npm"
           cache-dependency-path: docs/TermBlade.Docs.Wasm/package-lock.json
 
-      - name: Install WASM npm dependencies
+      - name: Install npm dependencies
         working-directory: docs/TermBlade.Docs.Wasm
         run: npm ci
 
-      - name: Build WASM xterm.js bundle
+      - name: Build JS bundle
         working-directory: docs/TermBlade.Docs.Wasm
         run: npm run build
 
-      - name: Publish Blazor WASM preview app
+      - name: Publish Blazor WASM app
         run: dotnet publish docs/TermBlade.Docs.Wasm/TermBlade.Docs.Wasm.csproj -c Release -o publish
 
       - name: Prepare GitHub Pages artifact
@@ -57,7 +61,7 @@ jobs:
           rm -rf pages-output/wasm
           cp -r publish/wwwroot pages-output/wasm
 
-          # GitHub Pages requires .nojekyll to serve Blazor files starting with underscores.
+          # GitHub Pages requires .nojekyll to serve files starting with underscore.
           touch pages-output/.nojekyll
 
           # The Blazor preview app is hosted below /wasm/ inside the docs site.

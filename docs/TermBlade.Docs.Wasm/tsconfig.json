@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./wwwroot/dist",
+    "rootDir": "./wwwroot/terminal",
+    "declaration": false,
+    "sourceMap": false
+  },
+  "include": ["wwwroot/terminal/**/*.ts"]
+}

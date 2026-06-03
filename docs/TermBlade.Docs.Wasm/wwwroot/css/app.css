@@ -1,0 +1,152 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: #1a1b26;
+    color: #c0caf5;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+}
+
+#app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+h1:focus {
+    outline: none;
+}
+
+/* Terminal page */
+.terminal-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.terminal-header {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #16161e;
+    border-bottom: 1px solid #292e42;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.terminal-header h1 {
+    font-size: 1rem;
+    margin: 0;
+    font-weight: 600;
+    color: #7aa2f7;
+}
+
+.terminal-header .subtitle {
+    font-size: 0.75rem;
+    color: #565f89;
+}
+
+.terminal-container {
+    flex: 1;
+    padding: 0.5rem;
+    min-height: 0;
+}
+
+.terminal-container .xterm {
+    height: 100%;
+}
+
+/* Error UI */
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    color: #333;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+.blazor-error-boundary {
+    padding: 1rem;
+    color: #f7768e;
+    background: #1a1b26;
+}
+
+    .blazor-error-boundary::after {
+        content: "An error has occurred."
+    }
+
+/* Loading */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.loading-progress {
+    display: block;
+    width: 8rem;
+    height: 8rem;
+}
+
+    .loading-progress circle {
+        fill: none;
+        stroke: #292e42;
+        stroke-width: 0.6rem;
+        transform-origin: 50% 50%;
+        transform: rotate(-90deg);
+    }
+
+        .loading-progress circle:last-child {
+            stroke: #7aa2f7;
+            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+            transition: stroke-dasharray 0.05s ease-in-out;
+        }
+
+.loading-progress-text {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 1rem;
+    color: #565f89;
+}
+
+    .loading-progress-text:after {
+        content: var(--blazor-load-percentage-text, "Loading");
+    }
+
+/* Embedded component previews */
+.preview-page {
+    height: 100vh;
+    width: 100vw;
+    background-color: #1a1b26;
+}
+
+.preview-terminal-container {
+    height: 100%;
+    width: 100%;
+}
+
+.preview-terminal-container .xterm {
+    height: 100%;
+    padding: 0.7rem 0.85rem;
+}
+
+.preview-terminal-container .xterm-viewport {
+    overflow: hidden !important;
+}

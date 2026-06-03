@@ -11,4 +11,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/TermBlade.Tests/TermBlade.Tests.csproj" />
   </Folder>
+  <Folder Name="/docs/">
+    <Project Path="docs/TermBlade.Docs.Wasm/TermBlade.Docs.Wasm.csproj" />
+  </Folder>
 </Solution>
