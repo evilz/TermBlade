@@ -4,32 +4,26 @@ import { WebLinksAddon } from "@xterm/addon-web-links";
 
 let terminal: Terminal | null = null;
 let fitAddon: FitAddon | null = null;
+let resizeObserver: ResizeObserver | null = null;
 
-/**
- * Initialize the xterm.js terminal inside the given HTML element.
- * Keyboard input is forwarded to .NET via dotnetRef.invokeMethodAsync("OnTerminalData", data).
- */
-export function initTerminal(
-  elementId: string,
-  dotnetRef: { invokeMethodAsync: (method: string, ...args: unknown[]) => Promise<void> }
-): void {
-  const container = document.getElementById(elementId);
-  if (!container) {
-    console.error(`[TermBlade] Element '${elementId}' not found.`);
-    return;
-  }
+type DotNetTerminalRef = {
+  invokeMethodAsync: (method: string, ...args: unknown[]) => Promise<void>;
+};
 
-  terminal = new Terminal({
-    cursorBlink: true,
+function createTerminal(readOnly: boolean): Terminal {
+  return new Terminal({
+    cursorBlink: !readOnly,
+    cursorStyle: readOnly ? "block" : "block",
+    disableStdin: readOnly,
     fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace",
-    fontSize: 14,
+    fontSize: readOnly ? 13 : 14,
     lineHeight: 1.2,
-    scrollback: 1000,
+    scrollback: readOnly ? 0 : 1000,
     convertEol: true,
     theme: {
       background: "#1a1b26",
       foreground: "#c0caf5",
-      cursor: "#c0caf5",
+      cursor: readOnly ? "#1a1b26" : "#c0caf5",
       cursorAccent: "#1a1b26",
       selectionBackground: "#33467c",
       black: "#15161e",
@@ -50,24 +44,51 @@ export function initTerminal(
       brightWhite: "#c0caf5",
     },
   });
+}
 
+function openTerminal(elementId: string, readOnly: boolean): void {
+  dispose();
+
+  const container = document.getElementById(elementId);
+  if (!container) {
+    console.error(`[TermBlade] Element '${elementId}' not found.`);
+    return;
+  }
+
+  terminal = createTerminal(readOnly);
   fitAddon = new FitAddon();
   terminal.loadAddon(fitAddon);
-  terminal.loadAddon(new WebLinksAddon());
+
+  if (!readOnly) {
+    terminal.loadAddon(new WebLinksAddon());
+  }
 
   terminal.open(container);
   fitAddon.fit();
 
-  // Forward keyboard input to .NET
-  terminal.onData((data: string) => {
-    dotnetRef.invokeMethodAsync("OnTerminalData", data);
-  });
-
-  // Handle window resize
-  const resizeObserver = new ResizeObserver(() => {
+  resizeObserver = new ResizeObserver(() => {
     fitAddon?.fit();
   });
   resizeObserver.observe(container);
+}
+
+/**
+ * Initialize the xterm.js terminal inside the given HTML element.
+ * Keyboard input is forwarded to .NET via dotnetRef.invokeMethodAsync("OnTerminalData", data).
+ */
+export function initTerminal(elementId: string, dotnetRef: DotNetTerminalRef): void {
+  openTerminal(elementId, false);
+
+  terminal?.onData((data: string) => {
+    dotnetRef.invokeMethodAsync("OnTerminalData", data);
+  });
+}
+
+/**
+ * Initialize a read-only xterm.js terminal for embedded component previews.
+ */
+export function initReadOnlyTerminal(elementId: string): void {
+  openTerminal(elementId, true);
 }
 
 /**
@@ -103,4 +124,15 @@ export function focus(): void {
  */
 export function fit(): void {
   fitAddon?.fit();
+}
+
+/**
+ * Dispose the current xterm.js instance.
+ */
+export function dispose(): void {
+  resizeObserver?.disconnect();
+  resizeObserver = null;
+  terminal?.dispose();
+  terminal = null;
+  fitAddon = null;
 }

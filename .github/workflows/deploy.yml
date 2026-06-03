@@ -26,13 +26,51 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: docs/TermBlade.Docs.Wasm/package-lock.json
+
+      - name: Install WASM npm dependencies
+        working-directory: docs/TermBlade.Docs.Wasm
+        run: npm ci
+
+      - name: Build WASM xterm.js bundle
+        working-directory: docs/TermBlade.Docs.Wasm
+        run: npm run build
+
+      - name: Publish Blazor WASM preview app
+        run: dotnet publish docs/TermBlade.Docs.Wasm/TermBlade.Docs.Wasm.csproj -c Release -o publish
+
+      - name: Prepare GitHub Pages artifact
+        run: |
+          mkdir -p pages-output
+          cp -r docs/. pages-output/
+          rm -rf pages-output/TermBlade.Docs.Wasm/node_modules
+          rm -rf pages-output/wasm
+          cp -r publish/wwwroot pages-output/wasm
+
+          # GitHub Pages requires .nojekyll to serve Blazor files starting with underscores.
+          touch pages-output/.nojekyll
+
+          # The Blazor preview app is hosted below /wasm/ inside the docs site.
+          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          sed -i "s|<base href=\"/\" />|<base href=\"/${REPO_NAME}/wasm/\" />|g" pages-output/wasm/index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: pages-output
 
       - name: Deploy to GitHub Pages
         id: deployment

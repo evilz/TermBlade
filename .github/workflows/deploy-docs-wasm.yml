@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - "docs/TermBlade.Docs.Wasm/**"
+      - "docs/components.html"
+      - "docs/css/components.css"
+      - "docs/js/component-previews.js"
       - "src/TermBlade.Core/**"
   workflow_dispatch:
 
@@ -50,21 +53,20 @@ jobs:
       - name: Publish Blazor WASM app
         run: dotnet publish docs/TermBlade.Docs.Wasm/TermBlade.Docs.Wasm.csproj -c Release -o publish
 
-      # Blazor WASM output is in wwwroot subfolder
       - name: Prepare GitHub Pages artifact
         run: |
-          # Copy published wwwroot to output
-          cp -r publish/wwwroot pages-output
+          mkdir -p pages-output
+          cp -r docs/. pages-output/
+          rm -rf pages-output/TermBlade.Docs.Wasm/node_modules
+          rm -rf pages-output/wasm
+          cp -r publish/wwwroot pages-output/wasm
 
-          # GitHub Pages requires .nojekyll to serve files starting with underscore
+          # GitHub Pages requires .nojekyll to serve files starting with underscore.
           touch pages-output/.nojekyll
 
-          # Update base href for GitHub Pages (repository name)
+          # The Blazor preview app is hosted below /wasm/ inside the docs site.
           REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
-          sed -i "s|<base href=\"/\" />|<base href=\"/${REPO_NAME}/\" />|g" pages-output/index.html
-
-          # Add 404.html for SPA routing support
-          cp pages-output/index.html pages-output/404.html
+          sed -i "s|<base href=\"/\" />|<base href=\"/${REPO_NAME}/wasm/\" />|g" pages-output/wasm/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

@@ -1,0 +1,34 @@
+@page "/preview"
+@using TermBlade.Docs.Wasm.Terminal.Interop
+@using TermBlade.Docs.Wasm.Terminal.Previews
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<PageTitle>TermBlade Component Preview</PageTitle>
+
+<div class="preview-page" data-component="@Component">
+    <div id="preview-xterm-container" class="preview-terminal-container"></div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery(Name = "component")]
+    public string? Component { get; set; }
+
+    private XtermInterop? _xterm;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        _xterm = new XtermInterop(JS);
+        await _xterm.InitReadOnlyAsync("preview-xterm-container");
+        await _xterm.WriteAsync(ComponentPreviewService.RenderPreview(Component ?? "text"));
+        await _xterm.FitAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_xterm is not null)
+            await _xterm.DisposeAsync();
+    }
+}
