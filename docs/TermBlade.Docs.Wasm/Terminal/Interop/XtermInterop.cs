@@ -25,6 +25,15 @@ public sealed class XtermInterop : ITerminalOutput, IAsyncDisposable
     await _module.InvokeVoidAsync("initTerminal", elementId, dotnetRef);
   }
 
+  /// <summary>
+  /// Initialize a read-only xterm.js terminal for embedded documentation previews.
+  /// </summary>
+  public async Task InitReadOnlyAsync(string elementId)
+  {
+    _module = await _js.InvokeAsync<IJSObjectReference>("import", "./dist/terminal.js");
+    await _module.InvokeVoidAsync("initReadOnlyTerminal", elementId);
+  }
+
   public async Task WriteAsync(string text)
   {
     if (_module is not null)
@@ -59,6 +68,7 @@ public sealed class XtermInterop : ITerminalOutput, IAsyncDisposable
   {
     if (_module is not null)
     {
+      await _module.InvokeVoidAsync("dispose");
       await _module.DisposeAsync();
       _module = null;
     }

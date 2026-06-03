@@ -2,8 +2,15 @@
 @inject NavigationManager Navigation
 
 @code {
+    [SupplyParameterFromQuery(Name = "preview")]
+    public string? Preview { get; set; }
+
     protected override void OnInitialized()
     {
-        Navigation.NavigateTo("/terminal", replace: true);
+        var target = string.IsNullOrWhiteSpace(Preview)
+            ? "terminal"
+            : $"preview?component={Uri.EscapeDataString(Preview)}";
+
+        Navigation.NavigateTo(target, replace: true);
     }
 }
