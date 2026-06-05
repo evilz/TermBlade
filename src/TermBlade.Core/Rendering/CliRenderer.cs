@@ -236,7 +236,7 @@ public class CliRenderer : IDisposable
         {
           _sigwinchReg = PosixSignalRegistration.Create(PosixSignal.SIGWINCH, _ =>
           {
-        RefreshConsoleSize(queryTerminal: false);
+            RefreshConsoleSize(queryTerminal: false);
             _renderRequested = true;
           });
         }
