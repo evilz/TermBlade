@@ -1,0 +1,482 @@
+@implements IDisposable
+@inject TermBladeAppContext App
+@inject IFileSystemOperations FileSystem
+@inject IOptions<FileManagerStartupOptions> StartupOptions
+
+@if (State.StartupError is not null)
+{
+    <Box Width="100%" Height="100%" BackgroundColor="#0b1020" PaddingTop="2" PaddingLeft="4" PaddingRight="4">
+        <Box Width="100%" Height="8" Border="true" BorderStyle="rounded" BorderColor="#ef4444" Title=" TermBlade.FileManager ">
+            <Text Content="Unable to open start path" Fg="#fecaca" LayoutPosition="absolute" Left="3" Top="2" Width="60" Height="1" />
+            <Text Content="@State.StartupError" Fg="#ffffff" LayoutPosition="absolute" Left="3" Top="4" Width="100%" Height="1" />
+            <Text Content="Press q or Esc to exit." Fg="#94a3b8" LayoutPosition="absolute" Left="3" Top="6" Width="40" Height="1" />
+        </Box>
+    </Box>
+}
+else
+{
+    <Box Width="100%" Height="100%" BackgroundColor="#07111f" FlexDirection="FlexDirection.Column">
+        <Box Width="100%" FlexGrow="1" BackgroundColor="#07111f" FlexDirection="FlexDirection.Row">
+            <Box Width="24" Height="100%" Border="true" BorderStyle="rounded" BorderColor="@(FocusBorder(FileManagerFocus.Sidebar))" Title=" sidebar " BackgroundColor="#081827" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+                @SidebarContent()
+            </Box>
+
+            <Box FlexGrow="1" Height="100%" BackgroundColor="#07111f" FlexDirection="FlexDirection.Column">
+                <Box Width="100%" FlexGrow="1" BackgroundColor="#07111f" FlexDirection="FlexDirection.Row">
+                    @for (var panelIndex = 0; panelIndex < State.Panels.Count; panelIndex++)
+                    {
+                        var panel = State.Panels[panelIndex];
+                        <Box FlexGrow="1" Height="100%" Border="true" BorderStyle="rounded" BorderColor="@(PanelBorder(panelIndex))" Title="@(PanelTitle(panelIndex))" BackgroundColor="#0b1628" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+                            @PanelRows(panel, panelIndex)
+                        </Box>
+                    }
+                </Box>
+
+                @if (State.PreviewVisible)
+                {
+                    <Box Width="100%" Height="12" Border="true" BorderColor="@(FocusBorder(FileManagerFocus.Preview))" Title="@PreviewTitle" BackgroundColor="#091321" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+                        @if (PreviewDocument.IsText)
+                        {
+                            <ScrollBox Width="100%" Height="9" Border="false" BackgroundColor="#1e1e1e"
+                                       ShowVerticalScrollbar="true" ShowHorizontalScrollbar="true"
+                                       ScrollX="@State.PreviewScrollX" ScrollY="@State.PreviewScrollY"
+                                       ContentWidth="@PreviewDocument.ContentWidth" ContentHeight="@PreviewDocument.ContentHeight">
+                                <Code Content="@PreviewDocument.Content" Language="@PreviewDocument.Language" ShowLineNumbers="true"
+                                      Width="@PreviewCodeWidth" Height="@PreviewCodeHeight" />
+                            </ScrollBox>
+                        }
+                        else
+                        {
+                            @PreviewMessage()
+                        }
+                    </Box>
+                }
+            </Box>
+
+            <Box Width="34" Height="100%" BackgroundColor="#07111f" FlexDirection="FlexDirection.Column">
+                <Box Width="34" FlexGrow="1" Border="true" BorderStyle="rounded" BorderColor="@(FocusBorder(FileManagerFocus.Metadata))" Title=" metadata " BackgroundColor="#081827" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+                    <Text Content="@MetadataContent" Fg="#dbeafe" Width="30" Height="8" />
+                </Box>
+                <Box Width="34" Height="7" Border="true" BorderStyle="rounded" BorderColor="#334155" Title=" clipboard " BackgroundColor="#081827" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+                    <Text Content="@ClipboardContent" Fg="#cbd5e1" Width="30" Height="4" />
+                </Box>
+                <Box Width="34" Height="7" Border="true" BorderStyle="rounded" BorderColor="@(FocusBorder(FileManagerFocus.Processes))" Title=" processes " BackgroundColor="#081827" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+                    <Text Content="@State.Status" Fg="#a7f3d0" Width="30" Height="4" />
+                </Box>
+            </Box>
+        </Box>
+
+        <Box Width="100%" Height="1" BackgroundColor="@CommandBg">
+            <Text Content="@CommandLine" Fg="#ffffff" Bg="@CommandBg" Width="100%" Height="1" />
+        </Box>
+
+        @if (State.FooterVisible)
+        {
+            <Box Width="100%" Height="1" BackgroundColor="#0f172a">
+                <Text Content="Move: up/down/k/j | Enter/l cd/open | h/backspace parent | P preview scroll | : shell | > spf | c/x/v/d/r ops | q exit" Fg="#94a3b8" Bg="#0f172a" Width="100%" Height="1" />
+            </Box>
+        }
+    </Box>
+}
+
+@code {
+    private readonly List<Action<object?>> _keypressHandlers = [];
+
+    private FileManagerState State { get; set; } = null!;
+
+    private string CommandBg => State.PendingConfirmation is null ? "#111827" : "#7f1d1d";
+    private string CommandLine
+        => State.PendingConfirmation is not null
+            ? $"{State.PendingConfirmation.Message} y/n"
+            : State.Focus == FileManagerFocus.Prompt
+                ? $"{PromptPrefix}{State.PromptText}"
+                : $" {State.Status}";
+
+    private string PromptPrefix => State.PromptMode == PromptMode.Shell ? ": " : "> ";
+
+    private string MetadataContent
+    {
+        get
+        {
+            var entry = State.ActivePanel.SelectedEntry;
+            if (entry == null)
+                return "No selection";
+
+            return $"Name: {entry.Value.Name}\nType: {(entry.Value.IsDirectory ? "Directory" : "File")}\nSize: {FormatSize(entry.Value.Size)}\nPath: {entry.Value.FullPath}";
+        }
+    }
+
+    private string ClipboardContent
+        => State.Clipboard.SourcePath is null
+            ? "Empty"
+            : $"{(State.Clipboard.IsCut ? "Cut" : "Copy")}\n{State.Clipboard.SourcePath}";
+
+    private PreviewDocument PreviewDocument => State.BuildPreviewDocument(maxChars: 64 * 1024);
+    private string PreviewCodeWidth => Math.Max(1, PreviewDocument.ContentWidth).ToString();
+    private string PreviewCodeHeight => Math.Max(1, PreviewDocument.ContentHeight).ToString();
+    private string PreviewTitle => State.Focus == FileManagerFocus.Preview ? " preview scroll " : " preview ";
+    private RenderFragment SidebarContent() => builder =>
+    {
+        var sequence = 0;
+        AddText(builder, sequence, "[ Super File ]", "#67e8f9", "20", "2");
+        sequence += 10;
+
+        var currentKind = (SidebarEntryKind?)null;
+        for (var i = 0; i < State.SidebarEntries.Count; i++)
+        {
+            var entry = State.SidebarEntries[i];
+            if (currentKind != entry.Kind)
+            {
+                currentKind = entry.Kind;
+                AddText(builder, sequence, SidebarHeading(entry.Kind), "#7dd3fc", "20", "1");
+                sequence += 10;
+            }
+
+            var selected = State.Focus == FileManagerFocus.Sidebar && i == State.SelectedSidebarIndex;
+            builder.OpenComponent<Box>(sequence++);
+            builder.AddAttribute(sequence++, "Width", "20");
+            builder.AddAttribute(sequence++, "Height", "1");
+            builder.AddAttribute(sequence++, "BackgroundColor", selected ? "#1d4ed8" : "#081827");
+            builder.AddAttribute(sequence++, "ChildContent", (RenderFragment)(rowBuilder =>
+                AddText(rowBuilder, 0, SidebarLine(entry, selected), selected ? "#ffffff" : "#cbd5e1", "20", "1", selected ? "#1d4ed8" : "#081827")));
+            builder.CloseComponent();
+        }
+    };
+
+    private RenderFragment PreviewMessage() => builder =>
+        AddText(builder, 0, PreviewDocument.Message, "#cbd5e1", "100%", "8");
+
+    protected override void OnInitialized()
+    {
+        App.Renderer.SetBackgroundColor("#07111f");
+        State = FileManagerState.Create(StartupOptions.Value.StartPath, FileSystem);
+        RegisterKeypress(HandleKeypress);
+    }
+
+    private void RegisterKeypress(Action<KeyEvent> handler)
+    {
+        Action<object?> wrapped = data =>
+        {
+            if (data is KeyEvent key)
+                handler(key);
+        };
+
+        App.KeyEvents.On("keypress", wrapped);
+        _keypressHandlers.Add(wrapped);
+    }
+
+    private void HandleKeypress(KeyEvent key)
+    {
+        if (State.PendingConfirmation is not null)
+        {
+            HandleConfirmationKey(key);
+            return;
+        }
+
+        if (State.Focus == FileManagerFocus.Prompt)
+        {
+            HandlePromptKey(key);
+            return;
+        }
+
+        switch (key.Name)
+        {
+            case "q":
+                key.PreventDefault();
+                App.Renderer.Destroy();
+                break;
+            case "escape":
+                if (State.Focus == FileManagerFocus.Preview)
+                    Mutate(key, () => State.ToggleFocus(FileManagerFocus.Preview));
+                else
+                {
+                    key.PreventDefault();
+                    App.Renderer.Destroy();
+                }
+                break;
+            case "s":
+                Mutate(key, () => State.ToggleFocus(FileManagerFocus.Sidebar));
+                break;
+            case "p":
+                Mutate(key, () => State.ToggleFocus(FileManagerFocus.Processes));
+                break;
+            case "P":
+                Mutate(key, () => State.ToggleFocus(FileManagerFocus.Preview));
+                break;
+            case "m":
+                Mutate(key, () => State.ToggleFocus(FileManagerFocus.Metadata));
+                break;
+            case ":":
+                Mutate(key, () => State.OpenPrompt(PromptMode.Shell));
+                break;
+            case ">":
+                Mutate(key, () => State.OpenPrompt(PromptMode.Spf));
+                break;
+            case "f":
+                Mutate(key, State.TogglePreview);
+                break;
+            case "F":
+                Mutate(key, State.ToggleFooter);
+                break;
+            case "n":
+                Mutate(key, State.SplitActivePanel);
+                break;
+            case "w":
+                Mutate(key, State.CloseActivePanel);
+                break;
+            case "tab":
+            case "L":
+                Mutate(key, State.FocusNextPanel);
+                break;
+            case "H":
+                Mutate(key, State.FocusPreviousPanel);
+                break;
+            case "up":
+            case "k":
+                Mutate(key, () => MoveOrScroll(deltaX: 0, deltaY: -1));
+                break;
+            case "down":
+            case "j":
+                Mutate(key, () => MoveOrScroll(deltaX: 0, deltaY: 1));
+                break;
+            case "left" when key.Shift:
+                Mutate(key, State.FocusPreviousPanel);
+                break;
+            case "left":
+                Mutate(key, () => MoveOrScroll(deltaX: -4, deltaY: 0));
+                break;
+            case "right":
+                Mutate(key, () => MoveOrScroll(deltaX: 4, deltaY: 0));
+                break;
+            case "return":
+            case "l":
+                if (State.Focus == FileManagerFocus.Sidebar)
+                    Mutate(key, State.ActivateSelectedSidebarEntry);
+                else if (State.Focus == FileManagerFocus.Preview && key.Name == "l")
+                    Mutate(key, () => MoveOrScroll(deltaX: 4, deltaY: 0));
+                else
+                    Mutate(key, State.OpenSelected);
+                break;
+            case "h":
+            case "backspace":
+                if (State.Focus == FileManagerFocus.Preview && key.Name == "h")
+                    Mutate(key, () => MoveOrScroll(deltaX: -4, deltaY: 0));
+                else
+                    Mutate(key, State.NavigateParent);
+                break;
+            case "pageup":
+                Mutate(key, () => ScrollPreviewByPage(-1));
+                break;
+            case "pagedown":
+                Mutate(key, () => ScrollPreviewByPage(1));
+                break;
+            case "c":
+                Mutate(key, () => State.CopySelected(cut: false));
+                break;
+            case "x":
+                Mutate(key, () => State.CopySelected(cut: true));
+                break;
+            case "v":
+                Mutate(key, () => State.PasteClipboard());
+                break;
+            case "d":
+                Mutate(key, () => State.RequestDeleteSelected());
+                break;
+            case "r":
+                Mutate(key, State.RefreshActivePanel);
+                break;
+        }
+    }
+
+    private void HandleConfirmationKey(KeyEvent key)
+    {
+        if (key.Name is "y" or "Y")
+        {
+            Mutate(key, State.ConfirmPending);
+            return;
+        }
+
+        if (key.Name is "n" or "N" or "escape")
+            Mutate(key, State.CancelPending);
+    }
+
+    private void HandlePromptKey(KeyEvent key)
+    {
+        if (key.Name == "escape")
+        {
+            Mutate(key, State.ClosePrompt);
+            return;
+        }
+
+        if (key.Name == "backspace")
+        {
+            Mutate(key, State.BackspacePrompt);
+            return;
+        }
+
+        if (key.Name == "return")
+        {
+            key.PreventDefault();
+            _ = InvokeAsync(async () =>
+            {
+                await State.SubmitPromptAsync().ConfigureAwait(false);
+                await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+            });
+            return;
+        }
+
+        if (key.Char.HasValue)
+            Mutate(key, () => State.AppendPromptChar(key.Char.Value));
+    }
+
+    private void Mutate(KeyEvent key, Action action)
+    {
+        key.PreventDefault();
+        action();
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void MoveOrScroll(int deltaX, int deltaY)
+    {
+        if (State.Focus == FileManagerFocus.Preview)
+        {
+            State.ScrollPreview(deltaX, deltaY, PreviewViewportWidth, PreviewViewportHeight);
+            return;
+        }
+
+        if (State.Focus == FileManagerFocus.Sidebar)
+        {
+            if (deltaY != 0)
+                State.MoveSidebarSelection(deltaY);
+            return;
+        }
+
+        if (deltaY != 0)
+            State.MoveSelection(deltaY);
+    }
+
+    private void ScrollPreviewByPage(int direction)
+    {
+        if (State.Focus != FileManagerFocus.Preview)
+            return;
+
+        State.ScrollPreview(0, direction * PreviewViewportHeight, PreviewViewportWidth, PreviewViewportHeight);
+    }
+
+    private string PanelBorder(int panelIndex)
+        => panelIndex == State.ActivePanelIndex && State.Focus == FileManagerFocus.File ? "#22d3ee" : "#334155";
+
+    private string FocusBorder(FileManagerFocus focus)
+        => State.Focus == focus ? "#22d3ee" : "#334155";
+
+    private string PanelTitle(int panelIndex)
+        => $" file {panelIndex + 1} {ShortPath(State.Panels[panelIndex].CurrentPath)} ";
+
+    private static int VisibleEntryCount(FilePanel panel) => Math.Min(panel.Entries.Count, 26);
+
+    private RenderFragment PanelRows(FilePanel panel, int panelIndex) => builder =>
+    {
+        var sequence = 0;
+        for (var i = 0; i < VisibleEntryCount(panel); i++)
+        {
+            var entry = panel.Entries[i];
+            var selected = panelIndex == State.ActivePanelIndex && i == panel.SelectedIndex;
+            builder.OpenComponent<Box>(sequence++);
+            builder.AddAttribute(sequence++, "Width", "100%");
+            builder.AddAttribute(sequence++, "Height", "1");
+            builder.AddAttribute(sequence++, "BackgroundColor", EntryBg(selected));
+            builder.AddAttribute(sequence++, "ChildContent", (RenderFragment)(rowBuilder =>
+            {
+                var rowSequence = 0;
+                rowBuilder.OpenComponent<TermBlade.Razor.Components.Text>(rowSequence++);
+                rowBuilder.AddAttribute(rowSequence++, "Content", EntryLine(entry, selected));
+                rowBuilder.AddAttribute(rowSequence++, "Fg", EntryFg(entry, selected));
+                rowBuilder.AddAttribute(rowSequence++, "Bg", EntryBg(selected));
+                rowBuilder.AddAttribute(rowSequence++, "Width", "100%");
+                rowBuilder.AddAttribute(rowSequence++, "Height", "1");
+                rowBuilder.CloseComponent();
+            }));
+            builder.CloseComponent();
+        }
+    };
+
+    private static void AddText(RenderTreeBuilder builder, int sequence, string content, string fg, string width, string height, string? bg = null)
+    {
+        builder.OpenComponent<TermBlade.Razor.Components.Text>(sequence);
+        builder.AddAttribute(sequence + 1, "Content", content);
+        builder.AddAttribute(sequence + 2, "Fg", fg);
+        if (bg != null)
+            builder.AddAttribute(sequence + 3, "Bg", bg);
+        builder.AddAttribute(sequence + 4, "Width", width);
+        builder.AddAttribute(sequence + 5, "Height", height);
+        builder.CloseComponent();
+    }
+
+    private static string EntryLine(FileManagerEntry entry, bool selected)
+    {
+        var cursor = selected ? "> " : "  ";
+        var icon = entry.IsDirectory ? "[D] " : "    ";
+        return cursor + icon + entry.Name;
+    }
+
+    private static string EntryFg(FileManagerEntry entry, bool selected)
+    {
+        if (selected)
+            return "#ffffff";
+
+        return entry.IsDirectory ? "#67e8f9" : "#cbd5e1";
+    }
+
+    private static string EntryBg(bool selected) => selected ? "#1d4ed8" : "#0b1628";
+
+    private static string ShortPath(string path)
+    {
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        if (!string.IsNullOrEmpty(home) && path.StartsWith(home, StringComparison.OrdinalIgnoreCase))
+            return "~" + path[home.Length..];
+
+        return path.Length <= 42 ? path : "..." + path[^39..];
+    }
+
+    private static string FormatSize(long size)
+    {
+        if (size < 1024)
+            return $"{size} B";
+        if (size < 1024 * 1024)
+            return $"{size / 1024d:0.0} KB";
+
+        return $"{size / 1024d / 1024d:0.0} MB";
+    }
+
+    private int PreviewViewportWidth => Math.Max(20, App.Renderer.TerminalWidth - 62);
+
+    private const int PreviewViewportHeight = 8;
+
+    private static string SidebarHeading(SidebarEntryKind kind)
+        => kind switch
+        {
+            SidebarEntryKind.Home => "Home",
+            SidebarEntryKind.Pinned => "Pinned",
+            SidebarEntryKind.Disk => "Disks",
+            _ => kind.ToString()
+        };
+
+    private static string SidebarLine(SidebarEntry entry, bool selected)
+    {
+        var cursor = selected ? "> " : "  ";
+        var marker = entry.Kind switch
+        {
+            SidebarEntryKind.Home => "~ ",
+            SidebarEntryKind.Pinned => "* ",
+            SidebarEntryKind.Disk => "# ",
+            _ => "- "
+        };
+        return cursor + marker + entry.Label;
+    }
+
+    public void Dispose()
+    {
+        foreach (var handler in _keypressHandlers)
+            App.KeyEvents.Off("keypress", handler);
+    }
+}
