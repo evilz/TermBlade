@@ -372,15 +372,16 @@ else
     private string PanelTitle(int panelIndex)
         => $" file {panelIndex + 1} {ShortPath(State.Panels[panelIndex].CurrentPath)} ";
 
-    private static int VisibleEntryCount(FilePanel panel) => Math.Min(panel.Entries.Count, 26);
+    private static int VisibleEntryCount(FilePanel panel) => Math.Max(0, Math.Min(panel.Entries.Count - panel.WindowStart, 26));
 
     private RenderFragment PanelRows(FilePanel panel, int panelIndex) => builder =>
     {
         var sequence = 0;
         for (var i = 0; i < VisibleEntryCount(panel); i++)
         {
-            var entry = panel.Entries[i];
-            var selected = panelIndex == State.ActivePanelIndex && i == panel.SelectedIndex;
+            var entryIndex = panel.WindowStart + i;
+            var entry = panel.Entries[entryIndex];
+            var selected = panelIndex == State.ActivePanelIndex && entryIndex == panel.SelectedIndex;
             builder.OpenComponent<Box>(sequence++);
             builder.AddAttribute(sequence++, "Width", "100%");
             builder.AddAttribute(sequence++, "Height", "1");

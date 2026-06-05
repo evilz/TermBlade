@@ -147,6 +147,25 @@ public class FileManagerStateTests
   }
 
   [Fact]
+  public void MoveSelection_ResetsPreviewScroll_WhenSelectionChanges()
+  {
+    var fileSystem = new FakeFileSystem("/repo");
+    fileSystem.SetEntries("/repo", [
+        FileManagerEntry.File("/repo/one.txt", 100),
+        FileManagerEntry.File("/repo/two.txt", 100)
+    ]);
+    fileSystem.SetText("/repo/one.txt", string.Join('\n', Enumerable.Range(1, 40).Select(i => $"line {i}")));
+    fileSystem.SetText("/repo/two.txt", "small");
+    var state = FileManagerState.Create("/repo", fileSystem);
+
+    state.ScrollPreview(deltaX: 10, deltaY: 10, viewportWidth: 20, viewportHeight: 5);
+    state.MoveSelection(1);
+
+    Assert.Equal(0, state.PreviewScrollX);
+    Assert.Equal(0, state.PreviewScrollY);
+  }
+
+  [Fact]
   public void ActivateSelectedSidebarEntry_NavigatesActivePanel()
   {
     var fileSystem = new FakeFileSystem("/repo");
@@ -195,6 +214,36 @@ public class FileManagerStateTests
     var preview = state.BuildPreviewContent(maxLines: 3, maxChars: 80);
 
     Assert.Contains("Preview unavailable", preview);
+  }
+
+  [Fact]
+  public void PasteCut_ToSamePath_DoesNotExecuteMove()
+  {
+    var fileSystem = new FakeFileSystem("/repo");
+    fileSystem.SetEntries("/repo", [FileManagerEntry.File("/repo/source.txt", 1)]);
+    var state = FileManagerState.Create("/repo", fileSystem);
+
+    state.CopySelected(cut: true);
+    var request = state.PasteClipboard();
+
+    Assert.Null(request);
+    Assert.False(fileSystem.Moved);
+    Assert.False(state.Clipboard.HasValue);
+  }
+
+  [Fact]
+  public void MoveSelection_UpdatesWindowStart_ToKeepSelectionVisible()
+  {
+    var fileSystem = new FakeFileSystem("/repo");
+    fileSystem.SetEntries(
+        "/repo",
+        Enumerable.Range(0, 40).Select(index => FileManagerEntry.File($"/repo/file-{index:00}.txt", 1)).ToList());
+    var state = FileManagerState.Create("/repo", fileSystem);
+
+    state.MoveSelection(30);
+
+    Assert.Equal(30, state.ActivePanel.SelectedIndex);
+    Assert.Equal(5, state.ActivePanel.WindowStart);
   }
 
   [Theory]

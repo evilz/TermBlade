@@ -48,7 +48,13 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
 
   public void CreateFile(string path)
   {
-    using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
+    if (File.Exists(path))
+    {
+      File.SetLastWriteTime(path, DateTime.Now);
+      return;
+    }
+
+    using var _ = File.Create(path);
   }
 
   public void Rename(string path, string newName)
@@ -65,6 +71,11 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
   {
     if (Directory.Exists(sourcePath))
     {
+      var sourceReal = NormalizeDirectoryPath(sourcePath);
+      var destinationReal = NormalizeDirectoryPath(destinationPath);
+      if (destinationReal.StartsWith(sourceReal, StringComparison.OrdinalIgnoreCase))
+        throw new IOException("Cannot copy a directory into itself or its subdirectory.");
+
       CopyDirectory(sourcePath, destinationPath, overwrite);
       return;
     }
@@ -74,6 +85,9 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
 
   public void Move(string sourcePath, string destinationPath, bool overwrite)
   {
+    if (PathsEqual(sourcePath, destinationPath))
+      return;
+
     if (overwrite)
       Delete(destinationPath, recursive: true);
 
@@ -99,7 +113,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     try
     {
       using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-      var buffer = new byte[Math.Min(maxChars * 4, 8192)];
+      var buffer = new byte[Math.Max(1, maxChars * 4)];
       var read = stream.Read(buffer, 0, buffer.Length);
       if (read == 0)
         return string.Empty;
@@ -140,5 +154,15 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
       var destinationDirectory = Path.Combine(destinationPath, Path.GetFileName(directory));
       CopyDirectory(directory, destinationDirectory, overwrite);
     }
+  }
+
+  private static string NormalizeDirectoryPath(string path)
+      => Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+
+  private static bool PathsEqual(string path1, string path2)
+  {
+    var normalizedPath1 = Path.GetFullPath(path1).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    var normalizedPath2 = Path.GetFullPath(path2).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    return string.Equals(normalizedPath1, normalizedPath2, StringComparison.OrdinalIgnoreCase);
   }
 }

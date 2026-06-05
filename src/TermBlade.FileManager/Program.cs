@@ -14,7 +14,7 @@ internal static class Program
     var startPath = args.Length > 0 ? args[0] : Environment.CurrentDirectory;
     var fullStartPath = Path.GetFullPath(startPath);
 
-    var host = Host.CreateDefaultBuilder(args)
+    var host = Host.CreateDefaultBuilder()
         .ConfigureServices(services =>
         {
           services.Configure<FileManagerStartupOptions>(options => options.StartPath = fullStartPath);

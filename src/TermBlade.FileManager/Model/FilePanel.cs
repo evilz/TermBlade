@@ -2,6 +2,8 @@ namespace TermBlade.FileManager;
 
 internal sealed class FilePanel
 {
+  private const int WindowSize = 26;
+
   public string CurrentPath { get; private set; }
   public IReadOnlyList<FileManagerEntry> Entries { get; private set; } = [];
   public int SelectedIndex { get; private set; }
@@ -27,7 +29,8 @@ internal sealed class FilePanel
   {
     Entries = fileSystem.ListEntries(CurrentPath);
     SelectedIndex = Entries.Count == 0 ? 0 : Math.Clamp(SelectedIndex, 0, Entries.Count - 1);
-    WindowStart = Math.Min(WindowStart, SelectedIndex);
+    WindowStart = Entries.Count == 0 ? 0 : Math.Clamp(WindowStart, 0, Entries.Count - 1);
+    EnsureSelectionVisible();
   }
 
   public void MoveSelection(int delta)
@@ -36,5 +39,20 @@ internal sealed class FilePanel
       return;
 
     SelectedIndex = Math.Clamp(SelectedIndex + delta, 0, Entries.Count - 1);
+    EnsureSelectionVisible();
+  }
+
+  private void EnsureSelectionVisible()
+  {
+    if (Entries.Count == 0)
+    {
+      WindowStart = 0;
+      return;
+    }
+
+    if (SelectedIndex < WindowStart)
+      WindowStart = SelectedIndex;
+    else if (SelectedIndex >= WindowStart + WindowSize)
+      WindowStart = SelectedIndex - WindowSize + 1;
   }
 }

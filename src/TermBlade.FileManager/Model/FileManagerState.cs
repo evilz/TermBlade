@@ -15,6 +15,9 @@ internal enum FileManagerFocus
 internal sealed class FileManagerState
 {
   private readonly IFileSystemOperations _fileSystem;
+  private PreviewDocument? _cachedPreview;
+  private string? _cachedPreviewPath;
+  private int _cachedPreviewMaxChars;
 
   public List<FilePanel> Panels { get; } = [];
   public IReadOnlyList<SidebarEntry> SidebarEntries { get; private set; } = [];
@@ -62,7 +65,15 @@ internal sealed class FileManagerState
   {
     Try(() =>
     {
+      var previousSelectedPath = ActivePanel.SelectedEntry?.FullPath;
       ActivePanel.Refresh(_fileSystem);
+      if (!string.Equals(previousSelectedPath, ActivePanel.SelectedEntry?.FullPath, StringComparison.Ordinal))
+      {
+        PreviewScrollX = 0;
+        PreviewScrollY = 0;
+      }
+
+      InvalidatePreviewCache();
       Status = $"Refreshed {ActivePanel.CurrentPath}";
     });
   }
@@ -76,9 +87,14 @@ internal sealed class FileManagerState
     Try(() =>
     {
       if (entry.Value.IsDirectory)
+      {
         ActivePanel.NavigateTo(entry.Value.FullPath, _fileSystem);
+        ResetPreviewState();
+      }
       else
+      {
         _fileSystem.OpenFile(entry.Value.FullPath);
+      }
 
       Status = entry.Value.IsDirectory ? $"Opened {entry.Value.FullPath}" : $"Launched {entry.Value.Name}";
     });
@@ -93,11 +109,20 @@ internal sealed class FileManagerState
         return;
 
       if (_fileSystem.DirectoryExists(parent))
+      {
         ActivePanel.NavigateTo(parent, _fileSystem);
+        ResetPreviewState();
+      }
     });
   }
 
-  public void MoveSelection(int delta) => ActivePanel.MoveSelection(delta);
+  public void MoveSelection(int delta)
+  {
+    var previousSelectedPath = ActivePanel.SelectedEntry?.FullPath;
+    ActivePanel.MoveSelection(delta);
+    if (!string.Equals(previousSelectedPath, ActivePanel.SelectedEntry?.FullPath, StringComparison.Ordinal))
+      ResetPreviewState();
+  }
 
   public void MoveSidebarSelection(int delta)
   {
@@ -123,6 +148,7 @@ internal sealed class FileManagerState
     panel.Refresh(_fileSystem);
     Panels.Insert(ActivePanelIndex + 1, panel);
     ActivePanelIndex++;
+    ResetPreviewState();
     Status = $"Opened panel {ActivePanelIndex + 1}";
   }
 
@@ -133,18 +159,21 @@ internal sealed class FileManagerState
 
     Panels.RemoveAt(ActivePanelIndex);
     ActivePanelIndex = Math.Clamp(ActivePanelIndex, 0, Panels.Count - 1);
+    ResetPreviewState();
     Status = $"Closed panel {ActivePanelIndex + 1}";
   }
 
   public void FocusNextPanel()
   {
     ActivePanelIndex = (ActivePanelIndex + 1) % Panels.Count;
+    ResetPreviewState();
     Focus = FileManagerFocus.File;
   }
 
   public void FocusPreviousPanel()
   {
     ActivePanelIndex = (ActivePanelIndex - 1 + Panels.Count) % Panels.Count;
+    ResetPreviewState();
     Focus = FileManagerFocus.File;
   }
 
@@ -284,21 +313,38 @@ internal sealed class FileManagerState
     if (!Clipboard.HasValue || Clipboard.SourcePath == null)
       return null;
 
-    var targetName = string.IsNullOrWhiteSpace(destinationName)
-        ? _fileSystem.GetFileName(Clipboard.SourcePath)
-        : destinationName;
-    var destinationPath = _fileSystem.Combine(ActivePanel.CurrentPath, targetName);
-    if (_fileSystem.FileExists(destinationPath) || _fileSystem.DirectoryExists(destinationPath))
+    try
     {
-      PendingConfirmation = new ConfirmationRequest(
-          ConfirmationKind.Overwrite,
-          $"Overwrite {targetName}?",
-          () => ExecutePaste(destinationPath, overwrite: true));
-      return PendingConfirmation;
-    }
+      var targetName = string.IsNullOrWhiteSpace(destinationName)
+          ? _fileSystem.GetFileName(Clipboard.SourcePath)
+          : destinationName;
+      var destinationPath = _fileSystem.Combine(ActivePanel.CurrentPath, targetName);
+      if (PathsEqual(Clipboard.SourcePath, destinationPath))
+      {
+        if (Clipboard.IsCut)
+          Clipboard.Clear();
 
-    ExecutePaste(destinationPath, overwrite: false);
-    return null;
+        Status = "Source and destination are the same path";
+        return null;
+      }
+
+      if (_fileSystem.FileExists(destinationPath) || _fileSystem.DirectoryExists(destinationPath))
+      {
+        PendingConfirmation = new ConfirmationRequest(
+            ConfirmationKind.Overwrite,
+            $"Overwrite {targetName}?",
+            () => ExecutePaste(destinationPath, overwrite: true));
+        return PendingConfirmation;
+      }
+
+      ExecutePaste(destinationPath, overwrite: false);
+      return null;
+    }
+    catch (Exception ex)
+    {
+      Status = ex.Message;
+      return null;
+    }
   }
 
   public ConfirmationRequest? RequestDeleteSelected()
@@ -312,8 +358,11 @@ internal sealed class FileManagerState
         $"Delete {entry.Value.Name}?",
         () =>
         {
-          _fileSystem.Delete(entry.Value.FullPath, recursive: entry.Value.IsDirectory);
-          RefreshActivePanel();
+          Try(() =>
+          {
+            _fileSystem.Delete(entry.Value.FullPath, recursive: entry.Value.IsDirectory);
+            RefreshActivePanel();
+          });
         });
     return PendingConfirmation;
   }
@@ -347,35 +396,53 @@ internal sealed class FileManagerState
     if (entry == null)
       return new PreviewDocument(false, string.Empty, string.Empty, 1, 1, "No file selected");
 
+    var previewPath = entry.Value.FullPath;
+    if (previewPath == _cachedPreviewPath && _cachedPreview != null && maxChars == _cachedPreviewMaxChars)
+      return _cachedPreview.Value;
+
+    PreviewDocument document;
     if (entry.Value.IsDirectory)
-      return new PreviewDocument(
+    {
+      document = new PreviewDocument(
           false,
           string.Empty,
           string.Empty,
           1,
           1,
           $"Directory\n{entry.Value.FullPath}\n{ActivePanel.Entries.Count} entries in current panel");
+    }
+    else
+    {
+      var text = _fileSystem.ReadTextPreview(entry.Value.FullPath, maxChars);
+      if (text == null)
+      {
+        document = new PreviewDocument(
+            false,
+            string.Empty,
+            string.Empty,
+            1,
+            1,
+            $"File\n{entry.Value.FullPath}\n{FormatSize(entry.Value.Size)}\nPreview unavailable for binary or unreadable files.");
+      }
+      else
+      {
+        var normalized = text.Replace("\r\n", "\n").Replace('\r', '\n');
+        var lines = normalized.Split('\n');
+        var lineNumberWidth = lines.Length.ToString().Length + 1;
+        document = new PreviewDocument(
+            true,
+            normalized,
+            DetectLanguage(entry.Value.FullPath),
+            Math.Max(1, lines.Max(line => line.Length) + lineNumberWidth),
+            Math.Max(1, lines.Length),
+            string.Empty);
+      }
+    }
 
-    var text = _fileSystem.ReadTextPreview(entry.Value.FullPath, maxChars);
-    if (text == null)
-      return new PreviewDocument(
-          false,
-          string.Empty,
-          string.Empty,
-          1,
-          1,
-          $"File\n{entry.Value.FullPath}\n{FormatSize(entry.Value.Size)}\nPreview unavailable for binary or unreadable files.");
-
-    var normalized = text.Replace("\r\n", "\n").Replace('\r', '\n');
-    var lines = normalized.Split('\n');
-    var lineNumberWidth = lines.Length.ToString().Length + 1;
-    return new PreviewDocument(
-        true,
-        normalized,
-        DetectLanguage(entry.Value.FullPath),
-        Math.Max(1, lines.Max(line => line.Length) + lineNumberWidth),
-        Math.Max(1, lines.Length),
-        string.Empty);
+    _cachedPreview = document;
+    _cachedPreviewPath = previewPath;
+    _cachedPreviewMaxChars = maxChars;
+    return document;
   }
 
   public void ScrollPreview(int deltaX, int deltaY, int viewportWidth, int viewportHeight)
@@ -412,6 +479,7 @@ internal sealed class FileManagerState
     }
 
     ActivePanel.NavigateTo(resolved, _fileSystem);
+    ResetPreviewState();
   }
 
   private string? ResolvePath(string? path)
@@ -450,14 +518,25 @@ internal sealed class FileManagerState
   {
     try
     {
-      using var process = Process.Start(new ProcessStartInfo
+      var psi = new ProcessStartInfo
       {
         FileName = OperatingSystem.IsWindows() ? "cmd.exe" : "/bin/sh",
-        Arguments = OperatingSystem.IsWindows() ? $"/c {command}" : $"-c \"{command}\"",
         WorkingDirectory = ActivePanel.CurrentPath,
         UseShellExecute = false,
         CreateNoWindow = true
-      });
+      };
+      if (OperatingSystem.IsWindows())
+      {
+        psi.ArgumentList.Add("/c");
+        psi.ArgumentList.Add(command);
+      }
+      else
+      {
+        psi.ArgumentList.Add("-c");
+        psi.ArgumentList.Add(command);
+      }
+
+      using var process = Process.Start(psi);
 
       if (process == null)
       {
@@ -484,6 +563,27 @@ internal sealed class FileManagerState
     {
       Status = ex.Message;
     }
+  }
+
+  private void ResetPreviewState()
+  {
+    PreviewScrollX = 0;
+    PreviewScrollY = 0;
+    InvalidatePreviewCache();
+  }
+
+  private void InvalidatePreviewCache()
+  {
+    _cachedPreview = null;
+    _cachedPreviewPath = null;
+    _cachedPreviewMaxChars = 0;
+  }
+
+  private static bool PathsEqual(string path1, string path2)
+  {
+    var normalizedPath1 = Path.GetFullPath(path1).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    var normalizedPath2 = Path.GetFullPath(path2).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    return string.Equals(normalizedPath1, normalizedPath2, StringComparison.OrdinalIgnoreCase);
   }
 
   private static string FormatSize(long size)
@@ -530,8 +630,14 @@ internal sealed class FileManagerState
 
     entries.Add(new SidebarEntry("TermBlade", startPath, SidebarEntryKind.Pinned));
 
-    foreach (var drive in DriveInfo.GetDrives().Where(drive => drive.IsReady).Take(6))
-      entries.Add(new SidebarEntry(drive.Name.TrimEnd(Path.DirectorySeparatorChar), drive.RootDirectory.FullName, SidebarEntryKind.Disk));
+    try
+    {
+      foreach (var drive in DriveInfo.GetDrives().Where(drive => drive.IsReady).Take(6))
+        entries.Add(new SidebarEntry(drive.Name.TrimEnd(Path.DirectorySeparatorChar), drive.RootDirectory.FullName, SidebarEntryKind.Disk));
+    }
+    catch
+    {
+    }
 
     return entries;
   }
