@@ -1,0 +1,16 @@
+@using TermBlade.Core.Ansi
+@using TermBlade.Core.Renderables
+
+<FrameBuffer Width="100%" Height="100%" PixelWidth="120" PixelHeight="48" Draw="@DrawPreview" />
+
+@code {
+    private static void DrawPreview(FrameBufferRenderable frame)
+    {
+        frame.Clear(Rgba.FromCss("#0d1117"));
+        frame.FillRect(8, 8, 36, 18, Rgba.FromCss("#1f6feb"));
+        frame.FillRect(50, 10, 32, 24, Rgba.FromCss("#3fb950"));
+        frame.DrawCircle(88, 24, 15, Rgba.FromCss("#f0883e"));
+        frame.DrawLine(4, 42, 116, 4, Rgba.FromCss("#c9d1d9"));
+        frame.DrawLine(4, 4, 116, 42, Rgba.FromCss("#bc8cff"));
+    }
+}

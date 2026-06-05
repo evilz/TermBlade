@@ -1,0 +1,17 @@
+@using TermBlade.Core.Console
+
+<Box Width="100%" Height="100%" BackgroundColor="#0d1117">
+    <Text Content="Application surface" Fg="#58a6ff" Width="40" Height="1" Attributes="@TextAttributes.Bold" />
+    <Text Content="The overlay renders above normal content." Fg="#8b949e" Top="2" Left="0" Width="48" Height="1" LayoutPosition="absolute" />
+    <ConsoleOverlay Position="OverlayPosition.TopRight" MaxLines="4" MaxWidth="38" Lines="@Lines" />
+</Box>
+
+@code {
+    private static readonly IReadOnlyList<string> Lines =
+    [
+        "[LOG] render frame 128",
+        "[LOG] focused: Input#email",
+        "[WARN] slow frame: 22ms",
+        "[LOG] fps: 60",
+    ];
+}

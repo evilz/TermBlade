@@ -1,0 +1,15 @@
+<Box Width="100%" Height="100%" FlexDirection="FlexDirection.Row" BackgroundColor="#0d1117">
+    <LineNumbers Width="6" Height="10" LineCount="10" StartLine="42" Fg="#8b949e" Bg="#161b22" />
+    <Box FlexGrow="1" Height="10" BackgroundColor="#0d1117">
+        <Code Width="100%" Height="10" Language="csharp" ShowLineNumbers="false" Content="@Source" />
+    </Box>
+</Box>
+
+@code {
+    private const string Source = @"public void Render()
+{
+    buffer.Clear(background);
+    root.Render(buffer, delta);
+    renderer.Flush(buffer);
+}";
+}

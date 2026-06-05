@@ -73,6 +73,16 @@
             <a href="#tabselect">TabSelect</a>
           </div>
           <div class="sidebar-group">
+            <h3>Chart Components</h3>
+            <a href="#barchart">BarChart</a>
+            <a href="#linechart">LineChart</a>
+            <a href="#timeserieslinechart">TimeSeriesLineChart</a>
+            <a href="#heatmap">HeatMap</a>
+            <a href="#candlestickchart">CandlestickChart</a>
+            <a href="#piechart">PieChart</a>
+            <a href="#doughnutchart">DoughnutChart</a>
+          </div>
+          <div class="sidebar-group">
             <h3>Container Components</h3>
             <a href="#box">Box</a>
             <a href="#scrollbox">ScrollBox</a>
@@ -538,6 +548,14 @@ Console.WriteLine(""Hello"");
              <span class="attr">Bg</span>=<span class="str">"#111827"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
+            <h3>Demo Source <small>(LineNumbersDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;LineNumbers</span> <span class="attr">Width</span>=<span class="str">"6"</span> <span class="attr">Height</span>=<span class="str">"10"</span>
+             <span class="attr">LineCount</span>=<span class="str">"10"</span>
+             <span class="attr">StartLine</span>=<span class="str">"42"</span>
+             <span class="attr">Fg</span>=<span class="str">"#8b949e"</span>
+             <span class="attr">Bg</span>=<span class="str">"#161b22"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
             <h3>Parameters</h3>
             <div class="table-wrapper">
               <table class="components-table">
@@ -609,6 +627,16 @@ Console.WriteLine(""Hello"");
              <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
              <span class="attr">PixelWidth</span>=<span class="str">"120"</span>
              <span class="attr">PixelHeight</span>=<span class="str">"40"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(FrameBufferDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="razor">@using</span> TermBlade.Core.Ansi
+<span class="razor">@using</span> TermBlade.Core.Renderables
+
+<span class="tag">&lt;FrameBuffer</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+             <span class="attr">PixelWidth</span>=<span class="str">"120"</span>
+             <span class="attr">PixelHeight</span>=<span class="str">"48"</span>
+             <span class="attr">Draw</span>=<span class="kw">"@DrawPreview"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -684,6 +712,14 @@ Console.WriteLine(""Hello"");
           <span class="attr">HighlightColor</span>=<span class="str">"#cc0000"</span>
           <span class="attr">ShowOtherMonthDays</span>=<span class="kw">"false"</span>
           <span class="attr">Width</span>=<span class="str">"20"</span> <span class="attr">Height</span>=<span class="str">"8"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(CalendarDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;Calendar</span> <span class="attr">Width</span>=<span class="str">"24"</span> <span class="attr">Height</span>=<span class="str">"10"</span>
+          <span class="attr">DisplayMonth</span>=<span class="kw">"@new DateOnly(2026, 6, 1)"</span>
+          <span class="attr">HighlightedDate</span>=<span class="kw">"@new DateOnly(2026, 6, 10)"</span>
+          <span class="attr">HighlightColor</span>=<span class="str">"#1f6feb"</span>
+          <span class="attr">DayNameColor</span>=<span class="str">"#58a6ff"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -1073,6 +1109,348 @@ Console.WriteLine(""Hello"");
           </details>
         </section>
 
+        <section id="barchart" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Chart Component</p>
+            <h2>BarChart</h2>
+            <p>Renders vertical, horizontal, or sparkline bar charts from numeric data.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">barchart-preview</span>
+              </div>
+              <pre class="terminal-body"><code> BarChart
+  █  █  █
+  █  █  █  █
+  █  █  █  █  █</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;BarChart</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"8"</span>
+          <span class="attr">Data</span>=<span class="kw">"@Values"</span>
+          <span class="attr">Labels</span>=<span class="kw">"@Labels"</span>
+          <span class="attr">BarColor</span>=<span class="str">"#58a6ff"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(BarChartDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;BarChart</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"8"</span>
+          <span class="attr">Data</span>=<span class="kw">"@SparkData"</span>
+          <span class="attr">Sparkline</span>=<span class="str">"true"</span>
+          <span class="attr">BarColor</span>=<span class="str">"#58a6ff"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Data</code></td><td><code>IReadOnlyList&lt;double&gt;</code></td><td><code>[]</code></td><td>Numeric values to chart.</td></tr>
+                  <tr><td><code>Labels</code></td><td><code>IReadOnlyList&lt;string&gt;?</code></td><td><code>null</code></td><td>Optional labels for bars.</td></tr>
+                  <tr><td><code>Orientation</code></td><td><code>string</code></td><td><code>"vertical"</code></td><td>Vertical or horizontal layout.</td></tr>
+                  <tr><td><code>Sparkline</code></td><td><code>bool</code></td><td><code>false</code></td><td>Compact sparkline rendering mode.</td></tr>
+                  <tr><td><code>BarColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Primary bar color.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="linechart" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Chart Component</p>
+            <h2>LineChart</h2>
+            <p>Renders numeric series as a terminal line chart with optional fill.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">linechart-preview</span>
+              </div>
+              <pre class="terminal-body"><code> LineChart
+  ▁▂▄▃▅▇▆█</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;LineChart</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"12"</span>
+           <span class="attr">Data</span>=<span class="kw">"@ChartData"</span>
+           <span class="attr">Title</span>=<span class="str">"Basic Line Chart"</span>
+           <span class="attr">LineColor</span>=<span class="str">"#58a6ff"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(LineChartDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;LineChart</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+           <span class="attr">Data</span>=<span class="kw">"@ChartData"</span>
+           <span class="attr">Title</span>=<span class="str">"Basic Line Chart"</span>
+           <span class="attr">FillColor</span>=<span class="str">"#1f6feb"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Data</code></td><td><code>IReadOnlyList&lt;double&gt;</code></td><td><code>[]</code></td><td>Series values.</td></tr>
+                  <tr><td><code>Title</code></td><td><code>string?</code></td><td><code>null</code></td><td>Optional chart title.</td></tr>
+                  <tr><td><code>LineColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Line stroke color.</td></tr>
+                  <tr><td><code>FillColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Optional area fill color.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="timeserieslinechart" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Chart Component</p>
+            <h2>TimeSeriesLineChart</h2>
+            <p>Renders timestamped values with formatted X-axis labels.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">timeserieslinechart-preview</span>
+              </div>
+              <pre class="terminal-body"><code> TimeSeriesLineChart
+  09:00     11:00     13:00</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;TimeSeriesLineChart</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"12"</span>
+                     <span class="attr">Data</span>=<span class="kw">"@TimeData"</span>
+                     <span class="attr">TimeFormat</span>=<span class="str">"HH:mm"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(TimeSeriesLineChartDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;TimeSeriesLineChart</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+                     <span class="attr">Data</span>=<span class="kw">"@TimeData"</span>
+                     <span class="attr">Title</span>=<span class="str">"Server Response Time"</span>
+                     <span class="attr">TimeFormat</span>=<span class="str">"HH:mm"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Data</code></td><td><code>IReadOnlyList&lt;TimeSeriesPoint&gt;</code></td><td><code>[]</code></td><td>Timestamped series values.</td></tr>
+                  <tr><td><code>TimeFormat</code></td><td><code>string</code></td><td><code>"HH:mm"</code></td><td>Date/time label format.</td></tr>
+                  <tr><td><code>LineColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Line stroke color.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="heatmap" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Chart Component</p>
+            <h2>HeatMap</h2>
+            <p>Renders a matrix of values with configurable low, mid, and high colors.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">heatmap-preview</span>
+              </div>
+              <pre class="terminal-body"><code> HeatMap
+  Mon 02 01 05 08 07 03</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;HeatMap</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"12"</span>
+         <span class="attr">Data</span>=<span class="kw">"@HeatData"</span>
+         <span class="attr">RowLabels</span>=<span class="kw">"@Rows"</span>
+         <span class="attr">ColumnLabels</span>=<span class="kw">"@Cols"</span>
+         <span class="attr">ShowValues</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(HeatMapDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;HeatMap</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+         <span class="attr">Data</span>=<span class="kw">"@HeatData"</span>
+         <span class="attr">LowColor</span>=<span class="str">"#0d1117"</span>
+         <span class="attr">MidColor</span>=<span class="str">"#1f6feb"</span>
+         <span class="attr">HighColor</span>=<span class="str">"#f0883e"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Data</code></td><td><code>IReadOnlyList&lt;IReadOnlyList&lt;double&gt;&gt;</code></td><td><code>[]</code></td><td>Matrix values.</td></tr>
+                  <tr><td><code>RowLabels</code></td><td><code>IReadOnlyList&lt;string&gt;?</code></td><td><code>null</code></td><td>Optional row labels.</td></tr>
+                  <tr><td><code>ColumnLabels</code></td><td><code>IReadOnlyList&lt;string&gt;?</code></td><td><code>null</code></td><td>Optional column labels.</td></tr>
+                  <tr><td><code>LowColor</code> / <code>MidColor</code> / <code>HighColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Color gradient stops.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="candlestickchart" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Chart Component</p>
+            <h2>CandlestickChart</h2>
+            <p>Renders OHLC financial data with bull and bear candle colors.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">candlestickchart-preview</span>
+              </div>
+              <pre class="terminal-body"><code> CandlestickChart
+  │ █ │ █ │ █ │ █</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;CandlestickChart</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"12"</span>
+                  <span class="attr">Data</span>=<span class="kw">"@CandleData"</span>
+                  <span class="attr">BullColor</span>=<span class="str">"#3fb950"</span>
+                  <span class="attr">BearColor</span>=<span class="str">"#f85149"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(CandlestickChartDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;CandlestickChart</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+                  <span class="attr">Data</span>=<span class="kw">"@CandleData"</span>
+                  <span class="attr">CandleWidth</span>=<span class="str">"3"</span>
+                  <span class="attr">CandleGap</span>=<span class="str">"1"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Data</code></td><td><code>IReadOnlyList&lt;CandlestickPoint&gt;</code></td><td><code>[]</code></td><td>OHLC data points.</td></tr>
+                  <tr><td><code>BullColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Color for rising candles.</td></tr>
+                  <tr><td><code>BearColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Color for falling candles.</td></tr>
+                  <tr><td><code>CandleWidth</code> / <code>CandleGap</code></td><td><code>int</code></td><td><code>-</code></td><td>Candle geometry controls.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="piechart" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Chart Component</p>
+            <h2>PieChart</h2>
+            <p>Renders proportional slices with labels and optional animation.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">piechart-preview</span>
+              </div>
+              <pre class="terminal-body"><code> PieChart
+  C# 35%  TS 25%  Python 20%</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;PieChart</span> <span class="attr">Width</span>=<span class="str">"50%"</span> <span class="attr">Height</span>=<span class="str">"12"</span>
+          <span class="attr">Data</span>=<span class="kw">"@PieData"</span>
+          <span class="attr">AnimationDuration</span>=<span class="str">"1.5"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(PieChartDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;PieChart</span> <span class="attr">Width</span>=<span class="str">"50%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+          <span class="attr">Data</span>=<span class="kw">"@PieData"</span>
+          <span class="attr">AnimationDuration</span>=<span class="str">"1.5"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Data</code></td><td><code>IReadOnlyList&lt;PieSlice&gt;</code></td><td><code>[]</code></td><td>Slice values, labels, and colors.</td></tr>
+                  <tr><td><code>AnimationDuration</code></td><td><code>double</code></td><td><code>0</code></td><td>Duration of sweep animation.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="doughnutchart" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Chart Component</p>
+            <h2>DoughnutChart</h2>
+            <p>Renders a pie-style chart with a hollow center and optional center label.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">doughnutchart-preview</span>
+              </div>
+              <pre class="terminal-body"><code> DoughnutChart
+  center label: Tasks</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;DoughnutChart</span> <span class="attr">Width</span>=<span class="str">"50%"</span> <span class="attr">Height</span>=<span class="str">"12"</span>
+               <span class="attr">Data</span>=<span class="kw">"@DonutData"</span>
+               <span class="attr">CenterLabel</span>=<span class="str">"100%"</span>
+               <span class="attr">InnerRadius</span>=<span class="str">"0.5"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(DoughnutChartDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;DoughnutChart</span> <span class="attr">Width</span>=<span class="str">"50%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+               <span class="attr">Data</span>=<span class="kw">"@DonutData"</span>
+               <span class="attr">CenterLabel</span>=<span class="str">"100%"</span>
+               <span class="attr">InnerRadius</span>=<span class="str">"0.5"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Data</code></td><td><code>IReadOnlyList&lt;PieSlice&gt;</code></td><td><code>[]</code></td><td>Slice values, labels, and colors.</td></tr>
+                  <tr><td><code>InnerRadius</code></td><td><code>double</code></td><td><code>0.5</code></td><td>Hollow center radius ratio.</td></tr>
+                  <tr><td><code>CenterLabel</code></td><td><code>string?</code></td><td><code>null</code></td><td>Text rendered in the center.</td></tr>
+                  <tr><td><code>CenterLabelColor</code></td><td><code>string?</code></td><td><code>null</code></td><td>Center label color.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
         <section id="treeview" class="component-section feature-card">
           <header class="component-header">
             <p class="hero-tagline">Input Component</p>
@@ -1104,6 +1482,15 @@ Console.WriteLine(""Hello"");
           <span class="attr">OnNodeToggled</span>=<span class="kw">"@OnToggled"</span>
           <span class="attr">OnNodeChecked</span>=<span class="kw">"@OnChecked"</span>
           <span class="attr">OnNodeActivated</span>=<span class="kw">"@OnActivated"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(TreeViewDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="razor">@using</span> TermBlade.Core.Renderables
+
+<span class="tag">&lt;TreeView</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+          <span class="attr">Nodes</span>=<span class="kw">"@Nodes"</span>
+          <span class="attr">CheckboxMode</span>=<span class="str">"true"</span>
+          <span class="attr">AutoFocus</span>=<span class="str">"false"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -1494,10 +1881,19 @@ Console.WriteLine(""Hello"");
             <h3>Usage</h3>
             <pre class="code-block"><code>&lt;ScrollBar <span class="attr">Orientation</span>=<span class="str">"vertical"</span>
            <span class="attr">ScrollPosition</span>=<span class="kw">"@pos"</span>
+          <span class="attr">ScrollSize</span>=<span class="str">"100"</span>
+          <span class="attr">ViewportSize</span>=<span class="str">"10"</span>
+          <span class="attr">TrackColor</span>=<span class="str">"#333333"</span>
+          <span class="attr">ThumbColor</span>=<span class="str">"#888888"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ScrollBarDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;ScrollBar</span> <span class="attr">Width</span>=<span class="str">"1"</span> <span class="attr">Height</span>=<span class="str">"12"</span>
+           <span class="attr">Orientation</span>=<span class="str">"vertical"</span>
+           <span class="attr">ScrollPosition</span>=<span class="str">"35"</span>
            <span class="attr">ScrollSize</span>=<span class="str">"100"</span>
-           <span class="attr">ViewportSize</span>=<span class="str">"10"</span>
-           <span class="attr">TrackColor</span>=<span class="str">"#333333"</span>
-           <span class="attr">ThumbColor</span>=<span class="str">"#888888"</span> <span class="punct">/&gt;</span></code></pre>
+           <span class="attr">ViewportSize</span>=<span class="str">"20"</span>
+           <span class="attr">ThumbColor</span>=<span class="str">"#58a6ff"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -1579,6 +1975,15 @@ Console.WriteLine(""Hello"");
     _overlay.Renderable.Error(<span class="str">"Connection timeout"</span>);
     _overlay.Renderable.Clear();
 }</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ConsoleOverlayDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="razor">@using</span> TermBlade.Core.Console
+
+<span class="tag">&lt;ConsoleOverlay</span> <span class="attr">Position</span>=<span class="kw">"OverlayPosition.TopRight"</span>
+                <span class="attr">MaxLines</span>=<span class="str">"4"</span>
+                <span class="attr">MaxWidth</span>=<span class="str">"38"</span>
+                <span class="attr">Lines</span>=<span class="kw">"@Lines"</span> <span class="punct">/&gt;</span></code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>

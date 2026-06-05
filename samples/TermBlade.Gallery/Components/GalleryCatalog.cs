@@ -29,6 +29,16 @@ public static class GalleryCatalog
             "Components/Demos/AsciiFontDemo.razor",
             ReadDemo("AsciiFontDemo.razor")),
 
+        new("LineNumbers",
+            "Displays a compact line number gutter for editors and code views.",
+            "Components/Demos/LineNumbersDemo.razor",
+            ReadDemo("LineNumbersDemo.razor")),
+
+        new("FrameBuffer",
+            "Renders a pixel-style frame buffer into terminal cells.",
+            "Components/Demos/FrameBufferDemo.razor",
+            ReadDemo("FrameBufferDemo.razor")),
+
         new("Select",
             "A navigable selection list with descriptions.",
             "Components/Demos/SelectDemo.razor",
@@ -63,6 +73,16 @@ public static class GalleryCatalog
             "Scrollable container with vertical and horizontal scrollbars.",
             "Components/Demos/ScrollBoxDemo.razor",
             ReadDemo("ScrollBoxDemo.razor")),
+
+        new("ScrollBar",
+            "Standalone vertical or horizontal scrollbar renderable.",
+            "Components/Demos/ScrollBarDemo.razor",
+            ReadDemo("ScrollBarDemo.razor")),
+
+        new("ConsoleOverlay",
+            "Floating debug console overlay for runtime diagnostics.",
+            "Components/Demos/ConsoleOverlayDemo.razor",
+            ReadDemo("ConsoleOverlayDemo.razor")),
 
         new("BarChart",
             "Vertical and horizontal bar charts with sparkline mode.",

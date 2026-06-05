@@ -51,6 +51,13 @@ public static class ComponentPreviewService
       case "scrollbox": RenderScrollBox(buffer); break;
       case "scrollbar": RenderScrollBar(buffer); break;
       case "consoleoverlay": RenderConsoleOverlay(buffer); break;
+      case "barchart": RenderBarChart(buffer); break;
+      case "linechart": RenderLineChart(buffer); break;
+      case "timeserieslinechart": RenderTimeSeriesLineChart(buffer); break;
+      case "heatmap": RenderHeatMap(buffer); break;
+      case "candlestickchart": RenderCandlestickChart(buffer); break;
+      case "piechart": RenderPieChart(buffer); break;
+      case "doughnutchart": RenderDoughnutChart(buffer); break;
       case "confirm": RenderConfirm(buffer); break;
       case "spinner": RenderSpinner(buffer); break;
       case "multiselect": RenderMultiSelect(buffer); break;
@@ -135,7 +142,7 @@ public static class ComponentPreviewService
 
   private static void RenderCalendar(RenderBuffer b)
   {
-    Draw(b, 6, 1, "June 2026", YellowFg, TextAttributes.Bold);
+    Draw(b, 2, 1, "Calendar - June 2026", YellowFg, TextAttributes.Bold);
     Draw(b, 2, 3, "Mo Tu We Th Fr Sa Su", CyanFg);
     Draw(b, 2, 4, " 1  2  3  4  5  6  7", DefaultFg);
     Draw(b, 2, 5, " 8  9 10 11 12 13 14", DefaultFg);
@@ -241,6 +248,100 @@ public static class ComponentPreviewService
     Draw(b, 4, 5, "> render frame 128", AccentFg);
     Draw(b, 4, 6, "> focused: Input#email", DefaultFg);
     Draw(b, 4, 7, "> fps: 60", MutedFg);
+  }
+
+  private static void RenderBarChart(RenderBuffer b)
+  {
+    Draw(b, 2, 1, "BarChart", YellowFg, TextAttributes.Bold);
+    var heights = new[] { 3, 7, 5, 9, 4, 8, 6 };
+    for (var i = 0; i < heights.Length; i++)
+    {
+      for (var y = 0; y < heights[i]; y++)
+        Draw(b, 4 + i * 4, 10 - y, "██", i % 2 == 0 ? BlueFg : AccentFg);
+    }
+
+    Draw(b, 4, 11, "Mon Tue Wed Thu Fri Sat Sun", MutedFg);
+  }
+
+  private static void RenderLineChart(RenderBuffer b)
+  {
+    Draw(b, 2, 1, "LineChart", YellowFg, TextAttributes.Bold);
+    Draw(b, 4, 9, "⣀", BlueFg);
+    Draw(b, 6, 8, "⣠", BlueFg);
+    Draw(b, 8, 7, "⣴", BlueFg);
+    Draw(b, 10, 8, "⠙⢦", BlueFg);
+    Draw(b, 14, 6, "⣠⠞", BlueFg);
+    Draw(b, 18, 5, "⣴⠋", BlueFg);
+    Draw(b, 22, 4, "⣠⠞", BlueFg);
+    Draw(b, 4, 10, "area fill + Braille resolution", MutedFg);
+  }
+
+  private static void RenderTimeSeriesLineChart(RenderBuffer b)
+  {
+    Draw(b, 2, 1, "TimeSeriesLineChart", YellowFg, TextAttributes.Bold);
+    Draw(b, 4, 8, "09:00", MutedFg);
+    Draw(b, 18, 8, "11:00", MutedFg);
+    Draw(b, 32, 8, "13:00", MutedFg);
+    Draw(b, 4, 6, "⣀⣤⣤⣀", YellowFg);
+    Draw(b, 12, 5, "⠉⠓⢦⣀", YellowFg);
+    Draw(b, 20, 4, "⣀⣤⠞⠁", YellowFg);
+    Draw(b, 28, 5, "⠉⢦⣀⣀", YellowFg);
+    Draw(b, 4, 10, "timestamp labels on the X axis", MutedFg);
+  }
+
+  private static void RenderHeatMap(RenderBuffer b)
+  {
+    Draw(b, 2, 1, "HeatMap", YellowFg, TextAttributes.Bold);
+    var colors = new[] { PanelBg, BlueFg, AccentFg, YellowFg, RedFg };
+    for (var row = 0; row < 5; row++)
+    {
+      Draw(b, 2, 3 + row, $"R{row + 1}", MutedFg);
+      for (var col = 0; col < 6; col++)
+      {
+        var bg = colors[(row + col) % colors.Length];
+        Draw(b, 7 + col * 5, 3 + row, ((row + col + 1) * 3).ToString("00"), DefaultFg, TextAttributes.None, bg);
+      }
+    }
+  }
+
+  private static void RenderCandlestickChart(RenderBuffer b)
+  {
+    Draw(b, 2, 1, "CandlestickChart", YellowFg, TextAttributes.Bold);
+    for (var i = 0; i < 8; i++)
+    {
+      var x = 5 + i * 4;
+      var color = i % 2 == 0 ? AccentFg : RedFg;
+      Draw(b, x, 3, "│", color);
+      Draw(b, x, 4, "█", color);
+      Draw(b, x, 5, "█", color);
+      Draw(b, x, 6, "│", color);
+    }
+
+    Draw(b, 4, 9, "OHLC with bull and bear colors", MutedFg);
+  }
+
+  private static void RenderPieChart(RenderBuffer b)
+  {
+    Draw(b, 2, 1, "PieChart", YellowFg, TextAttributes.Bold);
+    Draw(b, 6, 3, "  ██  ", BlueFg);
+    Draw(b, 6, 4, "██████", BlueFg);
+    Draw(b, 6, 5, "██", BlueFg);
+    Draw(b, 8, 5, "████", AccentFg);
+    Draw(b, 6, 6, "██████", YellowFg);
+    Draw(b, 21, 4, "C# 35%", BlueFg);
+    Draw(b, 21, 5, "TS 25%", AccentFg);
+    Draw(b, 21, 6, "Py 20%", YellowFg);
+  }
+
+  private static void RenderDoughnutChart(RenderBuffer b)
+  {
+    Draw(b, 2, 1, "DoughnutChart", YellowFg, TextAttributes.Bold);
+    Draw(b, 6, 3, " ████ ", BlueFg);
+    Draw(b, 6, 4, "██  ██", BlueFg);
+    Draw(b, 6, 5, "██OK██", AccentFg);
+    Draw(b, 6, 6, "██  ██", YellowFg);
+    Draw(b, 6, 7, " ████ ", YellowFg);
+    Draw(b, 21, 5, "hollow center + label", MutedFg);
   }
 
   private static void RenderConfirm(RenderBuffer b)

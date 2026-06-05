@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using TermBlade.Core.Ansi;
 using TermBlade.Core.Input;
 using TermBlade.Core.Layout;
@@ -26,6 +27,9 @@ public class ResizeEventArgs : EventArgs
 
 public class CliRenderer : IDisposable
 {
+  internal readonly record struct ConsoleSize(int Width, int Height);
+  private static readonly Regex TerminalSizeReportRegex = new(@"\x1b\[8;(?<rows>\d+);(?<cols>\d+)t", RegexOptions.Compiled);
+
   public int TerminalWidth { get; private set; }
   public int TerminalHeight { get; private set; }
   public RootRenderable Root { get; private set; }
@@ -53,22 +57,122 @@ public class CliRenderer : IDisposable
         ? Rgba.FromCss(_config.BackgroundColor)
         : Rgba.FromInts(0, 0, 0);
 
-    TerminalWidth = _config.Testing ? 80 : GetConsoleDimension(() => SysConsole.WindowWidth, 80);
-    TerminalHeight = _config.Testing ? 24 : GetConsoleDimension(() => SysConsole.WindowHeight, 24);
+    var initialSize = _config.Testing
+        ? new ConsoleSize(80, 24)
+        : GetCurrentConsoleSize(new ConsoleSize(80, 24), queryTerminal: false);
+    TerminalWidth = initialSize.Width;
+    TerminalHeight = initialSize.Height;
 
     Root = new RootRenderable(this);
   }
 
-  private static int GetConsoleDimension(Func<int> readDimension, int fallback)
+  private static ConsoleSize GetCurrentConsoleSize(ConsoleSize fallback, bool queryTerminal)
+    => ResolveConsoleSize(
+        ReadDotNetConsoleSize(),
+        ReadWindowsConsoleWindowSize(),
+        queryTerminal ? ReadTerminalReportedSize() : new ConsoleSize(0, 0),
+        fallback);
+
+  internal static ConsoleSize ResolveConsoleSize(ConsoleSize dotNetSize, ConsoleSize nativeSize, ConsoleSize fallback)
+    => ResolveConsoleSize(dotNetSize, nativeSize, new ConsoleSize(0, 0), fallback);
+
+  internal static ConsoleSize ResolveConsoleSize(ConsoleSize dotNetSize, ConsoleSize nativeSize, ConsoleSize terminalReportSize, ConsoleSize fallback)
+  {
+    dotNetSize = ValidOrZero(dotNetSize);
+    nativeSize = ValidOrZero(nativeSize);
+    terminalReportSize = ValidOrZero(terminalReportSize);
+
+    var width = Math.Max(Math.Max(dotNetSize.Width, nativeSize.Width), terminalReportSize.Width);
+    var height = Math.Max(Math.Max(dotNetSize.Height, nativeSize.Height), terminalReportSize.Height);
+
+    return new ConsoleSize(
+        width > 0 ? width : Math.Max(1, fallback.Width),
+        height > 0 ? height : Math.Max(1, fallback.Height));
+  }
+
+  private static ConsoleSize ValidOrZero(ConsoleSize size)
+    => size.Width > 0 && size.Height > 0 ? size : new ConsoleSize(0, 0);
+
+  private static ConsoleSize ReadDotNetConsoleSize()
   {
     try
     {
-      return Math.Max(1, readDimension());
+      return new ConsoleSize(Math.Max(1, SysConsole.WindowWidth), Math.Max(1, SysConsole.WindowHeight));
     }
     catch (IOException)
     {
-      return fallback;
+      return new ConsoleSize(0, 0);
     }
+    catch (InvalidOperationException)
+    {
+      return new ConsoleSize(0, 0);
+    }
+  }
+
+  private static ConsoleSize ReadWindowsConsoleWindowSize()
+  {
+    if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+      return new ConsoleSize(0, 0);
+
+    var output = GetStdHandle(StdOutputHandle);
+    if (!IsValidConsoleHandle(output) || !GetConsoleScreenBufferInfo(output, out var info))
+      return new ConsoleSize(0, 0);
+
+    var width = info.Window.Right - info.Window.Left + 1;
+    var height = info.Window.Bottom - info.Window.Top + 1;
+    return new ConsoleSize(width, height);
+  }
+
+  private static ConsoleSize ReadTerminalReportedSize()
+  {
+    if (SysConsole.IsInputRedirected || SysConsole.IsOutputRedirected)
+      return new ConsoleSize(0, 0);
+
+    try
+    {
+      SysConsole.Write("\x1b[18t");
+      SysConsole.Out.Flush();
+
+      var response = new StringBuilder();
+      var deadline = DateTime.UtcNow.AddMilliseconds(80);
+      while (DateTime.UtcNow < deadline)
+      {
+        while (SysConsole.KeyAvailable)
+        {
+          var key = SysConsole.ReadKey(intercept: true);
+          if (key.KeyChar != '\0')
+            response.Append(key.KeyChar);
+
+          if (TryParseTerminalSizeReport(response.ToString(), out var size))
+            return size;
+        }
+
+        Thread.Sleep(1);
+      }
+    }
+    catch
+    {
+      return new ConsoleSize(0, 0);
+    }
+
+    return new ConsoleSize(0, 0);
+  }
+
+  internal static bool TryParseTerminalSizeReport(string value, out ConsoleSize size)
+  {
+    var match = TerminalSizeReportRegex.Match(value);
+    if (!match.Success ||
+        !int.TryParse(match.Groups["rows"].Value, out var rows) ||
+        !int.TryParse(match.Groups["cols"].Value, out var cols) ||
+        rows <= 0 ||
+        cols <= 0)
+    {
+      size = default;
+      return false;
+    }
+
+    size = new ConsoleSize(cols, rows);
+    return true;
   }
 
   public Renderable? CurrentFocus { get; private set; }
@@ -123,6 +227,7 @@ public class CliRenderer : IDisposable
       // Enable mouse
       SysConsole.Write("\x1b[?1000h\x1b[?1002h\x1b[?1006h");
       SysConsole.Out.Flush();
+      RefreshConsoleSize(queryTerminal: true);
 
       // SIGWINCH
       if (!OperatingSystem.IsWindows())
@@ -131,7 +236,7 @@ public class CliRenderer : IDisposable
         {
           _sigwinchReg = PosixSignalRegistration.Create(PosixSignal.SIGWINCH, _ =>
           {
-            CheckResize();
+        RefreshConsoleSize(queryTerminal: false);
             _renderRequested = true;
           });
         }
@@ -251,7 +356,7 @@ public class CliRenderer : IDisposable
       try
       {
         if (_config.Testing) return;
-        CheckResize();
+        RefreshConsoleSize(queryTerminal: false);
 
         var now = DateTime.UtcNow;
         double deltaTime = (now - _lastFrame).TotalSeconds;
@@ -582,21 +687,17 @@ public class CliRenderer : IDisposable
     };
   }
 
-  private void CheckResize()
+  private void RefreshConsoleSize(bool queryTerminal)
   {
-    try
+    var size = GetCurrentConsoleSize(new ConsoleSize(TerminalWidth, TerminalHeight), queryTerminal);
+    if (size.Width != TerminalWidth || size.Height != TerminalHeight)
     {
-      int w = Math.Max(1, SysConsole.WindowWidth);
-      int h = Math.Max(1, SysConsole.WindowHeight);
-      if (w != TerminalWidth || h != TerminalHeight)
-      {
-        TerminalWidth = w;
-        TerminalHeight = h;
-        Root.UpdateSize(w, h);
-        Resize?.Invoke(this, new ResizeEventArgs(w, h));
-      }
+      TerminalWidth = size.Width;
+      TerminalHeight = size.Height;
+      Root.UpdateSize(size.Width, size.Height);
+      _prevBuffer = null;
+      Resize?.Invoke(this, new ResizeEventArgs(size.Width, size.Height));
     }
-    catch { /* may fail in non-tty environments */ }
   }
 
   private Renderable? HitTest(int x, int y) => HitTestNode(Root, x, y);
@@ -664,6 +765,9 @@ public class CliRenderer : IDisposable
   [DllImport("kernel32.dll", SetLastError = true)]
   private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
+  [DllImport("kernel32.dll", SetLastError = true)]
+  private static extern bool GetConsoleScreenBufferInfo(IntPtr hConsoleOutput, out ConsoleScreenBufferInfo lpConsoleScreenBufferInfo);
+
   [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
   private static extern bool ReadConsoleInput(
       IntPtr hConsoleInput,
@@ -689,6 +793,25 @@ public class CliRenderer : IDisposable
   {
     public short X;
     public short Y;
+  }
+
+  [StructLayout(LayoutKind.Sequential)]
+  private struct SmallRect
+  {
+    public short Left;
+    public short Top;
+    public short Right;
+    public short Bottom;
+  }
+
+  [StructLayout(LayoutKind.Sequential)]
+  private struct ConsoleScreenBufferInfo
+  {
+    public Coord Size;
+    public Coord CursorPosition;
+    public short Attributes;
+    public SmallRect Window;
+    public Coord MaximumWindowSize;
   }
 
   [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]

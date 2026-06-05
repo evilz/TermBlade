@@ -1,77 +1,68 @@
 @inherits GalleryComponentBase
 
-<Box Width="100%" Height="100%" BackgroundColor="#0d1117" FlexDirection="FlexDirection.Column">
+<Box Width="100%" Height="100%" BackgroundColor="#0d1117" FlexDirection="FlexDirection.Row">
 
-    <Box Width="100%" Height="8" BackgroundColor="#0d1117" PaddingLeft="2" PaddingTop="1">
-        <AsciiFont Width="60" Height="4" Text="Gallery" Font="block" Color="#58a6ff" BackgroundColor="#0d1117" />
-        <Text Content="TermBlade Component Gallery" Fg="#8b949e" LayoutPosition="absolute" Left="2" Top="5" Width="40" Height="1" />
-        <Text Content="Repo: github.com/evilz/TermBlade" Fg="#58a6ff" LayoutPosition="absolute" Left="2" Top="6" Width="40" Height="1" />
+    <Box Width="28" Height="100%" Border="true" BorderColor="#30363d" Title=" Gallery " BackgroundColor="#0d1117" PaddingTop="1" PaddingRight="1" PaddingBottom="1" PaddingLeft="1">
+        @for (var i = MenuWindow.StartIndex; i < MenuWindow.StartIndex + MenuWindow.Count; i++)
+        {
+            var isSelected = i == SelectedIndex;
+            var fg = isSelected ? "#ffffff" : "#8b949e";
+            var bg = isSelected ? "#1f6feb" : "#0d1117";
+            var label = GetEntryLabel(i);
+            var attrs = isSelected ? TextAttributes.Bold : TextAttributes.None;
+            <Box Width="26" Height="1" BackgroundColor="@bg">
+                <Text Content="@label" Fg="@fg" Bg="@bg" Width="26" Height="1" Attributes="@attrs" />
+            </Box>
+        }
     </Box>
 
-    <Box Width="100%" FlexGrow="1" FlexDirection="FlexDirection.Row" BackgroundColor="#0d1117">
+    <Box FlexGrow="1" Height="100%" FlexDirection="FlexDirection.Column" BackgroundColor="#0d1117" PaddingLeft="2" PaddingRight="2">
 
-        <Box Width="24" Height="100%" Border="true" BorderColor="#30363d" BackgroundColor="#0d1117" PaddingTop="1" PaddingBottom="1">
-            @for (var i = 0; i < Entries.Count; i++)
+        <Text Content="@CurrentEntry.Name" Fg="#58a6ff" Width="100%" Height="1" Attributes="@TextAttributes.Bold" />
+        <Text Content="@CurrentEntry.Description" Fg="#c9d1d9" Width="100%" Height="1" />
+        <Text Content="@SourceLabel" Fg="#f0883e" Width="100%" Height="1" />
+        <TabSelect Width="100%" Height="1" Tabs="@ContentTabs" SelectedIndex="@((int)SelectedTab)"
+                   SelectedIndexChanged="@SetSelectedTab" ActiveFg="#ffffff" ActiveBg="#1f6feb"
+                   InactiveFg="#8b949e" InactiveBg="#161b22" />
+
+        <Box Width="100%" FlexGrow="1" Border="true" BorderColor="#30363d" Title="@ContentPanelTitle" BackgroundColor="#161b22" PaddingLeft="1" PaddingRight="1" PaddingTop="1" PaddingBottom="1" MarginTop="1">
+            @if (SelectedTab == GalleryContentTab.Preview)
             {
-                var isSelected = i == SelectedIndex;
-                var fg = isSelected ? "#ffffff" : "#8b949e";
-                var bg = isSelected ? "#1f6feb" : "#0d1117";
-                var label = GetEntryLabel(i);
-                var attrs = isSelected ? TextAttributes.Bold : TextAttributes.None;
-                <Box Width="22" Height="1" BackgroundColor="@bg">
-                    <Text Content="@label" Fg="@fg" Bg="@bg" Width="22" Height="1" Attributes="@attrs" />
-                </Box>
+                @PreviewFragment
+            }
+            else
+            {
+                <Code Width="100%" Height="100%" Language="razor" ShowLineNumbers="true" Content="@CurrentEntry.RazorCode" />
             }
         </Box>
-
-        <Box FlexGrow="1" Height="100%" FlexDirection="FlexDirection.Column" BackgroundColor="#0d1117" PaddingLeft="2" PaddingRight="2" PaddingTop="1">
-
-            <Text Content="@CurrentEntry.Name" Fg="#58a6ff" Width="80" Height="1" Attributes="@TextAttributes.Bold" />
-            <Text Content="@CurrentEntry.Description" Fg="#c9d1d9" Width="80" Height="1" />
-            <Text Content="@SourceLabel" Fg="#f0883e" Width="80" Height="1" />
-
-            <Box Width="100%" Height="@CodePanelHeight" Border="true" BorderColor="#30363d" Title=" Code " BackgroundColor="#161b22" PaddingLeft="1" PaddingRight="1" PaddingTop="0" PaddingBottom="0" MarginTop="1">
-                <Code Width="100%" Height="100%" Language="razor" ShowLineNumbers="true" Content="@CurrentEntry.RazorCode" />
-            </Box>
-
-            <Box Width="100%" FlexGrow="1" Border="true" BorderColor="#30363d" Title=" Preview " BackgroundColor="#161b22" PaddingLeft="1" PaddingRight="1" PaddingTop="1" PaddingBottom="1" MarginTop="1">
-                @PreviewFragment
-            </Box>
-        </Box>
-    </Box>
-
-    <Box Width="100%" Height="2" BackgroundColor="#161b22" PaddingLeft="2" PaddingRight="2">
-        <Text Content="Use ↑/↓ to navigate • Tab / Ctrl+Tab to change focus • Enter to select • Control+C to exit"
-              Fg="#8b949e" Width="100%" Height="1" />
-        <Text Content="@FooterVersion"
-              Fg="#484f58" Width="100%" Height="1" />
     </Box>
 </Box>
 
 @code {
+    private static readonly List<string> ContentTabs = ["Preview", "Source"];
+
     private IReadOnlyList<GalleryEntry> Entries => GalleryCatalog.Entries;
 
     private int SelectedIndex { get; set; }
 
+    private GalleryContentTab SelectedTab { get; set; } = GalleryContentTab.Preview;
+
     private GalleryEntry CurrentEntry => Entries[SelectedIndex];
+
+    private GalleryViewportLayout Viewport => GalleryViewportLayout.Create(App.Renderer.TerminalHeight);
+
+    private GalleryMenuWindow MenuWindow => GalleryMenuWindow.Create(Entries.Count, SelectedIndex, MenuCapacity);
 
     private string SourceLabel => "Source Code: " + CurrentEntry.SourceFile;
 
-    private string FooterVersion => "TermBlade Gallery \u2022 .NET " + Environment.Version;
+    private string ContentPanelTitle => SelectedTab == GalleryContentTab.Preview ? " Preview " : " Source ";
+
+    private int MenuCapacity => Viewport.MenuCapacity;
 
     private string GetEntryLabel(int index)
     {
         var prefix = index == SelectedIndex ? "> " : "  ";
         return prefix + Entries[index].Name;
-    }
-
-    private string CodePanelHeight
-    {
-        get
-        {
-            var lines = CurrentEntry.RazorCode.Split('\n').Length;
-            return Math.Min(Math.Max(lines + 2, 6), 18).ToString();
-        }
     }
 
     private RenderFragment PreviewFragment => SelectedIndex switch
@@ -80,26 +71,30 @@
         1 => RenderComponent<TextDemo>(),
         2 => RenderComponent<CodeDemo>(),
         3 => RenderComponent<AsciiFontDemo>(),
-        4 => RenderComponent<SelectDemo>(),
-        5 => RenderComponent<InputDemo>(),
-        6 => RenderComponent<SliderDemo>(),
-        7 => RenderComponent<TabSelectDemo>(),
-        8 => RenderComponent<MarkdownDemo>(),
-        9 => RenderComponent<DiffDemo>(),
-        10 => RenderComponent<ScrollBoxDemo>(),
-        11 => RenderComponent<BarChartDemo>(),
-        12 => RenderComponent<LineChartDemo>(),
-        13 => RenderComponent<TimeSeriesLineChartDemo>(),
-        14 => RenderComponent<HeatMapDemo>(),
-        15 => RenderComponent<CandlestickChartDemo>(),
-        16 => RenderComponent<PieChartDemo>(),
-        17 => RenderComponent<DoughnutChartDemo>(),
-        18 => RenderComponent<TreeViewDemo>(),
-        19 => RenderComponent<CalendarDemo>(),
-        20 => RenderComponent<TextareaDemo>(),
-        21 => RenderComponent<ConfirmDemo>(),
-        22 => RenderComponent<SpinnerDemo>(),
-        23 => RenderComponent<MultiSelectDemo>(),
+        4 => RenderComponent<LineNumbersDemo>(),
+        5 => RenderComponent<FrameBufferDemo>(),
+        6 => RenderComponent<SelectDemo>(),
+        7 => RenderComponent<InputDemo>(),
+        8 => RenderComponent<SliderDemo>(),
+        9 => RenderComponent<TabSelectDemo>(),
+        10 => RenderComponent<MarkdownDemo>(),
+        11 => RenderComponent<DiffDemo>(),
+        12 => RenderComponent<ScrollBoxDemo>(),
+        13 => RenderComponent<ScrollBarDemo>(),
+        14 => RenderComponent<ConsoleOverlayDemo>(),
+        15 => RenderComponent<BarChartDemo>(),
+        16 => RenderComponent<LineChartDemo>(),
+        17 => RenderComponent<TimeSeriesLineChartDemo>(),
+        18 => RenderComponent<HeatMapDemo>(),
+        19 => RenderComponent<CandlestickChartDemo>(),
+        20 => RenderComponent<PieChartDemo>(),
+        21 => RenderComponent<DoughnutChartDemo>(),
+        22 => RenderComponent<TreeViewDemo>(),
+        23 => RenderComponent<CalendarDemo>(),
+        24 => RenderComponent<TextareaDemo>(),
+        25 => RenderComponent<ConfirmDemo>(),
+        26 => RenderComponent<SpinnerDemo>(),
+        27 => RenderComponent<MultiSelectDemo>(),
         _ => RenderComponent<BoxDemo>(),
     };
 
@@ -123,7 +118,22 @@
                 SelectedIndex = (SelectedIndex + 1) % Entries.Count;
                 InvokeAsync(StateHasChanged);
                 break;
+            case "left":
+                key.PreventDefault();
+                SelectedTab = GalleryContentTabNavigation.Move(SelectedTab, -1);
+                InvokeAsync(StateHasChanged);
+                break;
+            case "right":
+                key.PreventDefault();
+                SelectedTab = GalleryContentTabNavigation.Move(SelectedTab, 1);
+                InvokeAsync(StateHasChanged);
+                break;
         }
+    }
+
+    private void SetSelectedTab(int index)
+    {
+        SelectedTab = (GalleryContentTab)index;
     }
 
     private static RenderFragment RenderComponent<TComponent>() where TComponent : Microsoft.AspNetCore.Components.IComponent

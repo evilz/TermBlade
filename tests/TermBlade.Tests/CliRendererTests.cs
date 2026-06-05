@@ -45,6 +45,57 @@ public class CliRendererTests
   }
 
   [Fact]
+  public void ResolveConsoleSize_UsesLargerNativeWindow_WhenConsoleWindowIsStale()
+  {
+    var size = CliRenderer.ResolveConsoleSize(
+        new CliRenderer.ConsoleSize(120, 40),
+        new CliRenderer.ConsoleSize(190, 72),
+        new CliRenderer.ConsoleSize(80, 24));
+
+    Assert.Equal(190, size.Width);
+    Assert.Equal(72, size.Height);
+  }
+
+  [Fact]
+  public void ResolveConsoleSize_UsesLargerTerminalReport_WhenConsoleApisAreStale()
+  {
+    var size = CliRenderer.ResolveConsoleSize(
+        new CliRenderer.ConsoleSize(120, 40),
+        new CliRenderer.ConsoleSize(120, 40),
+        new CliRenderer.ConsoleSize(190, 72),
+        new CliRenderer.ConsoleSize(80, 24));
+
+    Assert.Equal(190, size.Width);
+    Assert.Equal(72, size.Height);
+  }
+
+  [Fact]
+  public void ResolveConsoleSize_IgnoresInvalidSources()
+  {
+    var size = CliRenderer.ResolveConsoleSize(
+        new CliRenderer.ConsoleSize(0, 40),
+        new CliRenderer.ConsoleSize(190, 0),
+        new CliRenderer.ConsoleSize(80, 24));
+
+    Assert.Equal(80, size.Width);
+    Assert.Equal(24, size.Height);
+  }
+
+  [Fact]
+  public void TryParseTerminalSizeReport_ParsesWindowReport()
+  {
+    Assert.True(CliRenderer.TryParseTerminalSizeReport("\x1b[8;72;190t", out var size));
+    Assert.Equal(190, size.Width);
+    Assert.Equal(72, size.Height);
+  }
+
+  [Fact]
+  public void TryParseTerminalSizeReport_IgnoresMalformedReport()
+  {
+    Assert.False(CliRenderer.TryParseTerminalSizeReport("\x1b[8;0;190t", out _));
+  }
+
+  [Fact]
   public void ParseWindowsKey_PrintableCharacter_ReturnsKeyEvent()
   {
     var key = CliRenderer.ParseWindowsKey(new ConsoleKeyInfo('a', ConsoleKey.A, false, false, false));

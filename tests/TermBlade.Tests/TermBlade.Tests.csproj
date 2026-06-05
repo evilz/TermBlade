@@ -22,6 +22,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\TermBlade.Core\TermBlade.Core.csproj" />
     <ProjectReference Include="..\..\src\TermBlade.Razor\TermBlade.Razor.csproj" />
+    <ProjectReference Include="..\..\samples\TermBlade.Gallery\TermBlade.Gallery.csproj" />
+    <ProjectReference Include="..\..\docs\TermBlade.Docs.Wasm\TermBlade.Docs.Wasm.csproj" />
   </ItemGroup>
 
 </Project>
