@@ -4,7 +4,7 @@
 .components-hero {
   padding: 6rem 0 2.5rem;
 }
-.components-hero .hero-title { font-size: 2.5rem; }
+.components-hero .hero-title { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
 
 /* ---- Docs Layout ---- */
 .docs-layout {
@@ -26,13 +26,37 @@
 .sidebar-card {
   padding: 1.25rem !important;
 }
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
 .sidebar-card h2 {
   font-size: 1rem;
-  margin-bottom: 1rem;
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  margin-bottom: 0;
 }
+.sidebar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.sidebar-toggle span {
+  display: block;
+  width: 18px; height: 2px;
+  background: var(--text-secondary);
+  margin: 4px 0;
+  transition: transform .25s, opacity .25s;
+}
+.sidebar-toggle.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.sidebar-toggle.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.sidebar-toggle.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
 .sidebar-group {
   margin-bottom: 1.25rem;
 }
@@ -188,7 +212,7 @@
   font-weight: 600;
 }
 
-/* ---- Responsive ---- */
+/* ---- Responsive: tablet ---- */
 @media (max-width: 900px) {
   .docs-layout {
     flex-direction: column;
@@ -197,33 +221,29 @@
     position: static;
     width: 100%;
     max-height: none;
+    overflow-y: visible;
   }
-  .sidebar-card {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: baseline;
+  .sidebar-toggle { display: block; }
+  .sidebar-body {
+    display: none;
+    margin-top: 0.75rem;
   }
-  .sidebar-card h2 {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-  .sidebar-group {
-    margin-bottom: 0.5rem;
-  }
-  .sidebar-group h3 {
-    margin-bottom: 0.25rem;
-  }
-  .sidebar-group a {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-  }
+  .sidebar-body.open { display: block; }
 }
 
+/* ---- Responsive: mobile ---- */
 @media (max-width: 768px) {
   .components-hero { padding: 5rem 0 1.5rem; }
   .components-hero .hero-title { font-size: 2rem; }
   .component-section { padding: 1.25rem !important; }
+  .component-header h2 { font-size: 1.35rem; }
+}
+
+@media (max-width: 480px) {
+  .component-section { padding: 1rem !important; }
+  .component-section .components-table { font-size: 0.8rem; }
+  .component-section .components-table th,
+  .component-section .components-table td { padding: 0.5rem 0.6rem; }
 }
 
 /* ---- Live WASM + xterm.js previews ---- */
