@@ -1,6 +1,14 @@
 using System.Diagnostics;
+using TermBlade.Core.Input;
 
 namespace TermBlade.FileManager;
+
+internal enum FileManagerKeyResult
+{
+  NotHandled,
+  Handled,
+  Exit
+}
 
 internal enum FileManagerFocus
 {
@@ -32,7 +40,7 @@ internal sealed class FileManagerState
   public bool PreviewVisible { get; private set; } = true;
   public int PreviewScrollX { get; private set; }
   public int PreviewScrollY { get; private set; }
-  public bool FooterVisible { get; private set; } = true;
+  public bool FooterVisible { get; private set; }
   public ConfirmationRequest? PendingConfirmation { get; private set; }
 
   public FilePanel ActivePanel => Panels[ActivePanelIndex];
@@ -187,10 +195,13 @@ internal sealed class FileManagerState
   }
 
   public void OpenPrompt(PromptMode mode)
+      => OpenPrompt(mode, string.Empty);
+
+  public void OpenPrompt(PromptMode mode, string initialText)
   {
     Focus = FileManagerFocus.Prompt;
     PromptMode = mode;
-    PromptText = string.Empty;
+    PromptText = initialText;
   }
 
   public void ClosePrompt()
@@ -266,6 +277,138 @@ internal sealed class FileManagerState
         break;
     }
   }
+
+  public FileManagerKeyResult HandleSpfKey(KeyEvent key)
+  {
+    if (PendingConfirmation is not null)
+    {
+      if (key.Name is "y" or "Y")
+        ConfirmPending();
+      else if (key.Name is "n" or "N" or "escape")
+        CancelPending();
+      else
+        return FileManagerKeyResult.NotHandled;
+
+      return FileManagerKeyResult.Handled;
+    }
+
+    switch (key.Name)
+    {
+      case "q":
+      case "escape":
+        return FileManagerKeyResult.Exit;
+      case "s":
+        ToggleFocus(FileManagerFocus.Sidebar);
+        return FileManagerKeyResult.Handled;
+      case "p":
+        ToggleFocus(FileManagerFocus.Processes);
+        return FileManagerKeyResult.Handled;
+      case "m":
+        ToggleFocus(FileManagerFocus.Metadata);
+        return FileManagerKeyResult.Handled;
+      case ":":
+        OpenPrompt(PromptMode.Shell);
+        return FileManagerKeyResult.Handled;
+      case ">":
+        OpenPrompt(PromptMode.Spf);
+        return FileManagerKeyResult.Handled;
+      case "f":
+        TogglePreview();
+        return FileManagerKeyResult.Handled;
+      case "F":
+        ToggleFooter();
+        return FileManagerKeyResult.Handled;
+      case "n":
+      case "N":
+        SplitActivePanel();
+        return FileManagerKeyResult.Handled;
+      case "w":
+        CloseActivePanel();
+        return FileManagerKeyResult.Handled;
+      case "tab":
+      case "L":
+        FocusNextPanel();
+        return FileManagerKeyResult.Handled;
+      case "H":
+        FocusPreviousPanel();
+        return FileManagerKeyResult.Handled;
+      case "left" when key.Shift:
+        FocusPreviousPanel();
+        return FileManagerKeyResult.Handled;
+      case "up":
+      case "k":
+        MoveOrSidebar(deltaY: -1);
+        return FileManagerKeyResult.Handled;
+      case "down":
+      case "j":
+        MoveOrSidebar(deltaY: 1);
+        return FileManagerKeyResult.Handled;
+      case "return":
+      case "right":
+      case "l":
+        if (Focus == FileManagerFocus.Sidebar)
+          ActivateSelectedSidebarEntry();
+        else
+          OpenSelected();
+        return FileManagerKeyResult.Handled;
+      case "h":
+      case "left":
+      case "backspace":
+        NavigateParent();
+        return FileManagerKeyResult.Handled;
+      case "ctrl+n":
+        OpenPrompt(PromptMode.Spf, "touch ");
+        return FileManagerKeyResult.Handled;
+      case "ctrl+r":
+        OpenPrompt(PromptMode.Spf, "rename ");
+        return FileManagerKeyResult.Handled;
+      case "ctrl+c":
+        CopySelected(cut: false);
+        return FileManagerKeyResult.Handled;
+      case "ctrl+x":
+        CopySelected(cut: true);
+        return FileManagerKeyResult.Handled;
+      case "ctrl+v":
+      case "ctrl+w":
+        PasteClipboard();
+        return FileManagerKeyResult.Handled;
+      case "ctrl+d":
+      case "delete":
+        RequestDeleteSelected();
+        return FileManagerKeyResult.Handled;
+      default:
+        return FileManagerKeyResult.NotHandled;
+    }
+  }
+
+  public string BuildSpfMetadataContent()
+  {
+    var entry = ActivePanel.SelectedEntry;
+    if (entry == null)
+      return "Name\nSize\nDate Modified\nPermissions\nOwner\nGroup";
+
+    var modified = entry.Value.LastWriteTime == DateTimeOffset.MinValue
+        ? string.Empty
+        : entry.Value.LastWriteTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
+    var permissions = string.IsNullOrWhiteSpace(entry.Value.Permissions)
+        ? (entry.Value.IsDirectory ? "drwxrwxrwx" : "-rw-rw-rw-")
+        : entry.Value.Permissions;
+
+    return string.Join('\n',
+        $"Name          {entry.Value.Name}",
+        $"Size          {FormatSize(entry.Value.Size)}",
+        $"Date Modified {modified}",
+        $"Permissions   {permissions}",
+        $"Owner         {entry.Value.Owner}",
+        $"Group         {entry.Value.Group}");
+  }
+
+  public string BuildSpfClipboardContent()
+      => Clipboard.SourcePath is null
+          ? "✖ No content in clipboard"
+          : $"{(Clipboard.IsCut ? "Cut" : "Copy")}\n{Clipboard.SourcePath}";
+
+  public string BuildSpfProcessesContent() => "✖ No processes running";
 
   public void CreateDirectory(string name)
   {
@@ -445,6 +588,22 @@ internal sealed class FileManagerState
     return document;
   }
 
+  public IReadOnlyList<FileManagerEntry> BuildSelectedDirectoryPreviewEntries()
+  {
+    var entry = ActivePanel.SelectedEntry;
+    if (entry is not { IsDirectory: true })
+      return [];
+
+    try
+    {
+      return _fileSystem.ListEntries(entry.Value.FullPath);
+    }
+    catch
+    {
+      return [];
+    }
+  }
+
   public void ScrollPreview(int deltaX, int deltaY, int viewportWidth, int viewportHeight)
   {
     var document = BuildPreviewDocument(maxChars: 64 * 1024);
@@ -467,6 +626,14 @@ internal sealed class FileManagerState
     panel.Refresh(_fileSystem);
     Panels.Add(panel);
     ActivePanelIndex = Panels.Count - 1;
+  }
+
+  private void MoveOrSidebar(int deltaY)
+  {
+    if (Focus == FileManagerFocus.Sidebar)
+      MoveSidebarSelection(deltaY);
+    else
+      MoveSelection(deltaY);
   }
 
   private void ChangeDirectory(string? path)

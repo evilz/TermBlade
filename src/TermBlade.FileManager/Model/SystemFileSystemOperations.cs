@@ -137,7 +137,10 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
           info.FullName,
           info is DirectoryInfo,
           info is FileInfo file ? file.Length : 0,
-          info.LastWriteTime);
+          info.LastWriteTime,
+          info is DirectoryInfo ? "drwxrwxrwx" : "-rw-rw-rw-",
+          Environment.UserName,
+          string.Empty);
 
   private static void CopyDirectory(string sourcePath, string destinationPath, bool overwrite)
   {

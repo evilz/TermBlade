@@ -52,6 +52,7 @@
           <div class="sidebar-group">
             <h3>Content Components</h3>
             <a href="#text">Text</a>
+            <a href="#segmentedtext">SegmentedText</a>
             <a href="#code">Code</a>
             <a href="#markdown">Markdown</a>
             <a href="#diff">Diff</a>
@@ -141,6 +142,87 @@
                   <tr><td><code>TextAlign</code></td><td><code>string</code></td><td><code>"left"</code></td><td>Text alignment: left, center, or right.</td></tr>
                   <tr><td><code>Wrap</code></td><td><code>bool</code></td><td><code>true</code></td><td>Whether to wrap text at component boundary.</td></tr>
                   <tr><td><code>Attributes</code></td><td><code>TextAttributes</code></td><td><code>TextAttributes.None</code></td><td>Text formatting: Bold, Dim, Italic, Underline, Blink, Inverse, Strikethrough.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Id</code></td><td><code>string?</code></td><td><code>null</code></td><td>Unique identifier.</td></tr>
+                  <tr><td><code>Width</code></td><td><code>string?</code></td><td><code>null</code></td><td>Width (e.g. <code>"100%"</code>, <code>"40"</code>).</td></tr>
+                  <tr><td><code>Height</code></td><td><code>string?</code></td><td><code>null</code></td><td>Height.</td></tr>
+                  <tr><td><code>FlexDirection</code></td><td><code>FlexDirection?</code></td><td><code>null</code></td><td>Flex layout direction.</td></tr>
+                  <tr><td><code>AlignItems</code></td><td><code>AlignItems?</code></td><td><code>null</code></td><td>Cross-axis alignment.</td></tr>
+                  <tr><td><code>JustifyContent</code></td><td><code>JustifyContent?</code></td><td><code>null</code></td><td>Main-axis alignment.</td></tr>
+                  <tr><td><code>FlexGrow</code></td><td><code>float?</code></td><td><code>null</code></td><td>Flex grow factor.</td></tr>
+                  <tr><td><code>FlexShrink</code></td><td><code>float?</code></td><td><code>null</code></td><td>Flex shrink factor.</td></tr>
+                  <tr><td><code>LayoutPosition</code></td><td><code>string?</code></td><td><code>null</code></td><td>Position type.</td></tr>
+                  <tr><td><code>Top</code> / <code>Left</code> / <code>Right</code> / <code>Bottom</code></td><td><code>int?</code></td><td><code>null</code></td><td>Position offsets.</td></tr>
+                  <tr><td><code>PaddingTop</code> / <code>PaddingRight</code> / <code>PaddingBottom</code> / <code>PaddingLeft</code></td><td><code>int?</code></td><td><code>null</code></td><td>Padding.</td></tr>
+                  <tr><td><code>MarginTop</code> / <code>MarginRight</code> / <code>MarginBottom</code> / <code>MarginLeft</code></td><td><code>int?</code></td><td><code>null</code></td><td>Margin.</td></tr>
+                  <tr><td><code>ZIndex</code></td><td><code>int?</code></td><td><code>null</code></td><td>Stacking order.</td></tr>
+                  <tr><td><code>Visible</code></td><td><code>bool?</code></td><td><code>null</code></td><td>Visibility toggle.</td></tr>
+                  <tr><td><code>Opacity</code></td><td><code>float?</code></td><td><code>null</code></td><td>Opacity (0.0 to 1.0).</td></tr>
+                  <tr><td><code>Focusable</code></td><td><code>bool?</code></td><td><code>null</code></td><td>Whether the component can receive focus.</td></tr>
+                  <tr><td><code>AutoFocus</code></td><td><code>bool</code></td><td><code>false</code></td><td>Whether to auto-focus on mount.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </section>
+
+        <section id="segmentedtext" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Content Component</p>
+            <h2>SegmentedText</h2>
+            <p>Renders a single terminal line from independently styled text segments.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">segmentedtext-preview</span>
+              </div>
+              <pre class="terminal-body"><code> 󰉋 <b>superfile</b>  C:\Users\evilz
+ ❯ 󰉋 AppData  drwxrwxrwx
+ ✖ No content in clipboard
+ <b> segmented </b> text</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;SegmentedText</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Segments</span>=<span class="kw">"@segments"</span> <span class="punct">/&gt;</span>
+
+<span class="razor">@code</span> {
+    <span class="kw">private static readonly IReadOnlyList&lt;SegmentedTextSegment&gt;</span> segments =
+    [
+        <span class="kw">new</span>(<span class="str">"󰉋 "</span>, <span class="str">"#89dceb"</span>),
+        <span class="kw">new</span>(<span class="str">"superfile"</span>, <span class="str">"#cdd6f4"</span>, Attributes: TextAttributes.Bold)
+    ];
+}</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(SegmentedTextDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;SegmentedText</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Segments</span>=<span class="kw">"@HeaderSegments"</span> <span class="punct">/&gt;</span>
+<span class="tag">&lt;SegmentedText</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Segments</span>=<span class="kw">"@FileSegments"</span> <span class="punct">/&gt;</span>
+<span class="tag">&lt;SegmentedText</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Segments</span>=<span class="kw">"@StatusSegments"</span> <span class="punct">/&gt;</span>
+<span class="tag">&lt;SegmentedText</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">BackgroundColor</span>=<span class="str">"#1e1e2e"</span> <span class="attr">Segments</span>=<span class="kw">"@HighlightedSegments"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Segments</code></td><td><code>IReadOnlyList&lt;SegmentedTextSegment&gt;</code></td><td><code>[]</code></td><td>Ordered text segments with independent foreground, background, and attributes.</td></tr>
+                  <tr><td><code>BackgroundColor</code></td><td><code>string</code></td><td><code>"transparent"</code></td><td>Optional background fill color for the whole component.</td></tr>
                 </tbody>
               </table>
             </div>

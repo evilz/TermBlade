@@ -34,6 +34,7 @@ public static class ComponentPreviewService
     switch (component.ToLowerInvariant())
     {
       case "text": RenderText(buffer); break;
+      case "segmentedtext": RenderSegmentedText(buffer); break;
       case "code": RenderCode(buffer); break;
       case "markdown": RenderMarkdown(buffer); break;
       case "diff": RenderDiff(buffer); break;
@@ -76,6 +77,21 @@ public static class ComponentPreviewService
     Draw(b, 2, 6, "Underline text", DefaultFg, TextAttributes.Underline);
     Draw(b, 2, 7, "Strikethrough", DefaultFg, TextAttributes.Strikethrough);
     Draw(b, 2, 9, "RGB foreground + transparent background", AccentFg);
+  }
+
+  private static void RenderSegmentedText(RenderBuffer b)
+  {
+    Draw(b, 2, 1, "SegmentedText", YellowFg, TextAttributes.Bold);
+    Draw(b, 2, 3, "󰉋 ", CyanFg);
+    Draw(b, 4, 3, "superfile", DefaultFg, TextAttributes.Bold);
+    Draw(b, 15, 3, "C:\\Users\\evilz", BlueFg);
+    Draw(b, 2, 5, "❯ ", MagentaFg);
+    Draw(b, 4, 5, "󰉋 ", AccentFg);
+    Draw(b, 6, 5, "AppData", DefaultFg);
+    Draw(b, 15, 5, "drwxrwxrwx", MutedFg);
+    Draw(b, 2, 7, "✖ ", MutedFg);
+    Draw(b, 4, 7, "No content in clipboard", MutedFg);
+    Draw(b, 2, 9, "independent colors per line segment", DefaultFg);
   }
 
   private static void RenderCode(RenderBuffer b)

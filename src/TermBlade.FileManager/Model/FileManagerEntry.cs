@@ -5,7 +5,10 @@ internal readonly record struct FileManagerEntry(
     string FullPath,
     bool IsDirectory,
     long Size,
-    DateTimeOffset LastWriteTime)
+    DateTimeOffset LastWriteTime,
+    string Permissions = "",
+    string Owner = "",
+    string Group = "")
 {
   public static FileManagerEntry Directory(string path)
       => new(Path.GetFileName(path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)), path, true, 0, DateTimeOffset.MinValue);

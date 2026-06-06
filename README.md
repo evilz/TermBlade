@@ -84,13 +84,13 @@ Install the terminal file manager as a global .NET tool:
 
 ```bash
 dotnet tool install --global TermBlade.FileManager
-termblade-fm
+tbfm
 ```
 
 You can also start it in a specific directory:
 
 ```bash
-termblade-fm ./src
+tbfm ./src
 ```
 
 The file manager is a Razor-hosted terminal UI with multiple file panels, sidebar,

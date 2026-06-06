@@ -18,6 +18,7 @@ internal static class Program
         .ConfigureServices(services =>
         {
           services.Configure<FileManagerStartupOptions>(options => options.StartPath = fullStartPath);
+          services.Configure<TermBladeRazorOptions>(options => options.ExitOnCtrlC = false);
           services.AddSingleton<IFileSystemOperations, SystemFileSystemOperations>();
         })
         .UseTermBladeRazor<FileManagerApp>()

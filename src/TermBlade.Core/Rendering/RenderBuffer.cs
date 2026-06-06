@@ -137,7 +137,7 @@ public class RenderBuffer
   private static int[] GetBorderChars(string style) => style.ToLowerInvariant() switch
   {
     "double" => new[] { '╔', '╗', '╚', '╝', '═', '║' }.Select(c => (int)c).ToArray(),
-    "rounded" => new[] { '╭', '╮', '╰', '╯', '─', '│' }.Select(c => (int)c).ToArray(),
+    "rounded" or "spf" => new[] { '╭', '╮', '╰', '╯', '─', '│' }.Select(c => (int)c).ToArray(),
     "thick" or "heavy" => new[] { '┏', '┓', '┗', '┛', '━', '┃' }.Select(c => (int)c).ToArray(),
     "dashed" => new[] { '┌', '┐', '└', '┘', '╌', '╎' }.Select(c => (int)c).ToArray(),
     "ascii" => new[] { '+', '+', '+', '+', '-', '|' }.Select(c => (int)c).ToArray(),

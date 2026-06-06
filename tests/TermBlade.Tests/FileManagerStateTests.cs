@@ -1,4 +1,5 @@
 using TermBlade.FileManager;
+using TermBlade.Core.Input;
 
 namespace TermBlade.Tests;
 
@@ -284,6 +285,52 @@ public class FileManagerStateTests
 
     Assert.NotNull(state.StartupError);
     Assert.Equal("/missing", state.ActivePanel.CurrentPath);
+  }
+
+  [Fact]
+  public void BuildSpfPanelContent_UsesSuperfileEmptyStateLabels()
+  {
+    var fileSystem = new FakeFileSystem("/repo");
+    fileSystem.SetEntries("/repo", [FileManagerEntry.Directory("/repo/AppData")]);
+    var state = FileManagerState.Create("/repo", fileSystem);
+
+    Assert.Contains("Name", state.BuildSpfMetadataContent());
+    Assert.Contains("Date Modified", state.BuildSpfMetadataContent());
+    Assert.Contains("Permissions", state.BuildSpfMetadataContent());
+    Assert.Contains("Owner", state.BuildSpfMetadataContent());
+    Assert.Contains("Group", state.BuildSpfMetadataContent());
+    Assert.Equal("✖ No content in clipboard", state.BuildSpfClipboardContent());
+    Assert.Equal("✖ No processes running", state.BuildSpfProcessesContent());
+  }
+
+  [Fact]
+  public void HandleSpfKey_UsesCtrlFileOperationBindings()
+  {
+    var fileSystem = new FakeFileSystem("/repo");
+    fileSystem.SetEntries("/repo", [FileManagerEntry.File("/repo/source.txt", 1)]);
+    var state = FileManagerState.Create("/repo", fileSystem);
+
+    var copyResult = state.HandleSpfKey(new KeyEvent { Name = "ctrl+c", Ctrl = true });
+    var deleteResult = state.HandleSpfKey(new KeyEvent { Name = "ctrl+d", Ctrl = true });
+
+    Assert.Equal(FileManagerKeyResult.Handled, copyResult);
+    Assert.Equal("/repo/source.txt", state.Clipboard.SourcePath);
+    Assert.Equal(FileManagerKeyResult.Handled, deleteResult);
+    Assert.NotNull(state.PendingConfirmation);
+    Assert.Equal(ConfirmationKind.Delete, state.PendingConfirmation.Kind);
+  }
+
+  [Fact]
+  public void HandleSpfKey_PlainCopyKeyNoLongerCopies()
+  {
+    var fileSystem = new FakeFileSystem("/repo");
+    fileSystem.SetEntries("/repo", [FileManagerEntry.File("/repo/source.txt", 1)]);
+    var state = FileManagerState.Create("/repo", fileSystem);
+
+    var result = state.HandleSpfKey(new KeyEvent { Name = "c", Char = 'c' });
+
+    Assert.Equal(FileManagerKeyResult.NotHandled, result);
+    Assert.Null(state.Clipboard.SourcePath);
   }
 
   private sealed class FakeFileSystem(string rootPath) : IFileSystemOperations

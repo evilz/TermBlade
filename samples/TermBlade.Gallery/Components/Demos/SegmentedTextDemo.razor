@@ -1,0 +1,34 @@
+<SegmentedText Width="52" Height="1" Segments="@HeaderSegments" />
+<SegmentedText Width="52" Height="1" Segments="@FileSegments" />
+<SegmentedText Width="52" Height="1" Segments="@StatusSegments" />
+<SegmentedText Width="52" Height="1" BackgroundColor="#1e1e2e" Segments="@HighlightedSegments" />
+
+@code {
+    private static readonly IReadOnlyList<SegmentedTextSegment> HeaderSegments =
+    [
+        new("󰉋 ", "#89dceb"),
+        new("superfile", "#cdd6f4", Attributes: TextAttributes.Bold),
+        new("  "),
+        new("C:\\Users\\evilz", "#89b4fa")
+    ];
+
+    private static readonly IReadOnlyList<SegmentedTextSegment> FileSegments =
+    [
+        new("❯ ", "#b4befe"),
+        new("󰉋 ", "#a6e3a1"),
+        new("AppData", "#cdd6f4"),
+        new("  drwxrwxrwx", "#a6adc8")
+    ];
+
+    private static readonly IReadOnlyList<SegmentedTextSegment> StatusSegments =
+    [
+        new("✖ ", "#a6adc8"),
+        new("No content in clipboard", "#a6adc8")
+    ];
+
+    private static readonly IReadOnlyList<SegmentedTextSegment> HighlightedSegments =
+    [
+        new(" segmented ", "#1e1e2e", "#a6e3a1", TextAttributes.Bold),
+        new(" text ", "#cdd6f4", "#313244")
+    ];
+}
