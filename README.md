@@ -48,7 +48,8 @@ src/TermBlade.Core/            # Core library (NuGet package)
   Events/                      # EventEmitter
   Plugins/                     # IPlugin, PluginRegistry
 src/TermBlade.Razor/           # Razor host + component wrappers for renderables
-tests/TermBlade.Tests/         # xUnit test project (126 tests)
+src/TermBlade.FileManager/     # Global dotnet tool: modern terminal file manager
+tests/TermBlade.Tests/         # xUnit test project
 samples/TermBlade.Samples/    # Sample console applications
 samples/TermBlade.Razor.Samples/ # Razor-hosted sample console applications
 docs/TermBlade.Docs.Wasm/     # Interactive docs (Blazor WASM + xterm.js)
@@ -76,6 +77,33 @@ dotnet run --project samples/TermBlade.Razor.Samples -- console  # Razor-hosted 
 dotnet run --project samples/TermBlade.Razor.Samples -- calendar # Razor-hosted calendar demo
 dotnet run --project samples/TermBlade.Gallery                 # Interactive component gallery (includes Calendar demo)
 ```
+
+## TermBlade.FileManager
+
+Install the terminal file manager as a global .NET tool:
+
+```bash
+dotnet tool install --global TermBlade.FileManager
+tbfm
+```
+
+You can also start it in a specific directory:
+
+```bash
+tbfm ./src
+```
+
+The file manager is a Razor-hosted terminal UI with multiple file panels, sidebar,
+metadata, clipboard, preview, command bar, shell prompt, and SPF commands such as
+`split`, `open <PATH>`, `cd <PATH>`, `mkdir`, `touch`, `rename`, `copy`, `cut`,
+`paste`, `delete`, and `refresh`. Destructive actions require confirmation.
+
+Navigation uses `Up`/`Down` or `k`/`j` to move the cursor, `Enter` or `l` to
+open the selected directory or file, and `h` or `Backspace` to go to the parent
+directory. Press `s` to focus the sidebar, move through Home/Pinned/Disks entries,
+and press `Enter` to jump to the selected location. Press `P` to focus the preview;
+then use arrows or `h`/`j`/`k`/`l` to scroll it vertically and horizontally.
+Readable text files render through the `Code` component with syntax highlighting.
 
 ## Documentation
 

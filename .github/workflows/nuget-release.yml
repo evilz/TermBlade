@@ -87,6 +87,15 @@ jobs:
           -p:SymbolPackageFormat=snupkg
           --output ./nupkgs
 
+      - name: Pack TermBlade.FileManager
+        run: >
+          dotnet pack src/TermBlade.FileManager/TermBlade.FileManager.csproj
+          --no-build
+          --configuration ${{ env.CONFIGURATION }}
+          -p:Version=${{ steps.version.outputs.VERSION }}
+          -p:ContinuousIntegrationBuild=true
+          --output ./nupkgs
+
       - name: NuGet login
         uses: NuGet/login@v1
         id: login

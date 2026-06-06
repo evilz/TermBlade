@@ -6,6 +6,7 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/TermBlade.Core/TermBlade.Core.csproj" />
+    <Project Path="src/TermBlade.FileManager/TermBlade.FileManager.csproj" />
     <Project Path="src/TermBlade.Razor/TermBlade.Razor.csproj" />
   </Folder>
   <Folder Name="/tests/">

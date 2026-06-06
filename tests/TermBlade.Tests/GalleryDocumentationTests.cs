@@ -19,6 +19,28 @@ public partial class GalleryDocumentationTests
   }
 
   [Fact]
+  public void GalleryCatalog_IncludesEveryPublicRazorComponent()
+  {
+    var root = FindRepositoryRoot();
+    var componentFiles = Directory.EnumerateFiles(
+            Path.Combine(root, "src", "TermBlade.Razor", "Components"),
+            "*.cs")
+        .Select(Path.GetFileNameWithoutExtension)
+        .Where(name => name is not null
+            and not "RenderableComponentBase"
+            and not "ContainerRenderableComponentBase"
+            and not "IRenderableParent")
+        .Order(StringComparer.OrdinalIgnoreCase)
+        .ToArray();
+    var gallery = GalleryCatalog.Entries
+        .Select(entry => entry.Name)
+        .Order(StringComparer.OrdinalIgnoreCase)
+        .ToArray();
+
+    Assert.Equal(componentFiles, gallery);
+  }
+
+  [Fact]
   public void ComponentPreviewService_RendersEveryGallerySample()
   {
     foreach (var entry in GalleryCatalog.Entries)

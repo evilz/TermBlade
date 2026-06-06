@@ -19,6 +19,11 @@ public static class GalleryCatalog
             "Components/Demos/TextDemo.razor",
             ReadDemo("TextDemo.razor")),
 
+        new("SegmentedText",
+            "Renders a single line composed from independently styled text segments.",
+            "Components/Demos/SegmentedTextDemo.razor",
+            ReadDemo("SegmentedTextDemo.razor")),
+
         new("Code",
             "Displays syntax-highlighted source code with line numbers.",
             "Components/Demos/CodeDemo.razor",
