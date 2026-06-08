@@ -182,6 +182,10 @@ code { font-family: var(--font-mono); font-size: 0.9em; }
   text-align: center;
   margin-bottom: 2.5rem;
 }
+.section-action {
+  margin-top: 1rem;
+  text-align: center;
+}
 
 /* ---- Features ---- */
 .features-grid {

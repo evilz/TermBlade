@@ -1,5 +1,15 @@
 // Replaces static preview bodies with the .NET 10 WASM + xterm.js TermBlade preview app.
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  let wasmAvailable = false;
+  try {
+    const response = await fetch('wasm/index.html', { method: 'HEAD' });
+    wasmAvailable = response.ok;
+  } catch {
+    wasmAvailable = false;
+  }
+
+  if (!wasmAvailable) return;
+
   document.querySelectorAll('.component-preview').forEach((preview) => {
     const title = preview.querySelector('.terminal-title');
     const body = preview.querySelector('.terminal-body');
