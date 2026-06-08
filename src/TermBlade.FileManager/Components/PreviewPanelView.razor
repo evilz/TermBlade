@@ -9,16 +9,18 @@
     }
     else if (Preview.IsText)
     {
-        <Code BackgroundColor="@FileManagerTheme.Background" Content="@Preview.Content" Language="@Preview.Language" ShowLineNumbers="true" Width="100%" Height="100%" />
+        <Code Content="@Preview.Content" Language="@Preview.Language" ShowLineNumbers="true" Width="100%" Height="100%" />
     }
     else
     {
-        <TermBlade.Razor.Components.Text BackgroundColor="@FileManagerTheme.Background" Content="@Preview.Message" Fg="@FileManagerTheme.Muted" Width="100%" Height="100%" />
+        <TermBlade.Razor.Components.Text Bg="@FileManagerTheme.Background" Content="@Preview.Message" Fg="@FileManagerTheme.Muted" Width="100%" Height="100%" />
     }
 </Box>
 
 @code {
-    [CascadingParameter] internal FileManagerState State { get; set; } = null!;
+    [CascadingParameter] public object CascadedState { get; set; } = null!;
+
+    private FileManagerState State => (FileManagerState)CascadedState;
 
     private FileManagerEntry? Selected => State.ActivePanel.SelectedEntry;
 

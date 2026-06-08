@@ -12,9 +12,10 @@
 </Box>
 
 @code {
-    [CascadingParameter] internal FileManagerState State { get; set; } = null!;
+    [CascadingParameter] public object CascadedState { get; set; } = null!;
     [Parameter] public int PanelIndex { get; set; }
 
+    private FileManagerState State => (FileManagerState)CascadedState;
     private FilePanel Panel => State.Panels[PanelIndex];
 
     private string BorderColor

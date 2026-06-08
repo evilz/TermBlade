@@ -11,5 +11,7 @@
 </Box>
 
 @code {
-    [CascadingParameter] internal FileManagerState State { get; set; } = null!;
+    [CascadingParameter] public object CascadedState { get; set; } = null!;
+
+    private FileManagerState State => (FileManagerState)CascadedState;
 }
