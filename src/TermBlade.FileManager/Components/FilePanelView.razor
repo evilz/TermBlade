@@ -1,0 +1,44 @@
+<Box FlexGrow="1" Height="100%" Border="true" BorderStyle="spf" BorderColor="@BorderColor"
+     Title="@Title" BottomTitle="@BottomTitle" BottomTitleAlignment="right"
+     BackgroundColor="@FileManagerTheme.Background" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+    <SegmentedText BackgroundColor="@FileManagerTheme.Background" Width="100%" Height="1" Segments="@FileManagerViewSegments.Search" />
+
+    @for (var i = 0; i < VisibleEntryCount; i++)
+    {
+        var entryIndex = Panel.WindowStart + i;
+        var entry = Panel.Entries[entryIndex];
+        <SegmentedText BackgroundColor="@FileManagerTheme.Background"  Width="100%" Height="1" Segments="@FileManagerViewSegments.Entry(entry, IsSelected(entryIndex))" />
+    }
+</Box>
+
+@code {
+    [CascadingParameter] public object CascadedState { get; set; } = null!;
+    [Parameter] public int PanelIndex { get; set; }
+
+    private FileManagerState State => (FileManagerState)CascadedState;
+    private FilePanel Panel => State.Panels[PanelIndex];
+
+    private string BorderColor
+        => PanelIndex == State.ActivePanelIndex && State.Focus == FileManagerFocus.File
+            ? FileManagerTheme.ActiveBorder
+            : FileManagerTheme.FrameBorder;
+
+    private string Title => $" 󰉋 {ShortPath(Panel.CurrentPath)} ";
+
+    private string BottomTitle
+        => $" Name ┤󰈙 Browser ├{(Panel.Entries.Count == 0 ? 0 : Panel.SelectedIndex + 1)}/{Panel.Entries.Count} ";
+
+    private int VisibleEntryCount => Math.Max(0, Math.Min(Panel.Entries.Count - Panel.WindowStart, 26));
+
+    private bool IsSelected(int entryIndex)
+        => PanelIndex == State.ActivePanelIndex && entryIndex == Panel.SelectedIndex && State.Focus == FileManagerFocus.File;
+
+    private static string ShortPath(string path)
+    {
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        if (!string.IsNullOrEmpty(home) && path.StartsWith(home, StringComparison.OrdinalIgnoreCase))
+            return "~" + path[home.Length..];
+
+        return path.Length <= 54 ? path : "..." + path[^51..];
+    }
+}

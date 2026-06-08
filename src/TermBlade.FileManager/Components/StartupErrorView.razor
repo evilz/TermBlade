@@ -1,0 +1,11 @@
+<Box Width="100%" Height="100%" BackgroundColor="@FileManagerTheme.Background" PaddingTop="2" PaddingLeft="4" PaddingRight="4">
+    <Box Width="100%" Height="8" Border="true" BorderStyle="spf" BorderColor="@FileManagerTheme.Danger" Title=" TermBlade.FileManager ">
+        <TermBlade.Razor.Components.Text Content="Unable to open start path" Fg="@FileManagerTheme.DangerText" LayoutPosition="absolute" Left="3" Top="2" Width="60" Height="1" />
+        <TermBlade.Razor.Components.Text Content="@Message" Fg="@FileManagerTheme.Text" LayoutPosition="absolute" Left="3" Top="4" Width="100%" Height="1" />
+        <TermBlade.Razor.Components.Text Content="Press q or Esc to exit." Fg="@FileManagerTheme.Muted" LayoutPosition="absolute" Left="3" Top="6" Width="40" Height="1" />
+    </Box>
+</Box>
+
+@code {
+    [Parameter] public string? Message { get; set; }
+}
