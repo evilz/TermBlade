@@ -1,0 +1,33 @@
+<Box Width="22" Height="100%" BackgroundColor="@FileManagerTheme.Background" PaddingLeft="1" PaddingTop="1" PaddingRight="1">
+    <SegmentedText Width="20" Height="1" BackgroundColor="@FileManagerTheme.Background" Segments="@FileManagerViewSegments.SidebarHeader" />
+
+    @foreach (var group in FileManagerSidebarModel.BuildGroups(State.SidebarEntries))
+    {
+        @if (!group.HideTitle)
+        {
+            <SegmentedText BackgroundColor="@FileManagerTheme.Background" Width="20" Height="1" MarginTop="2" Segments="@FileManagerViewSegments.SidebarGroup(group.Title)" />
+        }
+
+        @foreach (var item in Enumerate(group))
+        {
+            <SegmentedText BackgroundColor="@FileManagerTheme.Background" Width="20" Height="1" Segments="@FileManagerViewSegments.SidebarEntry(item.Entry, IsSelected(item.Index))" />
+        }
+    }
+</Box>
+
+@code {
+    [CascadingParameter] internal FileManagerState State { get; set; } = null!;
+
+    private bool IsSelected(int index)
+        => State.Focus == FileManagerFocus.Sidebar && index == State.SelectedSidebarIndex;
+
+    private IEnumerable<(SidebarEntry Entry, int Index)> Enumerate(SidebarGroup group)
+    {
+        for (var i = 0; i < State.SidebarEntries.Count; i++)
+        {
+            var entry = State.SidebarEntries[i];
+            if (entry.Kind == group.Kind)
+                yield return (entry, i);
+        }
+    }
+}

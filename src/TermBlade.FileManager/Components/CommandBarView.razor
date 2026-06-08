@@ -1,0 +1,10 @@
+@if (State.Focus == FileManagerFocus.Prompt || State.FooterVisible)
+{
+    <Box Width="100%" Height="1" BackgroundColor="@FileManagerTheme.Background">
+        <SegmentedText Width="100%" Height="1" Segments="@FileManagerViewSegments.Command(State)" />
+    </Box>
+}
+
+@code {
+    [CascadingParameter] internal FileManagerState State { get; set; } = null!;
+}

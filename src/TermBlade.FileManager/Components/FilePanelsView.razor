@@ -1,0 +1,15 @@
+<Box Width="100%" FlexGrow="1" BackgroundColor="@FileManagerTheme.Background" FlexDirection="FlexDirection.Row">
+    @for (var panelIndex = 0; panelIndex < State.Panels.Count; panelIndex++)
+    {
+        <FilePanelView PanelIndex="@panelIndex" />
+    }
+
+    @if (State.PreviewVisible)
+    {
+        <PreviewPanelView />
+    }
+</Box>
+
+@code {
+    [CascadingParameter] internal FileManagerState State { get; set; } = null!;
+}

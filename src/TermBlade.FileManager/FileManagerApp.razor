@@ -5,87 +5,34 @@
 
 @if (State.StartupError is not null)
 {
-    <Box Width="100%" Height="100%" BackgroundColor="@ThemeBg" PaddingTop="2" PaddingLeft="4" PaddingRight="4">
-        <Box Width="100%" Height="8" Border="true" BorderStyle="spf" BorderColor="@Danger" Title=" TermBlade.FileManager ">
-            <Text Content="Unable to open start path" Fg="@DangerFg" LayoutPosition="absolute" Left="3" Top="2" Width="60" Height="1" />
-            <Text Content="@State.StartupError" Fg="@TextFg" LayoutPosition="absolute" Left="3" Top="4" Width="100%" Height="1" />
-            <Text Content="Press q or Esc to exit." Fg="@MutedFg" LayoutPosition="absolute" Left="3" Top="6" Width="40" Height="1" />
-        </Box>
-    </Box>
+    <StartupErrorView Message="@State.StartupError" />
 }
 else
 {
-    <Box Width="100%" Height="100%" BackgroundColor="@ThemeBg" FlexDirection="FlexDirection.Column">
-        <Box Width="100%" FlexGrow="1" BackgroundColor="@ThemeBg" FlexDirection="FlexDirection.Row">
-            <Box Width="22" Height="100%" BackgroundColor="@ThemeBg" PaddingLeft="1" PaddingTop="2" PaddingRight="1">
-                @SidebarContent()
-            </Box>
+    <CascadingValue Value="State" IsFixed="false">
+        <Box Width="100%" Height="100%" BackgroundColor="@FileManagerTheme.Background" FlexDirection="FlexDirection.Column">
+            <Box Width="100%" FlexGrow="1" BackgroundColor="@FileManagerTheme.Background" FlexDirection="FlexDirection.Row">
+                <SidebarView />
 
-            <Box FlexGrow="1" Height="100%" BackgroundColor="@ThemeBg" FlexDirection="FlexDirection.Column">
-                <Box Width="100%" FlexGrow="1" BackgroundColor="@ThemeBg" FlexDirection="FlexDirection.Row">
-                    @for (var panelIndex = 0; panelIndex < State.Panels.Count; panelIndex++)
-                    {
-                        var panel = State.Panels[panelIndex];
-                        <Box FlexGrow="1" Height="100%" Border="true" BorderStyle="spf" BorderColor="@(PanelBorder(panelIndex))"
-                             Title="@PanelTitle(panelIndex)" BottomTitle="@PanelBottomTitle(panel)" BottomTitleAlignment="right"
-                             BackgroundColor="@ThemeBg" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
-                            @PanelContent(panel, panelIndex)
-                        </Box>
-                    }
-
-                    @if (State.PreviewVisible)
-                    {
-                        <Box Width="42" Height="100%" Border="true" BorderStyle="spf" BorderColor="@FrameBorder"
-                             Title=" 󰈙 Preview " BackgroundColor="@ThemeBg" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
-                            @PreviewPanelContent()
-                        </Box>
-                    }
-                </Box>
-
-                <Box Width="100%" Height="11" BackgroundColor="@ThemeBg" FlexDirection="FlexDirection.Row" PaddingTop="1">
-                    <Box FlexGrow="1" Height="100%" Border="true" BorderStyle="spf" BorderColor="@(FocusBorder(FileManagerFocus.Processes))"
-                         Title=" Processes " BackgroundColor="@ThemeBg" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
-                        <SegmentedText Width="100%" Height="1" Segments="@StatusSegments(State.BuildSpfProcessesContent())" />
-                    </Box>
-                    <Box FlexGrow="1" Height="100%" Border="true" BorderStyle="spf" BorderColor="@(FocusBorder(FileManagerFocus.Metadata))"
-                         Title=" Metadata " BackgroundColor="@ThemeBg" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
-                        <Text Content="@State.BuildSpfMetadataContent()" Fg="@MutedFg" Width="100%" Height="7" Wrap="false" />
-                    </Box>
-                    <Box FlexGrow="1" Height="100%" Border="true" BorderStyle="spf" BorderColor="@FrameBorder"
-                         Title=" Clipboard " BackgroundColor="@ThemeBg" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
-                        <SegmentedText Width="100%" Height="2" Segments="@StatusSegments(State.BuildSpfClipboardContent())" />
-                    </Box>
+                <Box FlexGrow="1" Height="100%" BackgroundColor="@FileManagerTheme.Background" FlexDirection="FlexDirection.Column">
+                    <FilePanelsView />
+                    <InfoPanelsView />
                 </Box>
             </Box>
+
+            <CommandBarView />
         </Box>
-
-        @if (State.Focus == FileManagerFocus.Prompt || State.FooterVisible)
-        {
-            <Box Width="100%" Height="1" BackgroundColor="@ThemeBg">
-                <SegmentedText Width="100%" Height="1" Segments="@CommandSegments()" />
-            </Box>
-        }
-    </Box>
+    </CascadingValue>
 }
 
 @code {
-    private const string ThemeBg = "#1e1e2e";
-    private const string ActiveBorder = "#b4befe";
-    private const string FrameBorder = "#6c7086";
-    private const string TextFg = "#cdd6f4";
-    private const string MutedFg = "#a6adc8";
-    private const string AccentFg = "#89dceb";
-    private const string GreenFg = "#a6e3a1";
-    private const string Danger = "#f38ba8";
-    private const string DangerFg = "#f5c2e7";
-
     private readonly List<Action<object?>> _keypressHandlers = [];
 
     private FileManagerState State { get; set; } = null!;
 
     protected override void OnInitialized()
     {
-        App.Renderer.SetBackgroundColor(ThemeBg);
+        App.Renderer.SetBackgroundColor(FileManagerTheme.Background);
         State = FileManagerState.Create(StartupOptions.Value.StartPath, FileSystem);
         RegisterKeypress(HandleKeypress);
     }
@@ -158,195 +105,6 @@ else
         key.PreventDefault();
         action();
         _ = InvokeAsync(StateHasChanged);
-    }
-
-    private RenderFragment SidebarContent() => builder =>
-    {
-        var sequence = 0;
-        AddSegmented(builder, sequence, SidebarHeaderSegments, "20", "1");
-        sequence += 10;
-
-        sequence = AddSidebarGroup(builder, sequence, "Home", SidebarEntryKind.Home);
-        sequence = AddSidebarGroup(builder, sequence, "Pinned", SidebarEntryKind.Pinned);
-        _ = AddSidebarGroup(builder, sequence, "Disks", SidebarEntryKind.Disk);
-    };
-
-    private int AddSidebarGroup(RenderTreeBuilder builder, int sequence, string title, SidebarEntryKind kind)
-    {
-        if (!State.SidebarEntries.Any(entry => entry.Kind == kind))
-            return sequence;
-
-        AddSegmented(builder, sequence, SidebarGroupSegments(title), "20", "1", marginTop: 2);
-        sequence += 10;
-
-        for (var i = 0; i < State.SidebarEntries.Count; i++)
-        {
-            var entry = State.SidebarEntries[i];
-            if (entry.Kind != kind)
-                continue;
-
-            var selected = State.Focus == FileManagerFocus.Sidebar && i == State.SelectedSidebarIndex;
-            AddSegmented(builder, sequence, SidebarEntrySegments(entry, selected), "20", "1");
-            sequence += 10;
-        }
-
-        return sequence;
-    }
-
-    private RenderFragment PanelContent(FilePanel panel, int panelIndex) => builder =>
-    {
-        var sequence = 0;
-        AddSegmented(builder, sequence, SearchSegments, "100%", "1");
-        sequence += 10;
-
-        for (var i = 0; i < VisibleEntryCount(panel); i++)
-        {
-            var entryIndex = panel.WindowStart + i;
-            var entry = panel.Entries[entryIndex];
-            var selected = panelIndex == State.ActivePanelIndex && entryIndex == panel.SelectedIndex && State.Focus == FileManagerFocus.File;
-            AddSegmented(builder, sequence, EntrySegments(entry, selected), "100%", "1");
-            sequence += 10;
-        }
-    };
-
-    private RenderFragment PreviewPanelContent() => builder =>
-    {
-        var selected = State.ActivePanel.SelectedEntry;
-        if (selected is { IsDirectory: true })
-        {
-            var sequence = 0;
-            foreach (var entry in State.BuildSelectedDirectoryPreviewEntries().Take(VisibleEntryCount(State.ActivePanel)))
-            {
-                AddSegmented(builder, sequence, EntrySegments(entry, selected: false, compact: true), "100%", "1");
-                sequence += 10;
-            }
-
-            return;
-        }
-
-        var preview = State.BuildPreviewDocument(maxChars: 64 * 1024);
-        if (preview.IsText)
-        {
-            builder.OpenComponent<Code>(0);
-            builder.AddAttribute(1, "Content", preview.Content);
-            builder.AddAttribute(2, "Language", preview.Language);
-            builder.AddAttribute(3, "ShowLineNumbers", true);
-            builder.AddAttribute(4, "Width", "100%");
-            builder.AddAttribute(5, "Height", "100%");
-            builder.CloseComponent();
-            return;
-        }
-
-        builder.OpenComponent<Text>(0);
-        builder.AddAttribute(1, "Content", preview.Message);
-        builder.AddAttribute(2, "Fg", MutedFg);
-        builder.AddAttribute(3, "Width", "100%");
-        builder.AddAttribute(4, "Height", "100%");
-        builder.CloseComponent();
-    };
-
-    private static void AddSegmented(
-        RenderTreeBuilder builder,
-        int sequence,
-        IReadOnlyList<SegmentedTextSegment> segments,
-        string width,
-        string height,
-        int? marginTop = null)
-    {
-        builder.OpenComponent<SegmentedText>(sequence);
-        builder.AddAttribute(sequence + 1, "Segments", segments);
-        builder.AddAttribute(sequence + 2, "Width", width);
-        builder.AddAttribute(sequence + 3, "Height", height);
-        if (marginTop.HasValue)
-            builder.AddAttribute(sequence + 4, "MarginTop", marginTop.Value);
-        builder.CloseComponent();
-    }
-
-    private string PanelBorder(int panelIndex)
-        => panelIndex == State.ActivePanelIndex && State.Focus == FileManagerFocus.File ? ActiveBorder : FrameBorder;
-
-    private string FocusBorder(FileManagerFocus focus)
-        => State.Focus == focus ? ActiveBorder : FrameBorder;
-
-    private string PanelTitle(int panelIndex) => $" 󰉋 {ShortPath(State.Panels[panelIndex].CurrentPath)} ";
-
-    private static string PanelBottomTitle(FilePanel panel)
-        => $" Name ┤󰈙 Browser ├{(panel.Entries.Count == 0 ? 0 : panel.SelectedIndex + 1)}/{panel.Entries.Count} ";
-
-    private static int VisibleEntryCount(FilePanel panel) => Math.Max(0, Math.Min(panel.Entries.Count - panel.WindowStart, 26));
-
-    private static IReadOnlyList<SegmentedTextSegment> SidebarHeaderSegments =>
-    [
-        new("\udb80\udc4b ", AccentFg),
-        new("superfile", AccentFg, Attributes: TextAttributes.Bold)
-    ];
-
-    private static IReadOnlyList<SegmentedTextSegment> SearchSegments =>
-    [
-        new(" ", GreenFg),
-        new("(/) Type something", MutedFg)
-    ];
-
-    private static IReadOnlyList<SegmentedTextSegment> SidebarGroupSegments(string title) =>
-    [
-        new(title == "Pinned" ? " " : title == "Disks" ? "󰋊 " : string.Empty, AccentFg),
-        new(title, AccentFg),
-        new(" ─────────", FrameBorder)
-    ];
-
-    private static IReadOnlyList<SegmentedTextSegment> SidebarEntrySegments(SidebarEntry entry, bool selected)
-    {
-        var icon = entry.Kind switch
-        {
-            SidebarEntryKind.Home => entry.Label switch
-            {
-                "Home" => " ",
-                "Downloads" => "󰇚 ",
-                "Documents" => "󰈙 ",
-                "Pictures" => " ",
-                "Music" => " ",
-                _ => "󰉋 "
-            },
-            SidebarEntryKind.Disk => "  ",
-            _ => "  "
-        };
-        var prefix = entry.Kind == SidebarEntryKind.Disk ? $"  {entry.Label}:" : $"{icon}{entry.Label}";
-        return [new(selected ? "❯ " : "  ", ActiveBorder), new(prefix, selected ? TextFg : MutedFg)];
-    }
-
-    private static IReadOnlyList<SegmentedTextSegment> EntrySegments(FileManagerEntry entry, bool selected, bool compact = false)
-    {
-        var icon = entry.IsDirectory ? "󰉋 " : "󰈔 ";
-        var prefix = compact ? string.Empty : selected ? "❯ " : "  ";
-        return
-        [
-            new(prefix, ActiveBorder),
-            new(icon, entry.IsDirectory ? GreenFg : MutedFg),
-            new(entry.Name, selected ? TextFg : MutedFg)
-        ];
-    }
-
-    private static IReadOnlyList<SegmentedTextSegment> StatusSegments(string content)
-    {
-        var color = content.StartsWith('✖') ? MutedFg : TextFg;
-        return [new(content, color)];
-    }
-
-    private IReadOnlyList<SegmentedTextSegment> CommandSegments()
-    {
-        if (State.Focus == FileManagerFocus.Prompt)
-            return [new(State.PromptMode == PromptMode.Shell ? ": " : "> ", AccentFg), new(State.PromptText, TextFg)];
-
-        return [new(" ↑↓/kj navigate  ↵/l open  h parent  s/p/m focus  : shell  > spf  f preview  ctrl+c/x/v/d ops  q quit", MutedFg)];
-    }
-
-    private static string ShortPath(string path)
-    {
-        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        if (!string.IsNullOrEmpty(home) && path.StartsWith(home, StringComparison.OrdinalIgnoreCase))
-            return "~" + path[home.Length..];
-
-        return path.Length <= 54 ? path : "..." + path[^51..];
     }
 
     public void Dispose()

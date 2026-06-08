@@ -1,0 +1,23 @@
+<Box Width="100%" Height="11" BackgroundColor="@FileManagerTheme.Background" FlexDirection="FlexDirection.Row" PaddingTop="1">
+    <Box FlexGrow="1" Height="100%" Border="true" BorderStyle="spf" BorderColor="@FocusBorder(FileManagerFocus.Processes)"
+         Title=" Processes " BackgroundColor="@FileManagerTheme.Background" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+        <SegmentedText BackgroundColor="@FileManagerTheme.Background" Width="100%" Height="1" Segments="@FileManagerViewSegments.Status(State.BuildSpfProcessesContent())" />
+    </Box>
+
+    <Box FlexGrow="1" Height="100%" Border="true" BorderStyle="spf" BorderColor="@FocusBorder(FileManagerFocus.Metadata)"
+         Title=" Metadata " BackgroundColor="@FileManagerTheme.Background" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+        <TermBlade.Razor.Components.Text Bg="@FileManagerTheme.Background" Content="@State.BuildSpfMetadataContent()" Fg="@FileManagerTheme.Muted" Width="100%" Height="7" Wrap="false" />
+    </Box>
+
+    <Box FlexGrow="1" Height="100%" Border="true" BorderStyle="spf" BorderColor="@FileManagerTheme.FrameBorder"
+         Title=" Clipboard " BackgroundColor="@FileManagerTheme.Background" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+        <SegmentedText BackgroundColor="@FileManagerTheme.Background" Width="100%" Height="2" Segments="@FileManagerViewSegments.Status(State.BuildSpfClipboardContent())" />
+    </Box>
+</Box>
+
+@code {
+    [CascadingParameter] internal FileManagerState State { get; set; } = null!;
+
+    private string FocusBorder(FileManagerFocus focus)
+        => State.Focus == focus ? FileManagerTheme.ActiveBorder : FileManagerTheme.FrameBorder;
+}

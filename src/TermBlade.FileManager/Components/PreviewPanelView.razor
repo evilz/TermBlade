@@ -1,0 +1,28 @@
+<Box Width="42" Height="100%" Border="true" BorderStyle="spf" BorderColor="@FileManagerTheme.FrameBorder"
+     Title=" 󰈙 Preview " BackgroundColor="@FileManagerTheme.Background" PaddingLeft="1" PaddingRight="1" PaddingTop="1">
+    @if (Selected is { IsDirectory: true })
+    {
+        @foreach (var entry in State.BuildSelectedDirectoryPreviewEntries().Take(VisibleEntryCount))
+        {
+            <SegmentedText BackgroundColor="@FileManagerTheme.Background" Width="100%" Height="1" Segments="@FileManagerViewSegments.Entry(entry, selected: false, compact: true)" />
+        }
+    }
+    else if (Preview.IsText)
+    {
+        <Code BackgroundColor="@FileManagerTheme.Background" Content="@Preview.Content" Language="@Preview.Language" ShowLineNumbers="true" Width="100%" Height="100%" />
+    }
+    else
+    {
+        <TermBlade.Razor.Components.Text BackgroundColor="@FileManagerTheme.Background" Content="@Preview.Message" Fg="@FileManagerTheme.Muted" Width="100%" Height="100%" />
+    }
+</Box>
+
+@code {
+    [CascadingParameter] internal FileManagerState State { get; set; } = null!;
+
+    private FileManagerEntry? Selected => State.ActivePanel.SelectedEntry;
+
+    private PreviewDocument Preview => State.BuildPreviewDocument(maxChars: 64 * 1024);
+
+    private int VisibleEntryCount => Math.Max(0, Math.Min(State.ActivePanel.Entries.Count - State.ActivePanel.WindowStart, 26));
+}
