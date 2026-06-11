@@ -407,11 +407,12 @@
         // Cols 0..LabelW-1 = rank labels; cols LabelW..LabelW+8*SquareW-1 = board files.
         var boardX = mouse.X - LabelW;
         var boardY = mouse.Y - 1; // subtract timer bar row
+        if (boardY < 0) return;
         var col = boardX / SquareW;
         var displayRow = boardY / SquareH;
         var row = 7 - displayRow;
 
-        if (boardX < 0 || col > 7 || displayRow < 0 || displayRow > 7) return;
+        if (boardX < 0 || col > 7 || displayRow > 7) return;
 
         _cursorRow = row;
         _cursorCol = col;

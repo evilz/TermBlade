@@ -281,7 +281,7 @@ public sealed class ChessGame
                 moves.Add((nr2, col));
         }
 
-        foreach (var dc in (int[])[-1, 1])
+        for (var dc = -1; dc <= 1; dc += 2)
         {
             var nc = col + dc;
             if (InBounds(nr, nc) && !_board[nr, nc].IsEmpty && _board[nr, nc].Color != color)
