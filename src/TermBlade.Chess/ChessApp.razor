@@ -3,6 +3,7 @@
    Board: 8 columns × 8 rows, each square 7 chars wide × 4 rows tall.
    Right panel shows captured material, move history and help hint.
    Controls: arrow keys to move cursor, Enter/Space to select/confirm a move,
+             click to select/move a piece,
              b to toggle bot (Black), r to reset, q/Esc to quit, ? for help.
    ──────────────────────────────────────────────────────────────────────────── *@
 
@@ -127,23 +128,24 @@
 @* ── Help overlay ─────────────────────────────────────────────────────────── *@
 @if (_showHelp)
 {
-    <Box Width="48" Height="16" Border="true" BorderStyle="rounded" BorderColor="#9370db"
+    <Box Width="48" Height="17" Border="true" BorderStyle="rounded" BorderColor="#9370db"
          Title=" Controls " BackgroundColor="#1e1e2e"
          LayoutPosition="absolute" Left="10" Top="3">
         <Text Content="Arrows    Move cursor"           Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="1" />
         <Text Content="Enter/Spc Select / confirm"      Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="2" />
-        <Text Content="Esc       Deselect piece"        Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="3" />
-        <Text Content="b         Toggle bot (Black)"    Width="46" Height="1" Fg="#a0c4ff" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="4" />
-        <Text Content="r         Reset game"            Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="5" />
-        <Text Content="q         Quit"                  Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="6" />
-        <Text Content="?         Toggle this help"      Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="7" />
-        <Text Content="──────────────────────────────────────────────" Width="46" Height="1" Fg="#444466" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="8" />
-        <Text Content="Light squares  #b0b0b0 (gray)"                  Width="46" Height="1" Fg="#888888" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="9" />
-        <Text Content="Dark  squares  #8b6242 (wood)"                  Width="46" Height="1" Fg="#888888" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="10" />
-        <Text Content="Cursor         purple"                          Width="46" Height="1" Fg="#9370db" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="11" />
-        <Text Content="Selected       gold"                            Width="46" Height="1" Fg="#d4a017" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="12" />
-        <Text Content="Legal moves    green tint"                      Width="46" Height="1" Fg="#6a8e4a" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="13" />
-        <Text Content="Press ? to close"                Width="46" Height="1" Fg="#555577" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="14" />
+        <Text Content="Click     Select / move piece"   Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="3" />
+        <Text Content="Esc       Deselect piece"        Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="4" />
+        <Text Content="b         Toggle bot (Black)"    Width="46" Height="1" Fg="#a0c4ff" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="5" />
+        <Text Content="r         Reset game"            Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="6" />
+        <Text Content="q         Quit"                  Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="7" />
+        <Text Content="?         Toggle this help"      Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="8" />
+        <Text Content="──────────────────────────────────────────────" Width="46" Height="1" Fg="#444466" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="9" />
+        <Text Content="Light squares  #b0b0b0 (gray)"                  Width="46" Height="1" Fg="#888888" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="10" />
+        <Text Content="Dark  squares  #8b6242 (wood)"                  Width="46" Height="1" Fg="#888888" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="11" />
+        <Text Content="Cursor         purple"                          Width="46" Height="1" Fg="#9370db" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="12" />
+        <Text Content="Selected       gold"                            Width="46" Height="1" Fg="#d4a017" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="13" />
+        <Text Content="Legal moves    green tint"                      Width="46" Height="1" Fg="#6a8e4a" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="14" />
+        <Text Content="Press ? to close"                Width="46" Height="1" Fg="#555577" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="15" />
     </Box>
 }
 
@@ -177,6 +179,7 @@
     private TimeSpan _blackTime = TimeSpan.FromMinutes(5);
 
     private readonly List<Action<object?>> _keypressHandlers = [];
+    private readonly List<Action<object?>> _mouseHandlers = [];
     private readonly List<Timer> _timers = [];
 
     // ── Computed UI values ────────────────────────────────────────────────────
@@ -217,6 +220,13 @@
         App.KeyEvents.On("keypress", handler);
         _keypressHandlers.Add(handler);
 
+        Action<object?> mouseHandler = data =>
+        {
+            if (data is MouseEvent mouse) HandleMouseClick(mouse);
+        };
+        App.KeyEvents.On("mouse", mouseHandler);
+        _mouseHandlers.Add(mouseHandler);
+
         var timer = new Timer(Tick, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
         _timers.Add(timer);
     }
@@ -225,6 +235,8 @@
     {
         foreach (var h in _keypressHandlers)
             App.KeyEvents.Off("keypress", h);
+        foreach (var h in _mouseHandlers)
+            App.KeyEvents.Off("mouse", h);
         foreach (var t in _timers)
             t.Dispose();
     }
@@ -383,6 +395,36 @@
         _legalMoves = _game.GetLegalMoves(row, col);
     }
 
+    // ── Mouse handler ─────────────────────────────────────────────────────────
+    private void HandleMouseClick(MouseEvent mouse)
+    {
+        if (!mouse.Pressed || mouse.Button != MouseButton.Left) return;
+        if (_showHelp || _game.IsGameOver || _botThinking) return;
+        if (_botMode && _game.CurrentTurn == PieceColor.Black) return;
+
+        // Convert terminal coordinates to board square.
+        // Layout: row 0 = timer bar, rows 1..32 = board (8 ranks × SquareH rows each).
+        // Cols 0..LabelW-1 = rank labels; cols LabelW..LabelW+8*SquareW-1 = board files.
+        var boardX = mouse.X - LabelW;
+        var boardY = mouse.Y - 1; // subtract timer bar row
+        var col = boardX / SquareW;
+        var displayRow = boardY / SquareH;
+        var row = 7 - displayRow;
+
+        if (boardX < 0 || col > 7 || displayRow < 0 || displayRow > 7) return;
+
+        _cursorRow = row;
+        _cursorCol = col;
+
+        _ = InvokeAsync(async () =>
+        {
+            HandleConfirm();
+            StateHasChanged();
+            if (_botMode && _game.CurrentTurn == PieceColor.Black && !_game.IsGameOver)
+                await RunBotAsync().ConfigureAwait(false);
+        });
+    }
+
     // ── Bot ───────────────────────────────────────────────────────────────────
     private async Task RunBotAsync()
     {
@@ -426,7 +468,7 @@
         var sb = new System.Text.StringBuilder();
         foreach (var p in captured)
         {
-            sb.Append(p.Notation.Length > 0 ? p.Notation : "P");
+            sb.Append(p.Symbol);
             sb.Append(' ');
         }
         return sb.ToString().TrimEnd();
