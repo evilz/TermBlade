@@ -10,12 +10,16 @@ type DotNetTerminalRef = {
   invokeMethodAsync: (method: string, ...args: unknown[]) => Promise<void>;
 };
 
+function getTerminalFontFamily(): string {
+  return getComputedStyle(document.documentElement).getPropertyValue("--font-terminal").trim() || "monospace";
+}
+
 function createTerminal(readOnly: boolean): Terminal {
   return new Terminal({
     cursorBlink: !readOnly,
     cursorStyle: readOnly ? "block" : "block",
     disableStdin: readOnly,
-    fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace",
+    fontFamily: getTerminalFontFamily(),
     fontSize: readOnly ? 13 : 14,
     lineHeight: 1.2,
     scrollback: readOnly ? 0 : 1000,
