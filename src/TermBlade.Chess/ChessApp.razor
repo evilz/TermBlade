@@ -1,0 +1,480 @@
+@* ────────────────────────────────────────────────────────────────────────────
+   TermBlade Chess — standalone interactive chess game.
+   Board: 8 columns × 8 rows, each square 7 chars wide × 4 rows tall.
+   Right panel shows captured material, move history and help hint.
+   Controls: arrow keys to move cursor, Enter/Space to select/confirm a move,
+             click to select/move a piece,
+             b to toggle bot (Black), r to reset, q/Esc to quit, ? for help.
+   ──────────────────────────────────────────────────────────────────────────── *@
+
+@implements IDisposable
+@inject TermBladeAppContext App
+
+<Box Width="100%" Height="100%" BackgroundColor="@BgColor" FlexDirection="FlexDirection.Column">
+
+    @* ── Top bar: player timers ─────────────────────────────────────────────── *@
+    <Box Width="100%" Height="1" BackgroundColor="@BgColor" FlexDirection="FlexDirection.Row">
+        <Box Width="50%" Height="1" BackgroundColor="@BgColor">
+            <Text Content="@($"White: {_whiteTime:mm\\:ss}")" Width="20" Height="1" Fg="#ffffff" Bg="@BgColor" />
+        </Box>
+        <Box Width="50%" Height="1" BackgroundColor="@BgColor" FlexDirection="FlexDirection.Row">
+            <Box FlexGrow="1" Height="1" BackgroundColor="@BgColor" />
+            <Text Content="@($"Black: {_blackTime:mm\\:ss}{(_botMode ? " [BOT]" : "")}")" Width="24" Height="1" Fg="@(_botMode ? "#a0c4ff" : "#ffffff")" Bg="@BgColor" />
+        </Box>
+    </Box>
+
+    @* ── Main area: board + right sidebar ─────────────────────────────────── *@
+    <Box FlexGrow="1" Width="100%" FlexDirection="FlexDirection.Row" BackgroundColor="@BgColor">
+
+        @* ── Chess board ──────────────────────────────────────────────────── *@
+        <Box FlexDirection="FlexDirection.Column" Width="@S(BoardAreaWidth)" BackgroundColor="@BgColor">
+
+            @* Eight ranks, drawn from rank 8 (display row 0) down to rank 1 *@
+            @for (var displayRow = 0; displayRow < 8; displayRow++)
+            {
+                var row = 7 - displayRow;
+                <Box Width="@S(BoardAreaWidth)" Height="@S(SquareH)" FlexDirection="FlexDirection.Row" BackgroundColor="@BgColor">
+
+                    @* Rank label *@
+                    <Box Width="@S(LabelW)" Height="@S(SquareH)" BackgroundColor="@BgColor">
+                        <Text Content="@($"{row + 1}")" Width="@S(LabelW)" Height="1" Fg="#888888" Bg="@BgColor"
+                              LayoutPosition="absolute" Left="0" Top="@LabelVOffset" />
+                    </Box>
+
+                    @* Eight files *@
+                    @for (var col = 0; col < 8; col++)
+                    {
+                        var r = row;
+                        var c = col;
+                        var squareBg = SquareBackground(r, c);
+                        var piece = _game.GetPiece(r, c);
+                        var pieceFg = piece.Color == PieceColor.White ? "#f0f0f0" : "#101010";
+                        var artRows = ChessPieceArt.GetRows(piece, SquareW);
+
+                        <Box Width="@S(SquareW)" Height="@S(SquareH)" BackgroundColor="@squareBg">
+                            <Text Content="@artRows[0]" Width="@S(SquareW)" Height="1" Fg="@pieceFg" Bg="@squareBg"
+                                  LayoutPosition="absolute" Left="0" Top="0" />
+                            <Text Content="@artRows[1]" Width="@S(SquareW)" Height="1" Fg="@pieceFg" Bg="@squareBg"
+                                  LayoutPosition="absolute" Left="0" Top="1" />
+                            <Text Content="@artRows[2]" Width="@S(SquareW)" Height="1" Fg="@pieceFg" Bg="@squareBg"
+                                  LayoutPosition="absolute" Left="0" Top="2" />
+                            <Text Content="@artRows[3]" Width="@S(SquareW)" Height="1" Fg="@pieceFg" Bg="@squareBg"
+                                  LayoutPosition="absolute" Left="0" Top="3" />
+                        </Box>
+                    }
+                </Box>
+            }
+
+            @* File labels row (A–H) *@
+            <Box Width="@S(BoardAreaWidth)" Height="1" FlexDirection="FlexDirection.Row" BackgroundColor="@BgColor">
+                <Box Width="@S(LabelW)" Height="1" BackgroundColor="@BgColor" />
+                @for (var col = 0; col < 8; col++)
+                {
+                    var label = CenterText(((char)('A' + col)).ToString(), SquareW);
+                    <Box Width="@S(SquareW)" Height="1" BackgroundColor="@BgColor">
+                        <Text Content="@label" Width="@S(SquareW)" Height="1" Fg="#888888" Bg="@BgColor" />
+                    </Box>
+                }
+            </Box>
+
+            @* Status bar *@
+            <Box Width="@S(BoardAreaWidth)" Height="1" BackgroundColor="@BgColor">
+                <Text Content="@StatusText" Width="@S(BoardAreaWidth)" Height="1" Fg="@StatusColor" Bg="@BgColor" />
+            </Box>
+
+        </Box>
+
+        @* ── Right sidebar ────────────────────────────────────────────────── *@
+        <Box FlexGrow="1" Height="100%" FlexDirection="FlexDirection.Column"
+             PaddingLeft="1" BackgroundColor="@BgColor">
+
+            @* Black material *@
+            <Box Width="100%" Height="6" Border="true" BorderColor="#3a3a3a"
+                 Title=" Black material " BackgroundColor="@BgColor">
+                <Text Content="@BlackMaterialText" Width="100%" Height="4" Fg="#888888" Bg="@BgColor"
+                      LayoutPosition="absolute" Left="1" Top="1" Wrap="true" />
+            </Box>
+
+            @* Move history – PaddingLeft/Top/Bottom prevent text from touching the border *@
+            <Box FlexGrow="1" Width="100%" Border="true" BorderColor="#3a3a3a"
+                 Title=" History " BackgroundColor="@BgColor" MarginTop="1"
+                 PaddingLeft="1" PaddingRight="1" PaddingTop="1" PaddingBottom="1">
+                @for (var i = HistoryStart; i < _game.History.Count; i++)
+                {
+                    var entry = _game.History[i];
+                    <Box Width="100%" Height="1" BackgroundColor="@BgColor">
+                        <Text Content="@entry" Width="100%" Height="1" Fg="#888888" Bg="@BgColor" />
+                    </Box>
+                }
+            </Box>
+
+            @* White material *@
+            <Box Width="100%" Height="6" Border="true" BorderColor="#3a3a3a"
+                 Title=" White material " BackgroundColor="@BgColor" MarginTop="1">
+                <Text Content="@WhiteMaterialText" Width="100%" Height="4" Fg="#888888" Bg="@BgColor"
+                      LayoutPosition="absolute" Left="1" Top="1" Wrap="true" />
+            </Box>
+
+            @* Help hint *@
+            <Box Width="100%" Height="1" BackgroundColor="@BgColor">
+                <Text Content="Press ? for help | b = toggle bot" Width="100%" Height="1" Fg="#555555" Bg="@BgColor" />
+            </Box>
+
+        </Box>
+    </Box>
+
+</Box>
+
+@* ── Help overlay ─────────────────────────────────────────────────────────── *@
+@if (_showHelp)
+{
+    <Box Width="48" Height="17" Border="true" BorderStyle="rounded" BorderColor="#9370db"
+         Title=" Controls " BackgroundColor="#1e1e2e"
+         LayoutPosition="absolute" Left="10" Top="3">
+        <Text Content="Arrows    Move cursor"           Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="1" />
+        <Text Content="Enter/Spc Select / confirm"      Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="2" />
+        <Text Content="Click     Select / move piece"   Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="3" />
+        <Text Content="Esc       Deselect piece"        Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="4" />
+        <Text Content="b         Toggle bot (Black)"    Width="46" Height="1" Fg="#a0c4ff" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="5" />
+        <Text Content="r         Reset game"            Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="6" />
+        <Text Content="q         Quit"                  Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="7" />
+        <Text Content="?         Toggle this help"      Width="46" Height="1" Fg="#cdd6f4" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="8" />
+        <Text Content="──────────────────────────────────────────────" Width="46" Height="1" Fg="#444466" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="9" />
+        <Text Content="Light squares  #b0b0b0 (gray)"                  Width="46" Height="1" Fg="#888888" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="10" />
+        <Text Content="Dark  squares  #8b6242 (wood)"                  Width="46" Height="1" Fg="#888888" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="11" />
+        <Text Content="Cursor         purple"                          Width="46" Height="1" Fg="#9370db" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="12" />
+        <Text Content="Selected       gold"                            Width="46" Height="1" Fg="#d4a017" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="13" />
+        <Text Content="Legal moves    green tint"                      Width="46" Height="1" Fg="#6a8e4a" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="14" />
+        <Text Content="Press ? to close"                Width="46" Height="1" Fg="#555577" Bg="#1e1e2e" LayoutPosition="absolute" Left="2" Top="15" />
+    </Box>
+}
+
+@code {
+    // ── Layout constants ──────────────────────────────────────────────────────
+    private const string BgColor = "#0f0f0f";
+    private const int SquareW = 7;          // chars per square (width); 7:8 visual ratio ≈ square
+    private const int SquareH = 4;          // rows per square (height)
+    private const int LabelW = 2;           // width of rank-label column
+    private const int LabelVOffset = 1;     // row inside label cell for rank number
+    private const int BoardAreaWidth = LabelW + 8 * SquareW; // 58
+
+    // ── Colors ────────────────────────────────────────────────────────────────
+    private const string LightSquareColor = "#b0b0b0";
+    private const string DarkSquareColor = "#8b6242";
+    private const string CursorColor = "#7950d4";
+    private const string SelectedColor = "#b8860b";
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    private readonly ChessGame _game = new();
+    private int _cursorRow;
+    private int _cursorCol = 4;
+    private int? _selRow;
+    private int? _selCol;
+    private List<(int Row, int Col)> _legalMoves = [];
+    private bool _showHelp;
+    private bool _botMode;
+    private bool _botThinking;
+
+    private TimeSpan _whiteTime = TimeSpan.FromMinutes(5);
+    private TimeSpan _blackTime = TimeSpan.FromMinutes(5);
+
+    private readonly List<Action<object?>> _keypressHandlers = [];
+    private readonly List<Action<object?>> _mouseHandlers = [];
+    private readonly List<Timer> _timers = [];
+
+    // ── Computed UI values ────────────────────────────────────────────────────
+
+    /// <summary>Number of history lines that fit inside the bordered panel on a typical terminal.</summary>
+    private int HistoryStart => Math.Max(0, _game.History.Count - 22);
+
+    private string StatusText
+    {
+        get
+        {
+            if (_game.IsGameOver) return _game.StatusMessage;
+            if (_game.StatusMessage.Length > 0) return _game.StatusMessage;
+            if (_botThinking) return "Bot is thinking…";
+            if (_selRow.HasValue)
+                return $"Selected {(char)('A' + _selCol!.Value)}{_selRow.Value + 1} — pick destination";
+            return $"{_game.CurrentTurn}'s turn";
+        }
+    }
+
+    private string StatusColor => _game.IsGameOver ? "#f87171"
+        : _game.StatusMessage.Length > 0 ? "#fbbf24"
+        : _botThinking ? "#a0c4ff"
+        : "#666666";
+
+    private string BlackMaterialText => BuildMaterialText(_game.BlackCaptured);
+    private string WhiteMaterialText => BuildMaterialText(_game.WhiteCaptured);
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    protected override void OnInitialized()
+    {
+        App.Renderer.SetBackgroundColor(BgColor);
+
+        Action<object?> handler = data =>
+        {
+            if (data is KeyEvent key) HandleKeypress(key);
+        };
+        App.KeyEvents.On("keypress", handler);
+        _keypressHandlers.Add(handler);
+
+        Action<object?> mouseHandler = data =>
+        {
+            if (data is MouseEvent mouse) HandleMouseClick(mouse);
+        };
+        App.KeyEvents.On("mouse", mouseHandler);
+        _mouseHandlers.Add(mouseHandler);
+
+        var timer = new Timer(Tick, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+        _timers.Add(timer);
+    }
+
+    public void Dispose()
+    {
+        foreach (var h in _keypressHandlers)
+            App.KeyEvents.Off("keypress", h);
+        foreach (var h in _mouseHandlers)
+            App.KeyEvents.Off("mouse", h);
+        foreach (var t in _timers)
+            t.Dispose();
+    }
+
+    // ── Timer tick ────────────────────────────────────────────────────────────
+    private void Tick(object? _)
+    {
+        if (_game.IsGameOver) return;
+
+        if (_game.CurrentTurn == PieceColor.White)
+        {
+            if (_whiteTime > TimeSpan.Zero)
+                _whiteTime -= TimeSpan.FromSeconds(1);
+        }
+        else
+        {
+            if (_blackTime > TimeSpan.Zero)
+                _blackTime -= TimeSpan.FromSeconds(1);
+        }
+
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    // ── Keyboard handler ──────────────────────────────────────────────────────
+    private void HandleKeypress(KeyEvent key)
+    {
+        switch (key.Name)
+        {
+            case "q":
+            case "escape" when !_selRow.HasValue && !_showHelp:
+                key.PreventDefault();
+                App.Renderer.Destroy();
+                return;
+
+            case "escape":
+                key.PreventDefault();
+                _showHelp = false;
+                _selRow = null;
+                _selCol = null;
+                _legalMoves = [];
+                _ = InvokeAsync(StateHasChanged);
+                return;
+
+            case "?":
+                key.PreventDefault();
+                _showHelp = !_showHelp;
+                _ = InvokeAsync(StateHasChanged);
+                return;
+
+            case "b":
+                key.PreventDefault();
+                _botMode = !_botMode;
+                _ = InvokeAsync(async () =>
+                {
+                    StateHasChanged();
+                    // If bot is toggled on and it is already Black's turn, play immediately.
+                    if (_botMode && _game.CurrentTurn == PieceColor.Black && !_game.IsGameOver)
+                        await RunBotAsync().ConfigureAwait(false);
+                });
+                return;
+
+            case "r":
+                key.PreventDefault();
+                _game.Reset();
+                _selRow = null;
+                _selCol = null;
+                _legalMoves = [];
+                _cursorRow = 0;
+                _cursorCol = 4;
+                _whiteTime = TimeSpan.FromMinutes(5);
+                _blackTime = TimeSpan.FromMinutes(5);
+                _ = InvokeAsync(StateHasChanged);
+                return;
+        }
+
+        if (_showHelp) return;
+        if (_game.IsGameOver) return;
+        if (_botThinking) return;
+        // Block player input when it's the bot's turn
+        if (_botMode && _game.CurrentTurn == PieceColor.Black) return;
+
+        switch (key.Name)
+        {
+            case "up":
+                key.PreventDefault();
+                _cursorRow = Math.Min(7, _cursorRow + 1);
+                _ = InvokeAsync(StateHasChanged);
+                break;
+            case "down":
+                key.PreventDefault();
+                _cursorRow = Math.Max(0, _cursorRow - 1);
+                _ = InvokeAsync(StateHasChanged);
+                break;
+            case "left":
+                key.PreventDefault();
+                _cursorCol = Math.Max(0, _cursorCol - 1);
+                _ = InvokeAsync(StateHasChanged);
+                break;
+            case "right":
+                key.PreventDefault();
+                _cursorCol = Math.Min(7, _cursorCol + 1);
+                _ = InvokeAsync(StateHasChanged);
+                break;
+
+            case "return":
+            case " ":
+                key.PreventDefault();
+                _ = InvokeAsync(async () =>
+                {
+                    HandleConfirm();
+                    StateHasChanged();
+                    if (_botMode && _game.CurrentTurn == PieceColor.Black && !_game.IsGameOver)
+                        await RunBotAsync().ConfigureAwait(false);
+                });
+                break;
+        }
+    }
+
+    private void HandleConfirm()
+    {
+        if (_selRow.HasValue)
+        {
+            var moved = _game.TryMove(_selRow.Value, _selCol!.Value, _cursorRow, _cursorCol);
+            if (moved)
+            {
+                _selRow = null;
+                _selCol = null;
+                _legalMoves = [];
+            }
+            else
+            {
+                // Re-select if cursor is on another friendly piece
+                var piece = _game.GetPiece(_cursorRow, _cursorCol);
+                if (!piece.IsEmpty && piece.Color == _game.CurrentTurn)
+                    SelectSquare(_cursorRow, _cursorCol);
+                else
+                {
+                    _selRow = null;
+                    _selCol = null;
+                    _legalMoves = [];
+                }
+            }
+        }
+        else
+        {
+            var piece = _game.GetPiece(_cursorRow, _cursorCol);
+            if (!piece.IsEmpty && piece.Color == _game.CurrentTurn)
+                SelectSquare(_cursorRow, _cursorCol);
+        }
+    }
+
+    private void SelectSquare(int row, int col)
+    {
+        _selRow = row;
+        _selCol = col;
+        _legalMoves = _game.GetLegalMoves(row, col);
+    }
+
+    // ── Mouse handler ─────────────────────────────────────────────────────────
+    private void HandleMouseClick(MouseEvent mouse)
+    {
+        if (!mouse.Pressed || mouse.Button != MouseButton.Left) return;
+        if (_showHelp || _game.IsGameOver || _botThinking) return;
+        if (_botMode && _game.CurrentTurn == PieceColor.Black) return;
+
+        // Convert terminal coordinates to board square.
+        // Layout: row 0 = timer bar, rows 1..32 = board (8 ranks × SquareH rows each).
+        // Cols 0..LabelW-1 = rank labels; cols LabelW..LabelW+8*SquareW-1 = board files.
+        var boardX = mouse.X - LabelW;
+        var boardY = mouse.Y - 1; // subtract timer bar row
+        if (boardY < 0) return;
+        var col = boardX / SquareW;
+        var displayRow = boardY / SquareH;
+        var row = 7 - displayRow;
+
+        if (boardX < 0 || col > 7 || displayRow > 7) return;
+
+        _cursorRow = row;
+        _cursorCol = col;
+
+        _ = InvokeAsync(async () =>
+        {
+            HandleConfirm();
+            StateHasChanged();
+            if (_botMode && _game.CurrentTurn == PieceColor.Black && !_game.IsGameOver)
+                await RunBotAsync().ConfigureAwait(false);
+        });
+    }
+
+    // ── Bot ───────────────────────────────────────────────────────────────────
+    private async Task RunBotAsync()
+    {
+        if (_game.IsGameOver || _game.CurrentTurn != PieceColor.Black) return;
+
+        _botThinking = true;
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+
+        // Small delay so the player can see the board before the bot moves.
+        await Task.Delay(400).ConfigureAwait(false);
+
+        var move = ChessBot.PickMove(_game);
+        if (move.HasValue)
+            _game.TryMove(move.Value.FromRow, move.Value.FromCol, move.Value.ToRow, move.Value.ToCol);
+
+        _botThinking = false;
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private string SquareBackground(int row, int col)
+    {
+        if (row == _cursorRow && col == _cursorCol) return CursorColor;
+        if (_selRow == row && _selCol == col) return SelectedColor;
+        if (_legalMoves.Contains((row, col)))
+            return (row + col) % 2 == 0 ? "#5d7a3e" : "#6a8e4a";
+        return (row + col) % 2 == 0 ? DarkSquareColor : LightSquareColor;
+    }
+
+    private static string CenterText(string text, int width)
+    {
+        if (text.Length >= width) return text[..width];
+        var pad = (width - text.Length) / 2;
+        return text.PadLeft(text.Length + pad).PadRight(width);
+    }
+
+    private static string BuildMaterialText(IReadOnlyList<ChessPiece> captured)
+    {
+        if (captured.Count == 0) return string.Empty;
+        var sb = new System.Text.StringBuilder();
+        foreach (var p in captured)
+        {
+            sb.Append(p.Symbol);
+            sb.Append(' ');
+        }
+        return sb.ToString().TrimEnd();
+    }
+
+    /// <summary>Converts an integer dimension to the string format expected by Width/Height parameters.</summary>
+    private static string S(int n) => n.ToString(System.Globalization.CultureInfo.InvariantCulture);
+}

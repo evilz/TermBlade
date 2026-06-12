@@ -217,7 +217,33 @@ samples/TermBlade.Gallery/          # Interactive component gallery</code></pre>
 <span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- input    <span class="comment"># keyboard input</span>
 <span class="prompt">$</span> dotnet run --project samples/TermBlade.Samples -- treeview <span class="comment"># tree view demo</span>
 <span class="prompt">$</span> dotnet run --project samples/TermBlade.Razor.Samples -- treeview <span class="comment"># razor tree view demo</span>
+<span class="prompt">$</span> dotnet run --project samples/TermBlade.Razor.Samples -- chess    <span class="comment"># chess game (Razor)</span>
+<span class="prompt">$</span> dotnet run --project src/TermBlade.Chess                         <span class="comment"># chess standalone app</span>
 <span class="prompt">$</span> dotnet run --project samples/TermBlade.Gallery   <span class="comment"># interactive component gallery</span></code></pre>
+
+      <h2 class="section-title" style="margin-top:3rem">Showcase</h2>
+      <div class="showcase-grid">
+        <div class="showcase-card">
+          <div class="showcase-header">
+            <span class="showcase-dot red"></span>
+            <span class="showcase-dot yellow"></span>
+            <span class="showcase-dot green"></span>
+            <span class="showcase-title">pwsh in TermBlade.Chess</span>
+          </div>
+          <img
+            src="https://github.com/user-attachments/assets/7b8a03f9-5769-4c64-aa9a-639ceb3e9368"
+            alt="TermBlade Chess — terminal chess game rendered in TermBlade.Razor"
+            class="showcase-img"
+            loading="lazy"
+          />
+          <div class="showcase-caption">
+            <strong>Chess game</strong> — a fully playable chess app built with <code>TermBlade.Razor</code>.
+            Features a cell-based board renderer, move history panel, material tracking, bot opponent toggle,
+            inline help overlay, and mouse support — all in the terminal.
+          </div>
+          <pre class="code-block showcase-cmd"><code><span class="prompt">$</span> dotnet run --project src/TermBlade.Chess</code></pre>
+        </div>
+      </div>
     </div>
   </section>
 
