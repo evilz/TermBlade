@@ -6,6 +6,9 @@ let terminal: Terminal | null = null;
 let fitAddon: FitAddon | null = null;
 let resizeObserver: ResizeObserver | null = null;
 
+const terminalFontFamily =
+  "'CaskaydiaCove Nerd Font Mono', 'CaskaydiaCove Nerd Font', 'JetBrainsMono Nerd Font Mono', 'JetBrainsMono Nerd Font', 'FiraCode Nerd Font Mono', 'FiraCode Nerd Font', 'Hack Nerd Font Mono', 'Hack Nerd Font', 'Symbols Nerd Font Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace";
+
 type DotNetTerminalRef = {
   invokeMethodAsync: (method: string, ...args: unknown[]) => Promise<void>;
 };
@@ -15,7 +18,7 @@ function createTerminal(readOnly: boolean): Terminal {
     cursorBlink: !readOnly,
     cursorStyle: readOnly ? "block" : "block",
     disableStdin: readOnly,
-    fontFamily: "'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace",
+    fontFamily: terminalFontFamily,
     fontSize: readOnly ? 13 : 14,
     lineHeight: 1.2,
     scrollback: readOnly ? 0 : 1000,

@@ -1,11 +1,12 @@
 html, body {
+    --font-terminal: 'CaskaydiaCove Nerd Font Mono', 'CaskaydiaCove Nerd Font', 'JetBrainsMono Nerd Font Mono', 'JetBrainsMono Nerd Font', 'FiraCode Nerd Font Mono', 'FiraCode Nerd Font', 'Hack Nerd Font Mono', 'Hack Nerd Font', 'Symbols Nerd Font Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
     margin: 0;
     padding: 0;
     height: 100%;
     overflow: hidden;
     background-color: #1a1b26;
     color: #c0caf5;
-    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+    font-family: var(--font-terminal);
 }
 
 #app {
@@ -55,6 +56,7 @@ h1:focus {
 
 .terminal-container .xterm {
     height: 100%;
+    font-family: var(--font-terminal);
 }
 
 /* Error UI */
@@ -145,6 +147,7 @@ h1:focus {
 .preview-terminal-container .xterm {
     height: 100%;
     padding: 0.7rem 0.85rem;
+    font-family: var(--font-terminal);
 }
 
 .preview-terminal-container .xterm-viewport {
