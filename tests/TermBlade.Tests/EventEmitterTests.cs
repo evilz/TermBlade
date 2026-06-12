@@ -19,7 +19,8 @@ namespace TermBlade.Tests
     public void Emit_UnknownEvent_NoOp()
     {
       var e = new EventEmitter();
-      e.Emit("nothing"); // no exception
+      var exception = Record.Exception(() => e.Emit("nothing"));
+      Assert.Null(exception);
     }
 
     [Fact]

@@ -17,7 +17,7 @@ function getTerminalFontFamily(): string {
 function createTerminal(readOnly: boolean): Terminal {
   return new Terminal({
     cursorBlink: !readOnly,
-    cursorStyle: readOnly ? "block" : "block",
+    cursorStyle: "block",
     disableStdin: readOnly,
     fontFamily: getTerminalFontFamily(),
     fontSize: readOnly ? 13 : 14,

@@ -77,7 +77,7 @@ public class CodeRenderable : Renderable
     }
   }
 
-  private List<(string Text, Rgba Color)> Tokenize(string line)
+  private static List<(string Text, Rgba Color)> Tokenize(string line)
   {
     var result = new List<(string, Rgba)>();
     int i = 0;

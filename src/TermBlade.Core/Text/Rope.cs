@@ -5,23 +5,23 @@ namespace TermBlade.Core.Text
 {
   // ── leaf / branch nodes ───────────────────────────────────────────────────────
 
-  internal abstract class RopeNode
+  internal interface RopeNode
   {
-    public abstract int Length { get; }
-    public abstract string GetText();
-    public abstract string Slice(int start, int end);
+    int Length { get; }
+    string GetText();
+    string Slice(int start, int end);
     /// <summary>Split the node at <paramref name="index"/> into (left, right) leaves.</summary>
-    public abstract (RopeNode Left, RopeNode Right) Split(int index);
+    (RopeNode Left, RopeNode Right) Split(int index);
   }
 
   internal sealed class RopeLeaf : RopeNode
   {
     private readonly string _v;
     public RopeLeaf(string value) { _v = value; }
-    public override int Length => _v.Length;
-    public override string GetText() => _v;
-    public override string Slice(int s, int e) => _v[Math.Max(0, s)..Math.Min(_v.Length, e)];
-    public override (RopeNode, RopeNode) Split(int index)
+    public int Length => _v.Length;
+    public string GetText() => _v;
+    public string Slice(int start, int end) => _v[Math.Max(0, start)..Math.Min(_v.Length, end)];
+    public (RopeNode, RopeNode) Split(int index)
     {
       index = Math.Clamp(index, 0, _v.Length);
       return (new RopeLeaf(_v[..index]), new RopeLeaf(_v[index..]));
@@ -33,16 +33,16 @@ namespace TermBlade.Core.Text
     private readonly RopeNode _left, _right;
     private readonly int _len;
     public RopeBranch(RopeNode left, RopeNode right) { _left = left; _right = right; _len = left.Length + right.Length; }
-    public override int Length => _len;
-    public override string GetText() => _left.GetText() + _right.GetText();
-    public override string Slice(int s, int e)
+    public int Length => _len;
+    public string GetText() => _left.GetText() + _right.GetText();
+    public string Slice(int start, int end)
     {
       int ll = _left.Length;
-      if (e <= ll) return _left.Slice(s, e);
-      if (s >= ll) return _right.Slice(s - ll, e - ll);
-      return _left.Slice(s, ll) + _right.Slice(0, e - ll);
+      if (end <= ll) return _left.Slice(start, end);
+      if (start >= ll) return _right.Slice(start - ll, end - ll);
+      return _left.Slice(start, ll) + _right.Slice(0, end - ll);
     }
-    public override (RopeNode, RopeNode) Split(int index)
+    public (RopeNode, RopeNode) Split(int index)
     {
       int ll = _left.Length;
       if (index <= ll)

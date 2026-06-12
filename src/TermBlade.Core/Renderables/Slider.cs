@@ -92,7 +92,7 @@ public class SliderRenderable : Renderable
         bool isThumb = i == thumbPos;
         bool isFilled = i < thumbPos;
         buffer.SetCell(x + i, y, isThumb ? '●' : '─',
-            isThumb ? thumbFg : isFilled ? valueFg : trackFg, trackBg);
+            GetTrackColor(isThumb, isFilled, thumbFg, valueFg, trackFg), trackBg);
       }
     }
     else
@@ -105,8 +105,16 @@ public class SliderRenderable : Renderable
         bool isThumb = i == thumbPos;
         bool isFilled = i > thumbPos;
         buffer.SetCell(x, y + i, isThumb ? '●' : '│',
-            isThumb ? thumbFg : isFilled ? valueFg : trackFg, trackBg);
+            GetTrackColor(isThumb, isFilled, thumbFg, valueFg, trackFg), trackBg);
       }
     }
+  }
+
+  private static Rgba GetTrackColor(bool isThumb, bool isFilled, Rgba thumbFg, Rgba valueFg, Rgba trackFg)
+  {
+    if (isThumb)
+      return thumbFg;
+
+    return isFilled ? valueFg : trackFg;
   }
 }

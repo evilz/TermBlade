@@ -320,11 +320,16 @@ public class CliRenderer : IDisposable
     _running = false;
   }
 
-  public void Destroy()
+  public void Destroy() => Dispose(true);
+
+  protected virtual void Dispose(bool disposing)
   {
     if (_disposed) return;
     _disposed = true;
     _running = false;
+
+    if (!disposing)
+      return;
 
     _renderSignal.Set();
     _sigwinchReg?.Dispose();
@@ -347,7 +352,11 @@ public class CliRenderer : IDisposable
     }
   }
 
-  public void Dispose() => Destroy();
+  public void Dispose()
+  {
+    Dispose(true);
+    GC.SuppressFinalize(this);
+  }
 
   private void DoRender()
   {
