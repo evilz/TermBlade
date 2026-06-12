@@ -22,13 +22,15 @@ internal enum FileManagerFocus
 
 internal sealed class FileManagerState
 {
+  private const string NoProcessesContent = "✖ No processes running";
+
   private readonly IFileSystemOperations _fileSystem;
   private PreviewDocument? _cachedPreview;
   private string? _cachedPreviewPath;
   private int _cachedPreviewMaxChars;
 
   public List<FilePanel> Panels { get; } = [];
-  public IReadOnlyList<SidebarEntry> SidebarEntries { get; private set; } = [];
+  public IReadOnlyList<SidebarEntry> SidebarEntries { get; private set; }
   public FileClipboard Clipboard { get; } = new();
   public int ActivePanelIndex { get; private set; }
   public int SelectedSidebarIndex { get; private set; }
@@ -390,9 +392,7 @@ internal sealed class FileManagerState
     var modified = entry.Value.LastWriteTime == DateTimeOffset.MinValue
         ? string.Empty
         : entry.Value.LastWriteTime.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
-    var permissions = string.IsNullOrWhiteSpace(entry.Value.Permissions)
-        ? (entry.Value.IsDirectory ? "drwxrwxrwx" : "-rw-rw-rw-")
-        : entry.Value.Permissions;
+    var permissions = GetDisplayPermissions(entry.Value);
 
     return string.Join('\n',
         $"Name          {entry.Value.Name}",
@@ -404,11 +404,23 @@ internal sealed class FileManagerState
   }
 
   public string BuildSpfClipboardContent()
-      => Clipboard.SourcePath is null
-          ? "✖ No content in clipboard"
-          : $"{(Clipboard.IsCut ? "Cut" : "Copy")}\n{Clipboard.SourcePath}";
+  {
+    if (Clipboard.SourcePath is null)
+      return "✖ No content in clipboard";
 
-  public string BuildSpfProcessesContent() => "✖ No processes running";
+    var operation = Clipboard.IsCut ? "Cut" : "Copy";
+    return $"{operation}\n{Clipboard.SourcePath}";
+  }
+
+  private static string GetDisplayPermissions(FileManagerEntry entry)
+  {
+    if (!string.IsNullOrWhiteSpace(entry.Permissions))
+      return entry.Permissions;
+
+    return entry.IsDirectory ? "drwxrwxrwx" : "-rw-rw-rw-";
+  }
+
+  public string BuildSpfProcessesContent() => NoProcessesContent;
 
   public void CreateDirectory(string name)
   {
@@ -802,8 +814,13 @@ internal sealed class FileManagerState
       foreach (var drive in DriveInfo.GetDrives().Where(drive => drive.IsReady).Take(6))
         entries.Add(new SidebarEntry(drive.Name.TrimEnd(Path.DirectorySeparatorChar), drive.RootDirectory.FullName, SidebarEntryKind.Disk));
     }
-    catch
+    catch (IOException)
     {
+      // Drive enumeration can fail for inaccessible removable/network drives; the sidebar remains usable without them.
+    }
+    catch (UnauthorizedAccessException)
+    {
+      // Drive enumeration can fail for restricted drives; skip them and keep the default entries.
     }
 
     return entries;

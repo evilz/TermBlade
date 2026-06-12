@@ -50,8 +50,8 @@ public class InputRenderable : Renderable
     Bg = opts.Bg;
     MaxLength = opts.MaxLength;
     Focusable = true;
-    if (opts.Width != null) SetWidth(opts.Width);
-    if (opts.Height != null) SetHeight(opts.Height);
+    if (opts.Width != null) SetInitialWidth(opts.Width);
+    if (opts.Height != null) SetInitialHeight(opts.Height);
     if (opts.Value != null)
     {
       Value = opts.Value;

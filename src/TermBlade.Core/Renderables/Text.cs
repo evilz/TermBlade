@@ -36,8 +36,8 @@ public class TextRenderable : Renderable
     Wrap = opts.Wrap;
     Attributes = opts.Attributes;
     LayoutNode.FlexGrow = opts.FlexGrow;
-    if (opts.Width != null) SetWidth(opts.Width);
-    if (opts.Height != null) SetHeight(opts.Height);
+    if (opts.Width != null) SetInitialWidth(opts.Width);
+    if (opts.Height != null) SetInitialHeight(opts.Height);
   }
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)

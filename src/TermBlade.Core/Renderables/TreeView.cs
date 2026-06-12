@@ -32,7 +32,7 @@ public class TreeViewRenderable : Renderable
 
   private readonly record struct FlatNode(TreeNode Node, int Depth, bool IsLast, bool[] ParentIsLast, bool IsExpandedInView);
 
-  private List<FlatNode> _flatNodes = new();
+  private readonly List<FlatNode> _flatNodes = new();
   private int _selectedIndex = 0;
   private int _scrollOffset = 0;
   private bool _dirty = true;

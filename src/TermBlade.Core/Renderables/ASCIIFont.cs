@@ -1,8 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using TermBlade.Core.Ansi;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+[SuppressMessage("Naming", "S101:Types should be named in PascalCase", Justification = "Public API keeps the established ASCII acronym casing.")]
+[SuppressMessage("Design", "S1192:String literals should not be duplicated", Justification = "Glyph rows are intentionally repeated in this compact font data table.")]
 public class ASCIIFontRenderable : Renderable
 {
   public string Text { get; set; } = "";

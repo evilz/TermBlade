@@ -134,9 +134,9 @@ public abstract class RenderableComponentBase<TRenderable> : ComponentBase, IDis
     renderable.Focusable = Focusable ?? _initialState.Focusable;
   }
 
-  public virtual void Dispose()
+  protected virtual void Dispose(bool disposing)
   {
-    if (!_initialized)
+    if (!disposing || !_initialized)
       return;
 
     if (Parent != null)
@@ -146,6 +146,13 @@ public abstract class RenderableComponentBase<TRenderable> : ComponentBase, IDis
 
     Renderable.Destroy();
     App.RequestRender();
+    _initialized = false;
+  }
+
+  public void Dispose()
+  {
+    Dispose(true);
+    GC.SuppressFinalize(this);
   }
 
   private readonly record struct CommonParameterState(

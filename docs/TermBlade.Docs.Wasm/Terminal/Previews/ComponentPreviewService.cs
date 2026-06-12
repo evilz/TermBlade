@@ -13,6 +13,7 @@ public static class ComponentPreviewService
 {
   private const int Width = 54;
   private const int Height = 12;
+  private const string SingleBorderStyle = "single";
   private static readonly Rgba DefaultFg = Rgba.FromCss("#c0caf5");
   private static readonly Rgba MutedFg = Rgba.FromCss("#6e7681");
   private static readonly Rgba AccentFg = Rgba.FromCss("#3fb950");
@@ -171,7 +172,7 @@ public static class ComponentPreviewService
   private static void RenderInput(RenderBuffer b)
   {
     Draw(b, 2, 1, "Input", YellowFg, TextAttributes.Bold);
-    DrawBox(b, 2, 3, 34, 3, null, BlueFg, "single");
+    DrawBox(b, 2, 3, 34, 3, null, BlueFg, SingleBorderStyle);
     Draw(b, 4, 4, "termblade@example.com", DefaultFg);
     Draw(b, 25, 4, " ", DefaultFg, TextAttributes.None, CursorBg);
     Draw(b, 2, 7, "Single-line editable value", MutedFg);
@@ -180,7 +181,7 @@ public static class ComponentPreviewService
   private static void RenderTextarea(RenderBuffer b)
   {
     Draw(b, 2, 1, "Textarea", YellowFg, TextAttributes.Bold);
-    DrawBox(b, 2, 3, 38, 6, null, BlueFg, "single");
+    DrawBox(b, 2, 3, 38, 6, null, BlueFg, SingleBorderStyle);
     Draw(b, 4, 4, "Multi-line", DefaultFg);
     Draw(b, 4, 5, "editable content", DefaultFg);
     Draw(b, 4, 6, "with cursor", DefaultFg);
@@ -222,7 +223,7 @@ public static class ComponentPreviewService
     Draw(b, 2, 3, " Components ", Bg, TextAttributes.Bold, AccentFg);
     Draw(b, 14, 3, " Samples ", MutedFg, TextAttributes.None, PanelBg);
     Draw(b, 24, 3, " Docs ", MutedFg, TextAttributes.None, PanelBg);
-    DrawBox(b, 2, 5, 34, 4, null, AccentFg, "single");
+    DrawBox(b, 2, 5, 34, 4, null, AccentFg, SingleBorderStyle);
     Draw(b, 4, 6, "Active tab content", DefaultFg);
   }
 
@@ -236,7 +237,7 @@ public static class ComponentPreviewService
 
   private static void RenderScrollBox(RenderBuffer b)
   {
-    DrawBox(b, 2, 1, 38, 9, " ScrollBox ", BlueFg, "single");
+    DrawBox(b, 2, 1, 38, 9, " ScrollBox ", BlueFg, SingleBorderStyle);
     for (var i = 0; i < 6; i++) Draw(b, 4, 3 + i, $"Item {i + 8:00} in scrollable content", i == 2 ? AccentFg : DefaultFg);
     Draw(b, 38, 3, "█", AccentFg);
     Draw(b, 38, 4, "█", AccentFg);
@@ -260,7 +261,7 @@ public static class ComponentPreviewService
   private static void RenderConsoleOverlay(RenderBuffer b)
   {
     Draw(b, 2, 1, "ConsoleOverlay", YellowFg, TextAttributes.Bold);
-    DrawBox(b, 2, 3, 42, 7, " Debug Console ", MagentaFg, "single");
+    DrawBox(b, 2, 3, 42, 7, " Debug Console ", MagentaFg, SingleBorderStyle);
     Draw(b, 4, 5, "> render frame 128", AccentFg);
     Draw(b, 4, 6, "> focused: Input#email", DefaultFg);
     Draw(b, 4, 7, "> fps: 60", MutedFg);

@@ -200,10 +200,19 @@
         }
     }
 
-    private string StatusColor => _game.IsGameOver ? "#f87171"
-        : _game.StatusMessage.Length > 0 ? "#fbbf24"
-        : _botThinking ? "#a0c4ff"
-        : "#666666";
+    private string StatusColor
+    {
+        get
+        {
+            if (_game.IsGameOver)
+                return "#f87171";
+
+            if (_game.StatusMessage.Length > 0)
+                return "#fbbf24";
+
+            return _botThinking ? "#a0c4ff" : "#666666";
+        }
+    }
 
     private string BlackMaterialText => BuildMaterialText(_game.BlackCaptured);
     private string WhiteMaterialText => BuildMaterialText(_game.WhiteCaptured);
@@ -227,7 +236,7 @@
         App.KeyEvents.On("mouse", mouseHandler);
         _mouseHandlers.Add(mouseHandler);
 
-        var timer = new Timer(Tick, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+        var timer = new Timer(_ => Tick(), null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
         _timers.Add(timer);
     }
 
@@ -242,7 +251,7 @@
     }
 
     // ── Timer tick ────────────────────────────────────────────────────────────
-    private void Tick(object? _)
+    private void Tick()
     {
         if (_game.IsGameOver) return;
 
@@ -257,7 +266,7 @@
                 _blackTime -= TimeSpan.FromSeconds(1);
         }
 
-        _ = InvokeAsync(StateHasChanged);
+        InvokeAsync(StateHasChanged);
     }
 
     // ── Keyboard handler ──────────────────────────────────────────────────────
@@ -277,19 +286,19 @@
                 _selRow = null;
                 _selCol = null;
                 _legalMoves = [];
-                _ = InvokeAsync(StateHasChanged);
+                InvokeAsync(StateHasChanged);
                 return;
 
             case "?":
                 key.PreventDefault();
                 _showHelp = !_showHelp;
-                _ = InvokeAsync(StateHasChanged);
+                InvokeAsync(StateHasChanged);
                 return;
 
             case "b":
                 key.PreventDefault();
                 _botMode = !_botMode;
-                _ = InvokeAsync(async () =>
+                InvokeAsync(async () =>
                 {
                     StateHasChanged();
                     // If bot is toggled on and it is already Black's turn, play immediately.
@@ -308,7 +317,7 @@
                 _cursorCol = 4;
                 _whiteTime = TimeSpan.FromMinutes(5);
                 _blackTime = TimeSpan.FromMinutes(5);
-                _ = InvokeAsync(StateHasChanged);
+                InvokeAsync(StateHasChanged);
                 return;
         }
 
@@ -323,28 +332,28 @@
             case "up":
                 key.PreventDefault();
                 _cursorRow = Math.Min(7, _cursorRow + 1);
-                _ = InvokeAsync(StateHasChanged);
+                InvokeAsync(StateHasChanged);
                 break;
             case "down":
                 key.PreventDefault();
                 _cursorRow = Math.Max(0, _cursorRow - 1);
-                _ = InvokeAsync(StateHasChanged);
+                InvokeAsync(StateHasChanged);
                 break;
             case "left":
                 key.PreventDefault();
                 _cursorCol = Math.Max(0, _cursorCol - 1);
-                _ = InvokeAsync(StateHasChanged);
+                InvokeAsync(StateHasChanged);
                 break;
             case "right":
                 key.PreventDefault();
                 _cursorCol = Math.Min(7, _cursorCol + 1);
-                _ = InvokeAsync(StateHasChanged);
+                InvokeAsync(StateHasChanged);
                 break;
 
             case "return":
             case " ":
                 key.PreventDefault();
-                _ = InvokeAsync(async () =>
+                InvokeAsync(async () =>
                 {
                     HandleConfirm();
                     StateHasChanged();
@@ -417,7 +426,7 @@
         _cursorRow = row;
         _cursorCol = col;
 
-        _ = InvokeAsync(async () =>
+        InvokeAsync(async () =>
         {
             HandleConfirm();
             StateHasChanged();

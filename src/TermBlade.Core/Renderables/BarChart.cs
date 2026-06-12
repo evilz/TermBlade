@@ -76,9 +76,7 @@ public class BarChartRenderable : Renderable
       }
     }
 
-    double max = MaxValue ?? 0;
-    foreach (var v in Data)
-      if (v > max) max = v;
+    double max = Math.Max(MaxValue ?? 0, Data.Max());
     if (max <= 0) max = 1;
 
     if (Sparkline)
@@ -201,8 +199,7 @@ public class BarChartRenderable : Renderable
     int labelWidth = 0;
     if (Labels != null)
     {
-      foreach (var l in Labels)
-        if (l.Length > labelWidth) labelWidth = l.Length;
+      labelWidth = Labels.Select(l => l.Length).DefaultIfEmpty(0).Max();
       labelWidth += 1; // gap
     }
 

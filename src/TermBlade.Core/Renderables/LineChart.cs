@@ -226,7 +226,6 @@ public class LineChartRenderable : Renderable
   private static string FormatValue(double value)
   {
     return Math.Abs(value) >= 1000 ? value.ToString("F0")
-         : Math.Abs(value) >= 1 ? value.ToString("F2")
          : value.ToString("F2");
   }
 }

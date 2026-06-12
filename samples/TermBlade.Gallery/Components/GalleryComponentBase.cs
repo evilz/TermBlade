@@ -26,9 +26,18 @@ public abstract class GalleryComponentBase : ComponentBase, IDisposable
     _keypressHandlers.Add(wrapped);
   }
 
-  public virtual void Dispose()
+  protected virtual void Dispose(bool disposing)
   {
+    if (!disposing)
+      return;
+
     foreach (var handler in _keypressHandlers)
       App.KeyEvents.Off("keypress", handler);
+  }
+
+  public void Dispose()
+  {
+    Dispose(true);
+    GC.SuppressFinalize(this);
   }
 }

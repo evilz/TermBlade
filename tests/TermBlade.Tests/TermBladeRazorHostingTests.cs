@@ -22,6 +22,7 @@ public class TermBladeRazorHostingTests
 
     var stopTask = host.StopAsync();
     await stopTask.WaitAsync(TimeSpan.FromSeconds(2));
+    Assert.True(stopTask.IsCompletedSuccessfully);
   }
 
   [Fact]

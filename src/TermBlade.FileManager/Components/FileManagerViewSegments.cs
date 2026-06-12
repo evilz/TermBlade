@@ -20,10 +20,18 @@ internal static class FileManagerViewSegments
 
   public static IReadOnlyList<SegmentedTextSegment> SidebarGroup(string title) =>
   [
-      new(title == "Pinned" ? " " : title == "Disks" ? "󰋊 " : string.Empty, FileManagerTheme.Accent),
+      new(GetSidebarGroupIcon(title), FileManagerTheme.Accent),
       new(title, FileManagerTheme.Accent),
       new(" ─────────", FileManagerTheme.FrameBorder)
   ];
+
+  private static string GetSidebarGroupIcon(string title)
+    => title switch
+    {
+      "Pinned" => " ",
+      "Disks" => "󰋊 ",
+      _ => string.Empty
+    };
 
   public static IReadOnlyList<SegmentedTextSegment> SidebarEntry(SidebarEntry entry, bool selected)
   {
@@ -48,13 +56,21 @@ internal static class FileManagerViewSegments
   public static IReadOnlyList<SegmentedTextSegment> Entry(FileManagerEntry entry, bool selected, bool compact = false)
   {
     var icon = entry.IsDirectory ? "󰉋 " : "󰈔 ";
-    var prefix = compact ? string.Empty : selected ? "❯ " : "  ";
+    var prefix = GetEntryPrefix(selected, compact);
     return
     [
         new(prefix, FileManagerTheme.ActiveBorder),
         new(icon, entry.IsDirectory ? FileManagerTheme.Green : FileManagerTheme.Muted),
         new(entry.Name, selected ? FileManagerTheme.Text : FileManagerTheme.Muted)
     ];
+  }
+
+  private static string GetEntryPrefix(bool selected, bool compact)
+  {
+    if (compact)
+      return string.Empty;
+
+    return selected ? "❯ " : "  ";
   }
 
   public static IReadOnlyList<SegmentedTextSegment> Status(string content)

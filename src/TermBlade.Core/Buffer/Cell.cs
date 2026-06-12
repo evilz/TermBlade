@@ -5,10 +5,10 @@ namespace TermBlade.Core.Buffer
   /// <summary>A single terminal cell: codepoint + foreground/background colors + attributes.</summary>
   public struct Cell
   {
-    public int Codepoint;
-    public Rgba Fg;
-    public Rgba Bg;
-    public TextAttributes Attributes;
+    public int Codepoint { get; set; }
+    public Rgba Fg { get; set; }
+    public Rgba Bg { get; set; }
+    public TextAttributes Attributes { get; set; }
 
     public static Cell Empty(Rgba bg) => new Cell
     {
