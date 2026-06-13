@@ -49,6 +49,7 @@ src/TermBlade.Core/            # Core library (NuGet package)
   Plugins/                     # IPlugin, PluginRegistry
 src/TermBlade.Razor/           # Razor host + component wrappers for renderables
 src/TermBlade.FileManager/     # Global dotnet tool: modern terminal file manager
+src/TermBlade.CsvViewer/       # Global dotnet tool: command-line CSV viewer
 tests/TermBlade.Tests/         # xUnit test project
 samples/TermBlade.Samples/    # Sample console applications
 samples/TermBlade.Razor.Samples/ # Razor-hosted sample console applications
@@ -77,6 +78,21 @@ dotnet run --project samples/TermBlade.Razor.Samples -- console  # Razor-hosted 
 dotnet run --project samples/TermBlade.Razor.Samples -- calendar # Razor-hosted calendar demo
 dotnet run --project samples/TermBlade.Gallery                 # Interactive component gallery (includes Calendar demo)
 ```
+
+## TermBlade.CsvViewer
+
+Install the CSV viewer as a global .NET tool:
+
+```bash
+dotnet tool install --global TermBlade.CsvViewer
+tbcsv ./data.csv
+```
+
+`tbcsv` is an independent command-line application packaged from `src/TermBlade.CsvViewer`.
+It uses a Razor-hosted `Table` component from `TermBlade.Razor` and behaves like `less` for CSV files: it renders a fixed-width table, keeps headers visible,
+auto-detects common delimiters (comma, semicolon, tab, and pipe), and supports keyboard
+scrolling with arrows, Page Up/Down, Home/End, `q`, or `Esc`. Use `--delimiter <char>` to
+force a separator and `--no-header` when the first row contains data instead of headers.
 
 ## TermBlade.FileManager
 
