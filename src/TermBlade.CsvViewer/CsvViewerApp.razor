@@ -50,9 +50,9 @@ else
 
     private string StatusLine => "Arrows scroll · PageUp/PageDown page · Home/End jump · q/Esc quit";
 
-    private int VisibleRowCount => Math.Max(1, Console.WindowHeight - 8);
+    private int VisibleRowCount => Math.Max(1, App.Renderer.TerminalHeight - 8);
 
-    private int MaxVisibleWidth => Math.Max(20, Console.WindowWidth - 4);
+    private int MaxVisibleWidth => Math.Max(20, App.Renderer.TerminalWidth - 4);
 
     protected override void OnInitialized()
     {
