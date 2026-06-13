@@ -1,4 +1,5 @@
 using TermBlade.CsvViewer;
+using TermBlade.Razor.Components;
 
 namespace TermBlade.Tests;
 
@@ -32,5 +33,37 @@ public class CsvViewerTests
 
     Assert.Equal(["Column 1", "Column 2"], document.Headers);
     Assert.Equal(2, document.Rows.Count);
+  }
+
+  [Fact]
+  public void Options_ParseSupportsTabDelimiterAlias()
+  {
+    var options = CsvViewerOptions.Parse(["--delimiter", "tab", "data.tsv"]);
+
+    Assert.Equal('\t', options.Delimiter);
+    Assert.Equal("data.tsv", options.FilePath);
+  }
+
+  [Fact]
+  public void Options_ParseRejectsUnknownOptions()
+  {
+    var ex = Assert.Throws<ArgumentException>(() => CsvViewerOptions.Parse(["--bad", "data.csv"]));
+
+    Assert.Contains("Unknown option", ex.Message);
+  }
+
+  [Fact]
+  public void TableLayout_TruncatesColumnsAndAppliesOffsets()
+  {
+    var rows = new[]
+    {
+        new[] { "Ada Lovelace", "Mathematician", "1843" },
+        new[] { "Grace Hopper", "Computer scientist", "1952" }
+    };
+
+    var layout = TableLayout.Create(["Name", "Role", "Year"], rows, rowOffset: 1, columnOffset: 1, visibleRowCount: 1, minColumnWidth: 4, maxColumnWidth: 10, maxVisibleWidth: 18);
+
+    Assert.Equal("│Role      │Year│", layout.Header);
+    Assert.Equal(["│Computer …│1952│"], layout.Rows);
   }
 }

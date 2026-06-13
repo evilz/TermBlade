@@ -4,6 +4,8 @@ internal sealed record CsvViewerOptions(string? FilePath, char? Delimiter, bool 
 {
   public static CsvViewerOptions Parse(string[] args)
   {
+    ArgumentNullException.ThrowIfNull(args);
+
     string? filePath = null;
     char? delimiter = null;
     var hasHeader = true;
@@ -18,18 +20,29 @@ internal sealed record CsvViewerOptions(string? FilePath, char? Delimiter, bool 
         case "-d":
         case "--delimiter":
           if (i + 1 >= args.Length || string.IsNullOrEmpty(args[i + 1]))
-          {
             throw new ArgumentException("Delimiter option requires a value.");
-          }
 
-          delimiter = args[++i][0];
+          delimiter = ParseDelimiter(args[++i]);
           break;
         default:
-          filePath ??= args[i];
+          if (args[i].StartsWith('-', StringComparison.Ordinal))
+            throw new ArgumentException($"Unknown option: {args[i]}");
+
+          if (filePath is not null)
+            throw new ArgumentException("Only one CSV file path can be specified.");
+
+          filePath = args[i];
           break;
       }
     }
 
     return new CsvViewerOptions(filePath, delimiter, hasHeader);
+  }
+
+  private static char ParseDelimiter(string value)
+  {
+    return value.Equals("tab", StringComparison.OrdinalIgnoreCase) || value == @"\t"
+        ? '\t'
+        : value[0];
   }
 }
