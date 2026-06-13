@@ -1,0 +1,142 @@
+@implements IDisposable
+@inject TermBladeAppContext App
+@inject IOptions<CsvViewerStartupOptions> StartupOptions
+
+@if (_document is null)
+{
+    <Box Width="100%" Height="100%" BackgroundColor="@BackgroundColor" Border="true" BorderStyle="rounded" BorderColor="@BorderColor" Title=" TermBlade CSV Viewer ">
+        <Text Width="100%" Height="1" Content="Loading CSV document..." Fg="@TextColor" Bg="@BackgroundColor" />
+    </Box>
+}
+else
+{
+    <Box Width="100%" Height="100%" BackgroundColor="@BackgroundColor" FlexDirection="FlexDirection.Column">
+        <Text Width="100%" Height="1" Content="@StatusLine" Fg="@HeaderColor" Bg="@BackgroundColor" Wrap="false" />
+        <Table Headers="@_document.Headers"
+               Rows="@_document.Rows"
+               RowOffset="@_rowOffset"
+               ColumnOffset="@_columnOffset"
+               VisibleRowCount="@VisibleRowCount"
+               MaxVisibleWidth="@MaxVisibleWidth"
+               Title="@Title"
+               Caption="@Caption"
+               BackgroundColor="@BackgroundColor"
+               BorderColor="@BorderColor"
+               HeaderColor="@HeaderColor"
+               TextColor="@TextColor"
+               ShowRowSeparators="false"
+               FlexGrow="1" />
+    </Box>
+}
+
+@code {
+    private const string BackgroundColor = "#020617";
+    private const string BorderColor = "#38bdf8";
+    private const string HeaderColor = "#facc15";
+    private const string TextColor = "#e5e7eb";
+
+    private readonly List<Action<object?>> _keypressHandlers = [];
+    private CsvDocument? _document;
+    private int _rowOffset;
+    private int _columnOffset;
+
+    private string Title => _document is null
+        ? " TermBlade CSV Viewer "
+        : $" {Path.GetFileName(StartupOptions.Value.FilePath)} · {_document.Rows.Count} rows · delimiter {PrintableDelimiter(_document.Delimiter)} ";
+
+    private string Caption => _document is null
+        ? string.Empty
+        : $" row {Math.Min(_rowOffset + 1, Math.Max(1, _document.Rows.Count))}/{Math.Max(1, _document.Rows.Count)} · col {_columnOffset + 1}/{Math.Max(1, _document.ColumnCount)} ";
+
+    private string StatusLine => "Arrows scroll · PageUp/PageDown page · Home/End jump · q/Esc quit";
+
+    private int VisibleRowCount => Math.Max(1, Console.WindowHeight - 8);
+
+    private int MaxVisibleWidth => Math.Max(20, Console.WindowWidth - 4);
+
+    protected override void OnInitialized()
+    {
+        App.Renderer.SetBackgroundColor(BackgroundColor);
+        RegisterKeypress(HandleKeypress);
+        _ = LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        _document = await CsvDocument.LoadAsync(
+            StartupOptions.Value.FilePath,
+            StartupOptions.Value.Delimiter,
+            StartupOptions.Value.HasHeader).ConfigureAwait(false);
+        await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+    }
+
+    private void RegisterKeypress(Action<KeyEvent> handler)
+    {
+        Action<object?> wrapped = data =>
+        {
+            if (data is KeyEvent key)
+                handler(key);
+        };
+
+        App.KeyEvents.On("keypress", wrapped);
+        _keypressHandlers.Add(wrapped);
+    }
+
+    private void HandleKeypress(KeyEvent key)
+    {
+        if (_document is null)
+            return;
+
+        var handled = true;
+        switch (key.Name)
+        {
+            case "q":
+            case "escape":
+            case "ctrl+c":
+                App.Renderer.Destroy();
+                return;
+            case "down":
+                _rowOffset = Math.Min(_rowOffset + 1, Math.Max(0, _document.Rows.Count - 1));
+                break;
+            case "up":
+                _rowOffset = Math.Max(0, _rowOffset - 1);
+                break;
+            case "pagedown":
+                _rowOffset = Math.Min(_rowOffset + VisibleRowCount, Math.Max(0, _document.Rows.Count - 1));
+                break;
+            case "pageup":
+                _rowOffset = Math.Max(0, _rowOffset - VisibleRowCount);
+                break;
+            case "right":
+                _columnOffset = Math.Min(_columnOffset + 1, Math.Max(0, _document.ColumnCount - 1));
+                break;
+            case "left":
+                _columnOffset = Math.Max(0, _columnOffset - 1);
+                break;
+            case "home":
+                _rowOffset = 0;
+                _columnOffset = 0;
+                break;
+            case "end":
+                _rowOffset = Math.Max(0, _document.Rows.Count - 1);
+                break;
+            default:
+                handled = false;
+                break;
+        }
+
+        if (!handled)
+            return;
+
+        key.PreventDefault();
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private static string PrintableDelimiter(char delimiter) => delimiter == '\t' ? "tab" : $"'{delimiter}'";
+
+    public void Dispose()
+    {
+        foreach (var handler in _keypressHandlers)
+            App.KeyEvents.Off("keypress", handler);
+    }
+}

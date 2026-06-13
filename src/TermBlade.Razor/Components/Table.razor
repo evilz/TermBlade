@@ -1,0 +1,82 @@
+<Box Width="@Width" Height="@Height" FlexGrow="@FlexGrow" BackgroundColor="@BackgroundColor"
+     Border="@ShowBorder" BorderStyle="@BorderStyle" BorderColor="@BorderColor"
+     Title="@Title" TitleAlignment="@TitleAlignment" BottomTitle="@Caption" BottomTitleAlignment="@CaptionAlignment"
+     PaddingLeft="@PaddingLeft" PaddingRight="@PaddingRight" PaddingTop="@PaddingTop" FlexDirection="FlexDirection.Column">
+    @if (ShowHeaders)
+    {
+        <Text Width="100%" Height="1" Content="@FormatRow(Headers, HeaderAttributes)" Fg="@HeaderColor" Bg="@BackgroundColor" Attributes="@HeaderAttributes" Wrap="false" />
+        <Text Width="100%" Height="1" Content="@Separator" Fg="@BorderColor" Bg="@BackgroundColor" Wrap="false" />
+    }
+
+    @foreach (var row in VisibleRows)
+    {
+        <Text Width="100%" Height="1" Content="@FormatRow(row, TextAttributes.None)" Fg="@TextColor" Bg="@BackgroundColor" Wrap="false" />
+        @if (ShowRowSeparators)
+        {
+            <Text Width="100%" Height="1" Content="@Separator" Fg="@BorderColor" Bg="@BackgroundColor" Wrap="false" />
+        }
+    }
+</Box>
+
+@code {
+    [Parameter] public IReadOnlyList<string> Headers { get; set; } = [];
+    [Parameter] public IReadOnlyList<IReadOnlyList<string>> Rows { get; set; } = [];
+    [Parameter] public int RowOffset { get; set; }
+    [Parameter] public int ColumnOffset { get; set; }
+    [Parameter] public int VisibleRowCount { get; set; } = 20;
+    [Parameter] public int MaxColumnWidth { get; set; } = 32;
+    [Parameter] public int MinColumnWidth { get; set; } = 6;
+    [Parameter] public int MaxVisibleWidth { get; set; } = 120;
+    [Parameter] public bool ShowHeaders { get; set; } = true;
+    [Parameter] public bool ShowBorder { get; set; } = true;
+    [Parameter] public bool ShowRowSeparators { get; set; }
+    [Parameter] public string BorderStyle { get; set; } = "rounded";
+    [Parameter] public string BorderColor { get; set; } = "#38bdf8";
+    [Parameter] public string HeaderColor { get; set; } = "#facc15";
+    [Parameter] public string TextColor { get; set; } = "#e5e7eb";
+    [Parameter] public string BackgroundColor { get; set; } = "#020617";
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Caption { get; set; }
+    [Parameter] public string TitleAlignment { get; set; } = "left";
+    [Parameter] public string CaptionAlignment { get; set; } = "right";
+    [Parameter] public string Width { get; set; } = "100%";
+    [Parameter] public string Height { get; set; } = "100%";
+    [Parameter] public float? FlexGrow { get; set; }
+    [Parameter] public int PaddingLeft { get; set; } = 1;
+    [Parameter] public int PaddingRight { get; set; } = 1;
+    [Parameter] public int PaddingTop { get; set; } = 1;
+
+    private IReadOnlyList<(int Index, int Width)> Columns => BuildColumns().ToArray();
+
+    private IEnumerable<IReadOnlyList<string>> VisibleRows => Rows.Skip(Math.Max(0, RowOffset)).Take(Math.Max(0, VisibleRowCount));
+
+    private string Separator => new('─', Math.Min(MaxVisibleWidth, Math.Max(0, Columns.Sum(column => column.Width + 1) + 1)));
+
+    private IEnumerable<(int Index, int Width)> BuildColumns()
+    {
+        var columnCount = Math.Max(Headers.Count, Rows.Count == 0 ? 0 : Rows.Max(row => row.Count));
+        var used = 1;
+        for (var column = Math.Max(0, ColumnOffset); column < columnCount; column++)
+        {
+            var headerWidth = GetCell(Headers, column).Length;
+            var dataWidth = Rows.Take(200).Select(row => GetCell(row, column).Length).DefaultIfEmpty(0).Max();
+            var width = Math.Clamp(Math.Max(headerWidth, dataWidth), MinColumnWidth, MaxColumnWidth);
+            if (used + width + 1 > MaxVisibleWidth)
+                yield break;
+
+            used += width + 1;
+            yield return (column, width);
+        }
+    }
+
+    private string FormatRow(IReadOnlyList<string> row, TextAttributes attributes)
+    {
+        var cells = Columns.Select(column => Trim(GetCell(row, column.Index).ReplaceLineEndings(" "), column.Width).PadRight(column.Width));
+        var content = "│" + string.Join("│", cells) + "│";
+        return attributes == TextAttributes.None ? content : content;
+    }
+
+    private static string GetCell(IReadOnlyList<string> row, int index) => index < row.Count ? row[index] : string.Empty;
+
+    private static string Trim(string value, int width) => value.Length <= width ? value : value[..Math.Max(0, width - 1)] + "…";
+}
