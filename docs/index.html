@@ -202,6 +202,8 @@ dotnet run</code></pre>
   Plugins/                   # IPlugin, PluginRegistry
 
 src/TermBlade.Razor/         # Razor host + component wrappers
+src/TermBlade.FileManager/   # Global dotnet tool: file manager
+src/TermBlade.CsvViewer/     # Global dotnet tool: CSV viewer
 
 tests/TermBlade.Tests/       # xUnit test project (241 tests)
 
@@ -220,6 +222,12 @@ samples/TermBlade.Gallery/          # Interactive component gallery</code></pre>
 <span class="prompt">$</span> dotnet run --project samples/TermBlade.Razor.Samples -- chess    <span class="comment"># chess game (Razor)</span>
 <span class="prompt">$</span> dotnet run --project src/TermBlade.Chess                         <span class="comment"># chess standalone app</span>
 <span class="prompt">$</span> dotnet run --project samples/TermBlade.Gallery   <span class="comment"># interactive component gallery</span></code></pre>
+
+      <h2 class="section-title" style="margin-top:3rem">Install Tools</h2>
+      <pre class="code-block"><code><span class="prompt">$</span> dotnet tool install --global TermBlade.FileManager
+<span class="prompt">$</span> tbfm ./src
+<span class="prompt">$</span> dotnet tool install --global TermBlade.CsvViewer
+<span class="prompt">$</span> tbcsv ./data.csv <span class="comment"># Razor-hosted, less-like CSV table viewer</span></code></pre>
 
       <h2 class="section-title" style="margin-top:3rem">Showcase</h2>
       <div class="showcase-grid">

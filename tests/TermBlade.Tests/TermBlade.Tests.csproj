@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TermBlade.Core\TermBlade.Core.csproj" />
+    <ProjectReference Include="..\..\src\TermBlade.CsvViewer\TermBlade.CsvViewer.csproj" />
     <ProjectReference Include="..\..\src\TermBlade.Chess\TermBlade.Chess.csproj" />
     <ProjectReference Include="..\..\src\TermBlade.FileManager\TermBlade.FileManager.csproj" />
     <ProjectReference Include="..\..\src\TermBlade.Razor\TermBlade.Razor.csproj" />
