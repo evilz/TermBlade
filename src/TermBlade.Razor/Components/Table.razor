@@ -1,0 +1,64 @@
+<TermBlade.Razor.Components.Box Width="@Width" Height="@Height" FlexGrow="@FlexGrow" BackgroundColor="@BackgroundColor"
+     Border="@ShowBorder" BorderStyle="@BorderStyle" BorderColor="@BorderColor"
+     Title="@Title" TitleAlignment="@TitleAlignment" BottomTitle="@Caption" BottomTitleAlignment="@CaptionAlignment"
+     PaddingLeft="@PaddingLeft" PaddingRight="@PaddingRight" PaddingTop="@PaddingTop" FlexDirection="FlexDirection.Column">
+    @if (ShowHeaders)
+    {
+        <TermBlade.Razor.Components.Text Width="100%" Height="1" Content="@_layout.Header" Fg="@HeaderColor" Bg="@BackgroundColor" Attributes="@HeaderAttributes" Wrap="false" />
+        <TermBlade.Razor.Components.Text Width="100%" Height="1" Content="@_layout.Separator" Fg="@BorderColor" Bg="@BackgroundColor" Wrap="false" />
+    }
+
+    @foreach (var row in _layout.Rows)
+    {
+        <TermBlade.Razor.Components.Text Width="100%" Height="1" Content="@row" Fg="@TextColor" Bg="@BackgroundColor" Wrap="false" />
+        @if (ShowRowSeparators)
+        {
+            <TermBlade.Razor.Components.Text Width="100%" Height="1" Content="@_layout.Separator" Fg="@BorderColor" Bg="@BackgroundColor" Wrap="false" />
+        }
+    }
+</TermBlade.Razor.Components.Box>
+
+@code {
+    private TableLayoutResult _layout = new(string.Empty, string.Empty, []);
+
+    [Parameter] public IReadOnlyList<string> Headers { get; set; } = [];
+    [Parameter] public IReadOnlyList<IReadOnlyList<string>> Rows { get; set; } = [];
+    [Parameter] public int RowOffset { get; set; }
+    [Parameter] public int ColumnOffset { get; set; }
+    [Parameter] public int VisibleRowCount { get; set; } = 20;
+    [Parameter] public int MaxColumnWidth { get; set; } = 32;
+    [Parameter] public int MinColumnWidth { get; set; } = 6;
+    [Parameter] public int MaxVisibleWidth { get; set; } = 120;
+    [Parameter] public bool ShowHeaders { get; set; } = true;
+    [Parameter] public bool ShowBorder { get; set; } = true;
+    [Parameter] public bool ShowRowSeparators { get; set; }
+    [Parameter] public string BorderStyle { get; set; } = "rounded";
+    [Parameter] public string BorderColor { get; set; } = "#38bdf8";
+    [Parameter] public string HeaderColor { get; set; } = "#facc15";
+    [Parameter] public string TextColor { get; set; } = "#e5e7eb";
+    [Parameter] public string BackgroundColor { get; set; } = "#020617";
+    [Parameter] public TextAttributes HeaderAttributes { get; set; } = TextAttributes.Bold;
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Caption { get; set; }
+    [Parameter] public string TitleAlignment { get; set; } = "left";
+    [Parameter] public string CaptionAlignment { get; set; } = "right";
+    [Parameter] public string Width { get; set; } = "100%";
+    [Parameter] public string Height { get; set; } = "100%";
+    [Parameter] public float? FlexGrow { get; set; }
+    [Parameter] public int PaddingLeft { get; set; } = 1;
+    [Parameter] public int PaddingRight { get; set; } = 1;
+    [Parameter] public int PaddingTop { get; set; } = 1;
+
+    protected override void OnParametersSet()
+    {
+        _layout = TableLayout.Create(
+            Headers,
+            Rows,
+            RowOffset,
+            ColumnOffset,
+            VisibleRowCount,
+            MinColumnWidth,
+            MaxColumnWidth,
+            MaxVisibleWidth);
+    }
+}
