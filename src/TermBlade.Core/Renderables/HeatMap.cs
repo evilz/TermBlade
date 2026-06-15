@@ -90,8 +90,7 @@ public class HeatMapRenderable : Renderable
     int rowLabelWidth = 0;
     if (RowLabels != null)
     {
-      foreach (var l in RowLabels)
-        if (l.Length > rowLabelWidth) rowLabelWidth = l.Length;
+      rowLabelWidth = RowLabels.Select(l => l.Length).DefaultIfEmpty(0).Max();
       rowLabelWidth += 1;
     }
 

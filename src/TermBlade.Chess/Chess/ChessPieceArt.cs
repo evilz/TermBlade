@@ -7,13 +7,16 @@ namespace TermBlade.Chess.Chess;
 /// </summary>
 public static class ChessPieceArt
 {
+  private const string BlankRow = "     ";
+  private const string RoundedBaseRow = "▝▀▀▀▘";
+
   // 5-character-wide art rows for each piece type (4 rows per piece).
   // Empty square: 4 rows of spaces.
-  private static readonly string[] EmptyRows = ["     ", "     ", "     ", "     "];
+  private static readonly string[] EmptyRows = [BlankRow, BlankRow, BlankRow, BlankRow];
 
   private static readonly string[] PawnRows =
   [
-      "     ",
+      BlankRow,
         " ▝█▘ ",
         " ▟█▙ ",
         " ▔▔▔ ",
@@ -24,7 +27,7 @@ public static class ChessPieceArt
       "  ▖▗ ",
         "▗▇▟█▌",
         " ▟█▛ ",
-        "▝▀▀▀▘",
+        RoundedBaseRow,
     ];
 
   private static readonly string[] BishopRows =
@@ -32,7 +35,7 @@ public static class ChessPieceArt
       " ▄▁▗ ",
         " ██▟ ",
         " ▟█▙ ",
-        "▝▀▀▀▘",
+        RoundedBaseRow,
     ];
 
   private static readonly string[] RookRows =
@@ -48,7 +51,7 @@ public static class ChessPieceArt
       "▂ ▄ ▂",
         "▜▙█▟▛",
         " ▜█▛ ",
-        "▝▀▀▀▘",
+        RoundedBaseRow,
     ];
 
   private static readonly string[] KingRows =
@@ -56,7 +59,7 @@ public static class ChessPieceArt
       " ▂╋▂ ",
         "▜███▛",
         " ▜█▛ ",
-        "▝▀▀▀▘",
+        RoundedBaseRow,
     ];
 
   /// <summary>

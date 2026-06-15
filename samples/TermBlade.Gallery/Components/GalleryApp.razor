@@ -41,7 +41,7 @@
 @code {
     private static readonly List<string> ContentTabs = ["Preview", "Source"];
 
-    private IReadOnlyList<GalleryEntry> Entries => GalleryCatalog.Entries;
+    private static IReadOnlyList<GalleryEntry> Entries => GalleryCatalog.Entries;
 
     private int SelectedIndex { get; set; }
 

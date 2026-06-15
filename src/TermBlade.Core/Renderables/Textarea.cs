@@ -18,6 +18,8 @@ public class TextareaOptions
 
 public class TextareaRenderable : Renderable
 {
+  private const string InputEvent = "input";
+
   private readonly EditBuffer _editBuffer = new();
   private int _scrollY = 0;
 
@@ -37,7 +39,7 @@ public class TextareaRenderable : Renderable
   public string WrapMode { get; set; } = "word";
   public string? Fg { get; set; }
   public string? Bg { get; set; }
-  public bool ShowCursor { get; set; } = true;
+  public bool ShowCursor { get; set; }
   public string? CursorColor { get; set; }
   public int ScrollY => _scrollY;
   public int LineCount => Value.Split('\n').Length;
@@ -50,10 +52,11 @@ public class TextareaRenderable : Renderable
     WrapMode = opts.WrapMode;
     Fg = opts.Fg;
     Bg = opts.Bg;
-    if (opts.Width != null) SetWidth(opts.Width);
-    if (opts.Height != null) SetHeight(opts.Height);
+    if (opts.Width != null) SetInitialWidth(opts.Width);
+    if (opts.Height != null) SetInitialHeight(opts.Height);
     if (opts.InitialValue != null) _editBuffer.SetText(opts.InitialValue);
 
+    ShowCursor = true;
     Focusable = true;
     On("focused", _ => RequestRender());
     On("blurred", _ => RequestRender());
@@ -97,30 +100,31 @@ public class TextareaRenderable : Renderable
       case "return":
         _editBuffer.InsertChar("\n");
         EnsureVisible();
-        Emit("input", Value);
+        Emit(InputEvent, Value);
         RequestRender();
         break;
       case "backspace":
         _editBuffer.DeleteCharBackward();
         EnsureVisible();
-        Emit("input", Value);
+        Emit(InputEvent, Value);
         RequestRender();
         break;
       case "delete":
+      case "ctrl+d":
         _editBuffer.DeleteChar();
-        Emit("input", Value);
+        Emit(InputEvent, Value);
         RequestRender();
         break;
       case "ctrl+z":
         _editBuffer.Undo();
         EnsureVisible();
-        Emit("input", Value);
+        Emit(InputEvent, Value);
         RequestRender();
         break;
       case "ctrl+y":
         _editBuffer.Redo();
         EnsureVisible();
-        Emit("input", Value);
+        Emit(InputEvent, Value);
         RequestRender();
         break;
       case "ctrl+a":
@@ -132,22 +136,17 @@ public class TextareaRenderable : Renderable
         _editBuffer.SetCursor(lineEnd.Row, lineEnd.Col);
         RequestRender();
         break;
-      case "ctrl+d":
-        _editBuffer.DeleteChar();
-        Emit("input", Value);
-        RequestRender();
-        break;
       case "ctrl+k":
         var cursor = _editBuffer.GetCursorPosition();
         var end = _editBuffer.GetEol();
         _editBuffer.DeleteRange(cursor.Row, cursor.Col, end.Row, end.Col);
-        Emit("input", Value);
+        Emit(InputEvent, Value);
         RequestRender();
         break;
       case "ctrl+u":
         var current = _editBuffer.GetCursorPosition();
         _editBuffer.DeleteRange(current.Row, 0, current.Row, current.Col);
-        Emit("input", Value);
+        Emit(InputEvent, Value);
         RequestRender();
         break;
       default:
@@ -155,7 +154,7 @@ public class TextareaRenderable : Renderable
         {
           _editBuffer.InsertChar(key.Char.Value.ToString());
           EnsureVisible();
-          Emit("input", Value);
+          Emit(InputEvent, Value);
           RequestRender();
         }
         break;

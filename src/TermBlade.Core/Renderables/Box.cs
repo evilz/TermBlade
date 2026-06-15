@@ -64,8 +64,8 @@ public class BoxRenderable : Renderable
     LayoutNode.PaddingBottom = opts.PaddingBottom;
     LayoutNode.PaddingLeft = opts.PaddingLeft;
 
-    if (opts.Width != null) SetWidth(opts.Width);
-    if (opts.Height != null) SetHeight(opts.Height);
+    if (opts.Width != null) SetInitialWidth(opts.Width);
+    if (opts.Height != null) SetInitialHeight(opts.Height);
 
     if (Border)
     {
@@ -96,7 +96,7 @@ public class BoxRenderable : Renderable
     }
   }
 
-  private Rgba ParseColor(string color)
+  private static Rgba ParseColor(string color)
   {
     if (string.IsNullOrEmpty(color) || color == "transparent")
       return Rgba.FromValues(0, 0, 0, 0);

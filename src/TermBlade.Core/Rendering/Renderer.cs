@@ -22,8 +22,8 @@ namespace TermBlade.Core.Rendering
     public bool UseAlternateScreen { get; set; } = true;
     public bool Testing { get; set; }
 
-    private CellBuffer _current;
-    private CellBuffer _next;
+    private readonly CellBuffer _current;
+    private readonly CellBuffer _next;
     private readonly TextWriter _out;
     private bool _initialized;
     private bool _disposed;

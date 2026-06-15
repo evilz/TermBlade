@@ -169,17 +169,30 @@
     // ── Computed UI values ────────────────────────────────────────────────────
     private int HistoryStart => Math.Max(0, _game.History.Count - 18);
 
-    private string StatusText => _game.IsGameOver
-        ? _game.StatusMessage
-        : _game.StatusMessage.Length > 0
-            ? _game.StatusMessage
-            : _selRow.HasValue
-                ? $"Selected {(char)('A' + _selCol!.Value)}{_selRow.Value + 1} — pick destination"
-                : $"{_game.CurrentTurn}'s turn";
+    private string StatusText
+    {
+        get
+        {
+            if (_game.IsGameOver || _game.StatusMessage.Length > 0)
+                return _game.StatusMessage;
 
-    private string StatusColor => _game.IsGameOver ? "#f87171"
-        : _game.StatusMessage.Length > 0 ? "#fbbf24"
-        : "#666666";
+            if (_selRow.HasValue)
+                return $"Selected {(char)('A' + _selCol!.Value)}{_selRow.Value + 1} — pick destination";
+
+            return $"{_game.CurrentTurn}'s turn";
+        }
+    }
+
+    private string StatusColor
+    {
+        get
+        {
+            if (_game.IsGameOver)
+                return "#f87171";
+
+            return _game.StatusMessage.Length > 0 ? "#fbbf24" : "#666666";
+        }
+    }
 
     private string BlackMaterialText
         => BuildMaterialText(_game.BlackCaptured);
@@ -192,11 +205,11 @@
     {
         SetBackground(BgColor);
         RegisterKeypress(HandleKeypress);
-        CreateTimer(Tick, TimeSpan.FromSeconds(1));
+        CreateTimer(_ => Tick(), TimeSpan.FromSeconds(1));
     }
 
     // ── Timer tick ────────────────────────────────────────────────────────────
-    private void Tick(object? _)
+    private void Tick()
     {
         if (_game.IsGameOver)
             return;

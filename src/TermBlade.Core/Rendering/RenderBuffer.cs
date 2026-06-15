@@ -41,7 +41,7 @@ public class RenderBuffer
   public void SetCell(int x, int y, int codepoint, Rgba fg, Rgba bg, TextAttributes attrs = 0)
   {
     if (!InBounds(x, y) || !InClip(x, y)) return;
-    _cells[y * Width + x] = new Cell { Codepoint = codepoint, Fg = fg, Bg = bg, Attributes = (TextAttributes)attrs };
+    _cells[y * Width + x] = new Cell { Codepoint = codepoint, Fg = fg, Bg = bg, Attributes = attrs };
   }
 
   public void DrawText(int x, int y, string text, Rgba fg, Rgba bg, TextAttributes attrs = 0)

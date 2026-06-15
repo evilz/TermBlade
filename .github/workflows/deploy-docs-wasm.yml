@@ -44,7 +44,7 @@ jobs:
 
       - name: Install npm dependencies
         working-directory: docs/TermBlade.Docs.Wasm
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Build JS bundle
         working-directory: docs/TermBlade.Docs.Wasm

@@ -4,6 +4,9 @@ namespace TermBlade.Core.Input;
 
 public class StdinParser
 {
+  private const string EscapeKey = "escape";
+  private const string BackspaceKey = "backspace";
+
   private readonly List<byte> _buf = new();
 
   public IEnumerable<object> Feed(ReadOnlySpan<byte> data)
@@ -23,7 +26,7 @@ public class StdinParser
     // this point was not the start of a sequence.
     if (_buf.Count == 1 && _buf[0] == 0x1b)
     {
-      events.Add(new KeyEvent { Name = "escape", Key = "escape" });
+      events.Add(new KeyEvent { Name = EscapeKey, Key = EscapeKey });
       _buf.Clear();
     }
 
@@ -79,7 +82,7 @@ public class StdinParser
       else if (_buf[1] == 0x1b)
       {
         // Double ESC = escape key
-        events.Add(new KeyEvent { Name = "escape", Key = "escape" });
+        events.Add(new KeyEvent { Name = EscapeKey, Key = EscapeKey });
         _buf.RemoveAt(0);
         return true;
       }
@@ -100,7 +103,7 @@ public class StdinParser
         }
         else
         {
-          events.Add(new KeyEvent { Name = "escape", Key = "escape" });
+          events.Add(new KeyEvent { Name = EscapeKey, Key = EscapeKey });
           _buf.RemoveAt(0);
           return true;
         }
@@ -149,11 +152,11 @@ public class StdinParser
     // Special chars
     return b switch
     {
-      0x7f => new KeyEvent { Name = "backspace", Key = "backspace" },
-      0x08 => new KeyEvent { Name = "backspace", Key = "backspace" },
+      0x7f => new KeyEvent { Name = BackspaceKey, Key = BackspaceKey },
+      0x08 => new KeyEvent { Name = BackspaceKey, Key = BackspaceKey },
       0x0d or 0x0a => new KeyEvent { Name = "return", Key = "return" },
       0x09 => new KeyEvent { Name = "tab", Key = "tab" },
-      0x1b => new KeyEvent { Name = "escape", Key = "escape" },
+      0x1b => new KeyEvent { Name = EscapeKey, Key = EscapeKey },
       0x00 => new KeyEvent { Name = "ctrl+space", Key = "ctrl+space", Ctrl = true },
       >= 0x01 and <= 0x1a => MakeCtrl(b),
       _ => null

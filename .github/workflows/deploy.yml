@@ -40,7 +40,7 @@ jobs:
 
       - name: Install WASM npm dependencies
         working-directory: docs/TermBlade.Docs.Wasm
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Build WASM xterm.js bundle
         working-directory: docs/TermBlade.Docs.Wasm

@@ -33,6 +33,8 @@ public abstract class Renderable : EventEmitter
 
   public virtual void SetWidth(object? value) => LayoutNode.Width = LayoutDimension.Parse(value);
   public virtual void SetHeight(object? value) => LayoutNode.Height = LayoutDimension.Parse(value);
+  protected void SetInitialWidth(object? value) => LayoutNode.Width = LayoutDimension.Parse(value);
+  protected void SetInitialHeight(object? value) => LayoutNode.Height = LayoutDimension.Parse(value);
 
   public int X => LayoutNode.ComputedX;
   public int Y => LayoutNode.ComputedY;

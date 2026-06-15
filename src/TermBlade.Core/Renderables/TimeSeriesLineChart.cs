@@ -67,11 +67,9 @@ public class TimeSeriesLineChartRenderable : Renderable
     double dataMax = MaxValue ?? double.MinValue;
     if (MinValue == null || MaxValue == null)
     {
-      foreach (var p in Data)
-      {
-        if (MinValue == null && p.Value < dataMin) dataMin = p.Value;
-        if (MaxValue == null && p.Value > dataMax) dataMax = p.Value;
-      }
+      var values = Data.Select(p => p.Value);
+      if (MinValue == null) dataMin = values.Min();
+      if (MaxValue == null) dataMax = values.Max();
     }
     if (Math.Abs(dataMax - dataMin) < 0.0001) dataMax = dataMin + 1;
 
