@@ -25,7 +25,7 @@ internal sealed record CsvViewerOptions(string? FilePath, char? Delimiter, bool 
           delimiter = ParseDelimiter(args[++i]);
           break;
         default:
-          if (args[i].StartsWith('-', StringComparison.Ordinal))
+          if (args[i].StartsWith("-", StringComparison.Ordinal))
             throw new ArgumentException($"Unknown option: {args[i]}");
 
           if (filePath is not null)

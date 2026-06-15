@@ -1,22 +1,22 @@
-<Box Width="@Width" Height="@Height" FlexGrow="@FlexGrow" BackgroundColor="@BackgroundColor"
+<TermBlade.Razor.Components.Box Width="@Width" Height="@Height" FlexGrow="@FlexGrow" BackgroundColor="@BackgroundColor"
      Border="@ShowBorder" BorderStyle="@BorderStyle" BorderColor="@BorderColor"
      Title="@Title" TitleAlignment="@TitleAlignment" BottomTitle="@Caption" BottomTitleAlignment="@CaptionAlignment"
      PaddingLeft="@PaddingLeft" PaddingRight="@PaddingRight" PaddingTop="@PaddingTop" FlexDirection="FlexDirection.Column">
     @if (ShowHeaders)
     {
-        <Text Width="100%" Height="1" Content="@_layout.Header" Fg="@HeaderColor" Bg="@BackgroundColor" Attributes="@HeaderAttributes" Wrap="false" />
-        <Text Width="100%" Height="1" Content="@_layout.Separator" Fg="@BorderColor" Bg="@BackgroundColor" Wrap="false" />
+        <TermBlade.Razor.Components.Text Width="100%" Height="1" Content="@_layout.Header" Fg="@HeaderColor" Bg="@BackgroundColor" Attributes="@HeaderAttributes" Wrap="false" />
+        <TermBlade.Razor.Components.Text Width="100%" Height="1" Content="@_layout.Separator" Fg="@BorderColor" Bg="@BackgroundColor" Wrap="false" />
     }
 
     @foreach (var row in _layout.Rows)
     {
-        <Text Width="100%" Height="1" Content="@row" Fg="@TextColor" Bg="@BackgroundColor" Wrap="false" />
+        <TermBlade.Razor.Components.Text Width="100%" Height="1" Content="@row" Fg="@TextColor" Bg="@BackgroundColor" Wrap="false" />
         @if (ShowRowSeparators)
         {
-            <Text Width="100%" Height="1" Content="@_layout.Separator" Fg="@BorderColor" Bg="@BackgroundColor" Wrap="false" />
+            <TermBlade.Razor.Components.Text Width="100%" Height="1" Content="@_layout.Separator" Fg="@BorderColor" Bg="@BackgroundColor" Wrap="false" />
         }
     }
-</Box>
+</TermBlade.Razor.Components.Box>
 
 @code {
     private TableLayoutResult _layout = new(string.Empty, string.Empty, []);
