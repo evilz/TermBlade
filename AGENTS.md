@@ -8,7 +8,7 @@ TermBlade is a terminal UI core library for modern .NET. It provides a cell-base
 
 ## Solution Layout
 
-The repository is structured at the repository root as follows:
+The repository is structured as follows:
 
 - `src/TermBlade.Core/`: Core library containing all public APIs (e.g., Ansi, Buffer, Text, Rendering).
 - `src/TermBlade.Razor/`: Razor host + component wrappers for renderables.
