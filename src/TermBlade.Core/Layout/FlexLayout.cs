@@ -1,7 +1,16 @@
 namespace TermBlade.Core.Layout;
 
+/// <summary>
+/// Represents flex layout.
+/// </summary>
 public static class FlexLayout
 {
+  /// <summary>
+  /// Calculate.
+  /// </summary>
+  /// <param name="root">The root value.</param>
+  /// <param name="containerWidth">The containerWidth value.</param>
+  /// <param name="containerHeight">The containerHeight value.</param>
   public static void Calculate(FlexNode root, int containerWidth, int containerHeight)
   {
     root.ComputedX = 0;

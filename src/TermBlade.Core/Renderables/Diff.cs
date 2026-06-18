@@ -3,10 +3,22 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents diff renderable.
+/// </summary>
 public class DiffRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the old text.
+  /// </summary>
   public string OldText { get; set; } = "";
+  /// <summary>
+  /// Gets or sets the new text.
+  /// </summary>
   public string NewText { get; set; } = "";
+  /// <summary>
+  /// Gets or sets the show line numbers.
+  /// </summary>
   public bool ShowLineNumbers { get; set; } = true;
 
   private static readonly Rgba AddedFg = Rgba.FromCss("#98c379");
@@ -17,6 +29,10 @@ public class DiffRenderable : Renderable
   private static readonly Rgba SameBg = Rgba.FromInts(0, 0, 0, 0);
   private static readonly Rgba LineNumFg = Rgba.FromInts(100, 100, 100);
 
+  /// <summary>
+  /// Diff renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public DiffRenderable(CliRenderer? renderer) : base(renderer) { }
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)

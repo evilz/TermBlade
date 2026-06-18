@@ -45,6 +45,10 @@ public class BarChartRenderable : Renderable
   private double _elapsed;
   private bool _animationComplete;
 
+  /// <summary>
+  /// Bar chart renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public BarChartRenderable(CliRenderer? renderer) : base(renderer) { }
 
   // Block characters for fractional bar rendering (eighths from empty to full)

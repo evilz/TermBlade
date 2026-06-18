@@ -4,20 +4,59 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents scroll box renderable.
+/// </summary>
 public class ScrollBoxRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the scroll x.
+  /// </summary>
   public int ScrollX { get; set; } = 0;
+  /// <summary>
+  /// Gets or sets the scroll y.
+  /// </summary>
   public int ScrollY { get; set; } = 0;
+  /// <summary>
+  /// Gets or sets the sticky scroll.
+  /// </summary>
   public bool StickyScroll { get; set; } = false;
+  /// <summary>
+  /// Gets or sets the show vertical scrollbar.
+  /// </summary>
   public bool ShowVerticalScrollbar { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the show horizontal scrollbar.
+  /// </summary>
   public bool ShowHorizontalScrollbar { get; set; } = false;
+  /// <summary>
+  /// Gets or sets the border.
+  /// </summary>
   public bool Border { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the border color.
+  /// </summary>
   public string BorderColor { get; set; } = "#7aa2f7";
+  /// <summary>
+  /// Gets or sets the background color.
+  /// </summary>
   public string BackgroundColor { get; set; } = "#1a1b26";
+  /// <summary>
+  /// Gets or sets the track color.
+  /// </summary>
   public string TrackColor { get; set; } = "#414868";
+  /// <summary>
+  /// Gets or sets the thumb color.
+  /// </summary>
   public string ThumbColor { get; set; } = "#7aa2f7";
 
+  /// <summary>
+  /// Gets or sets the content width.
+  /// </summary>
   public int ContentWidth { get; set; } = 0;
+  /// <summary>
+  /// Gets or sets the content height.
+  /// </summary>
   public int ContentHeight { get; set; } = 0;
 
   private bool _draggingVertical;
@@ -25,11 +64,19 @@ public class ScrollBoxRenderable : Renderable
 
   internal bool IsDraggingScrollbar => _draggingVertical || _draggingHorizontal;
 
+  /// <summary>
+  /// Scroll box renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public ScrollBoxRenderable(CliRenderer? renderer) : base(renderer)
   {
     Focusable = true;
   }
 
+  /// <summary>
+  /// Handle key.
+  /// </summary>
+  /// <param name="key">The key value.</param>
   public override void HandleKey(KeyEvent key)
   {
     int viewH = GetViewportHeight();
@@ -75,6 +122,10 @@ public class ScrollBoxRenderable : Renderable
     }
   }
 
+  /// <summary>
+  /// Handle mouse.
+  /// </summary>
+  /// <param name="mouse">The mouse value.</param>
   public override void HandleMouse(MouseEvent mouse)
   {
     int viewH = GetViewportHeight();
@@ -116,6 +167,11 @@ public class ScrollBoxRenderable : Renderable
     }
   }
 
+  /// <summary>
+  /// Render.
+  /// </summary>
+  /// <param name="buffer">The buffer value.</param>
+  /// <param name="deltaTime">The deltaTime value.</param>
   public override void Render(RenderBuffer buffer, double deltaTime)
   {
     if (!Visible) return;

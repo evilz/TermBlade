@@ -3,6 +3,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents diff.
+/// </summary>
 public sealed class Diff : RenderableComponentBase<DiffRenderable>
 {
   [Parameter] public string OldText { get; set; } = string.Empty;

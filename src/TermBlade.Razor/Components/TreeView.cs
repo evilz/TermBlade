@@ -4,6 +4,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents tree view.
+/// </summary>
 public sealed class TreeView : RenderableComponentBase<TreeViewRenderable>
 {
   [Parameter] public List<TreeNode> Nodes { get; set; } = [];

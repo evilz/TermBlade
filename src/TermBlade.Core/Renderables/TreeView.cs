@@ -5,29 +5,80 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Defines check state values.
+/// </summary>
 public enum CheckState
 {
+  /// <summary>
+  /// The unchecked value.
+  /// </summary>
   Unchecked,
+  /// <summary>
+  /// The checked value.
+  /// </summary>
   Checked,
+  /// <summary>
+  /// The indeterminate value.
+  /// </summary>
   Indeterminate
 }
 
+/// <summary>
+/// Represents tree node.
+/// </summary>
 public class TreeNode
 {
+  /// <summary>
+  /// Gets or sets the label.
+  /// </summary>
   public string Label { get; set; } = "";
+  /// <summary>
+  /// Gets or sets the children.
+  /// </summary>
   public List<TreeNode> Children { get; set; } = new();
+  /// <summary>
+  /// Gets or sets the is expanded.
+  /// </summary>
   public bool IsExpanded { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the check state.
+  /// </summary>
   public CheckState CheckState { get; set; } = CheckState.Unchecked;
+  /// <summary>
+  /// Gets or sets the tag.
+  /// </summary>
   public object? Tag { get; set; }
 }
 
+/// <summary>
+/// Represents tree view renderable.
+/// </summary>
 public class TreeViewRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the nodes.
+  /// </summary>
   public List<TreeNode> Nodes { get; set; } = new();
+  /// <summary>
+  /// Gets or sets the allow letter based navigation.
+  /// </summary>
   public bool AllowLetterBasedNavigation { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the checkbox mode.
+  /// </summary>
   public bool CheckboxMode { get; set; } = false;
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
+  /// <summary>
+  /// Gets or sets the selected bg.
+  /// </summary>
   public string? SelectedBg { get; set; } = "#0055aa";
+  /// <summary>
+  /// Gets or sets the filter.
+  /// </summary>
   public string? Filter { get; set; }
 
   private readonly record struct FlatNode(TreeNode Node, int Depth, bool IsLast, bool[] ParentIsLast, bool IsExpandedInView);
@@ -41,6 +92,9 @@ public class TreeViewRenderable : Renderable
   private DateTime _lastKeystroke = DateTime.MinValue;
   private static readonly TimeSpan KeystrokeTimeout = TimeSpan.FromMilliseconds(600);
 
+  /// <summary>
+  /// Member.
+  /// </summary>
   public int SelectedIndex
   {
     get => _selectedIndex;
@@ -51,18 +105,31 @@ public class TreeViewRenderable : Renderable
     }
   }
 
+  /// <summary>
+  /// Selected node.
+  /// </summary>
   public TreeNode? SelectedNode =>
       _flatNodes.Count > 0 && _selectedIndex < _flatNodes.Count
           ? _flatNodes[_selectedIndex].Node
           : null;
 
+  /// <summary>
+  /// Tree view renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public TreeViewRenderable(CliRenderer? renderer) : base(renderer)
   {
     Focusable = true;
   }
 
+  /// <summary>
+  /// Gets the invalidate.
+  /// </summary>
   public void Invalidate() => _dirty = true;
 
+  /// <summary>
+  /// Rebuild flat list.
+  /// </summary>
   public void RebuildFlatList()
   {
     _flatNodes.Clear();
@@ -109,6 +176,10 @@ public class TreeViewRenderable : Renderable
     return false;
   }
 
+  /// <summary>
+  /// Handle key.
+  /// </summary>
+  /// <param name="key">The key value.</param>
   public override void HandleKey(KeyEvent key)
   {
     if (_dirty) RebuildFlatList();
@@ -220,6 +291,10 @@ public class TreeViewRenderable : Renderable
     }
   }
 
+  /// <summary>
+  /// Handle mouse.
+  /// </summary>
+  /// <param name="mouse">The mouse value.</param>
   public override void HandleMouse(MouseEvent mouse)
   {
     if (mouse.Button != MouseButton.Left || !mouse.Pressed)

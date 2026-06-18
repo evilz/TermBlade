@@ -4,22 +4,57 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents slider renderable.
+/// </summary>
 public class SliderRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the min.
+  /// </summary>
   public float Min { get; set; } = 0;
+  /// <summary>
+  /// Gets or sets the max.
+  /// </summary>
   public float Max { get; set; } = 100;
+  /// <summary>
+  /// Gets or sets the value.
+  /// </summary>
   public float Value { get; set; } = 50;
+  /// <summary>
+  /// Gets or sets the step.
+  /// </summary>
   public float Step { get; set; } = 1;
+  /// <summary>
+  /// Gets or sets the orientation.
+  /// </summary>
   public string Orientation { get; set; } = "horizontal";
+  /// <summary>
+  /// Gets or sets the track color.
+  /// </summary>
   public string? TrackColor { get; set; }
+  /// <summary>
+  /// Gets or sets the thumb color.
+  /// </summary>
   public string? ThumbColor { get; set; }
+  /// <summary>
+  /// Gets or sets the value color.
+  /// </summary>
   public string? ValueColor { get; set; }
 
+  /// <summary>
+  /// Slider renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public SliderRenderable(CliRenderer? renderer) : base(renderer)
   {
     Focusable = true;
   }
 
+  /// <summary>
+  /// Handle key.
+  /// </summary>
+  /// <param name="key">The key value.</param>
   public override void HandleKey(KeyEvent key)
   {
     bool isHorizontal = Orientation == "horizontal";
@@ -36,6 +71,10 @@ public class SliderRenderable : Renderable
     }
   }
 
+  /// <summary>
+  /// Handle mouse.
+  /// </summary>
+  /// <param name="mouse">The mouse value.</param>
   public override void HandleMouse(MouseEvent mouse)
   {
     if (mouse.Button != MouseButton.Left || !mouse.Pressed)

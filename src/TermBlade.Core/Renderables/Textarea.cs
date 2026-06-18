@@ -5,17 +5,44 @@ using TermBlade.Core.Text;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents textarea options.
+/// </summary>
 public class TextareaOptions
 {
+  /// <summary>
+  /// Gets or sets the initial value.
+  /// </summary>
   public string? InitialValue { get; set; }
+  /// <summary>
+  /// Gets or sets the placeholder.
+  /// </summary>
   public string? Placeholder { get; set; }
+  /// <summary>
+  /// Gets or sets the wrap mode.
+  /// </summary>
   public string WrapMode { get; set; } = "word";
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
+  /// <summary>
+  /// Gets or sets the bg.
+  /// </summary>
   public string? Bg { get; set; }
+  /// <summary>
+  /// Gets or sets the width.
+  /// </summary>
   public object? Width { get; set; }
+  /// <summary>
+  /// Gets or sets the height.
+  /// </summary>
   public object? Height { get; set; }
 }
 
+/// <summary>
+/// Represents textarea renderable.
+/// </summary>
 public class TextareaRenderable : Renderable
 {
   private const string InputEvent = "input";
@@ -23,6 +50,9 @@ public class TextareaRenderable : Renderable
   private readonly EditBuffer _editBuffer = new();
   private int _scrollY = 0;
 
+  /// <summary>
+  /// Member.
+  /// </summary>
   public string Value
   {
     get => _editBuffer.GetText();
@@ -35,16 +65,48 @@ public class TextareaRenderable : Renderable
     }
   }
 
+  /// <summary>
+  /// Gets or sets the placeholder.
+  /// </summary>
   public string? Placeholder { get; set; }
+  /// <summary>
+  /// Gets or sets the wrap mode.
+  /// </summary>
   public string WrapMode { get; set; } = "word";
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
+  /// <summary>
+  /// Gets or sets the bg.
+  /// </summary>
   public string? Bg { get; set; }
+  /// <summary>
+  /// Gets or sets the show cursor.
+  /// </summary>
   public bool ShowCursor { get; set; }
+  /// <summary>
+  /// Gets or sets the cursor color.
+  /// </summary>
   public string? CursorColor { get; set; }
+  /// <summary>
+  /// Gets the scroll y.
+  /// </summary>
   public int ScrollY => _scrollY;
+  /// <summary>
+  /// Gets the line count.
+  /// </summary>
   public int LineCount => Value.Split('\n').Length;
+  /// <summary>
+  /// Gets the logical cursor.
+  /// </summary>
   public LogicalCursor LogicalCursor => _editBuffer.GetCursorPosition().Clone();
 
+  /// <summary>
+  /// Textarea renderable.
+  /// </summary>
+  /// <param name="renderer">The renderer value.</param>
+  /// <param name="options">The options value.</param>
   public TextareaRenderable(CliRenderer? renderer, TextareaOptions? options = null) : base(renderer)
   {
     var opts = options ?? new TextareaOptions();
@@ -62,6 +124,10 @@ public class TextareaRenderable : Renderable
     On("blurred", _ => RequestRender());
   }
 
+  /// <summary>
+  /// Handle key.
+  /// </summary>
+  /// <param name="key">The key value.</param>
   public override void HandleKey(KeyEvent key)
   {
     switch (key.Name)

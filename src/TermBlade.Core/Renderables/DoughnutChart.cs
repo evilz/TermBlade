@@ -20,6 +20,10 @@ public class DoughnutChartRenderable : PieChartRenderable
   /// <summary>CSS color for the center label text.</summary>
   public string CenterLabelColor { get; set; } = "#c9d1d9";
 
+  /// <summary>
+  /// Doughnut chart renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public DoughnutChartRenderable(CliRenderer? renderer) : base(renderer) { }
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)

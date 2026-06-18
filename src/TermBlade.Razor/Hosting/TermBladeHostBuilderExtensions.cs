@@ -5,10 +5,17 @@ using Microsoft.Extensions.Hosting;
 
 namespace TermBlade.Razor.Hosting;
 
+/// <summary>
+/// Represents term blade host builder extensions.
+/// </summary>
 public static class TermBladeHostBuilderExtensions
 {
   extension(IHostBuilder hostBuilder)
   {
+    /// <summary>
+    /// Dynamically accessed members.
+    /// </summary>
+    /// <param name="TComponent>(">The TComponent>( value.</param>
     public IHostBuilder UseTermBladeRazor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>()
         where TComponent : IComponent
     {

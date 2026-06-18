@@ -4,17 +4,33 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents struct.
+/// </summary>
 public readonly record struct SegmentedTextSegment(
     string Text,
     string? Fg = null,
     string? Bg = null,
     TextAttributes Attributes = TextAttributes.None);
 
+/// <summary>
+/// Represents segmented text renderable.
+/// </summary>
 public sealed class SegmentedTextRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the segments.
+  /// </summary>
   public IReadOnlyList<SegmentedTextSegment> Segments { get; set; } = [];
+  /// <summary>
+  /// Gets or sets the background color.
+  /// </summary>
   public string BackgroundColor { get; set; } = "transparent";
 
+  /// <summary>
+  /// Segmented text renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public SegmentedTextRenderable(CliRenderer? renderer) : base(renderer)
   {
   }

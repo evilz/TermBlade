@@ -4,6 +4,9 @@ using TermBlade.Core.Renderables;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents container renderable component base.
+/// </summary>
 public abstract class ContainerRenderableComponentBase<TRenderable> : RenderableComponentBase<TRenderable>, IRenderableParent where TRenderable : Renderable
 {
   private readonly HashSet<string> _childIds = [];
@@ -22,12 +25,20 @@ public abstract class ContainerRenderableComponentBase<TRenderable> : Renderable
     builder.CloseComponent();
   }
 
+  /// <summary>
+  /// Add child.
+  /// </summary>
+  /// <param name="child">The child value.</param>
   public void AddChild(Renderable child)
   {
     if (_childIds.Add(child.Id))
       Renderable.Add(child);
   }
 
+  /// <summary>
+  /// Remove child.
+  /// </summary>
+  /// <param name="child">The child value.</param>
   public void RemoveChild(Renderable child)
   {
     _childIds.Remove(child.Id);

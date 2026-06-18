@@ -58,13 +58,34 @@ public sealed class ChessGame
   private readonly List<ChessPiece> _whiteCaptured = [];
   private readonly List<ChessPiece> _blackCaptured = [];
 
+  /// <summary>
+  /// Gets or sets the current turn.
+  /// </summary>
   public PieceColor CurrentTurn { get; private set; } = PieceColor.White;
+  /// <summary>
+  /// Gets or sets the is game over.
+  /// </summary>
   public bool IsGameOver { get; private set; }
+  /// <summary>
+  /// Gets or sets the status message.
+  /// </summary>
   public string StatusMessage { get; private set; } = string.Empty;
+  /// <summary>
+  /// Gets the history.
+  /// </summary>
   public IReadOnlyList<string> History => _history;
+  /// <summary>
+  /// Gets the white captured.
+  /// </summary>
   public IReadOnlyList<ChessPiece> WhiteCaptured => _whiteCaptured;
+  /// <summary>
+  /// Gets the black captured.
+  /// </summary>
   public IReadOnlyList<ChessPiece> BlackCaptured => _blackCaptured;
 
+  /// <summary>
+  /// Chess game.
+  /// </summary>
   public ChessGame() => Reset();
 
   /// <summary>Resets the board to the standard starting position.</summary>

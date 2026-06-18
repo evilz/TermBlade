@@ -4,6 +4,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents tab select.
+/// </summary>
 public sealed class TabSelect : RenderableComponentBase<TabSelectRenderable>
 {
   [Parameter] public List<string> Tabs { get; set; } = [];

@@ -48,6 +48,10 @@ public class TimeSeriesLineChartRenderable : Renderable
   private double _elapsed;
   private bool _animationComplete;
 
+  /// <summary>
+  /// Time series line chart renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public TimeSeriesLineChartRenderable(CliRenderer? renderer) : base(renderer) { }
 
   private static readonly int[] BrailleDotBits = [0x01, 0x02, 0x04, 0x40, 0x08, 0x10, 0x20, 0x80];

@@ -8,6 +8,10 @@ internal static class FileManagerSidebarModel
 {
   public const string HeaderText = "Favorites";
 
+  /// <summary>
+  /// Build groups.
+  /// </summary>
+  /// <param name="entries">The entries value.</param>
   public static IReadOnlyList<SidebarGroup> BuildGroups(IReadOnlyList<SidebarEntry> entries)
   {
     var groups = new List<SidebarGroup>();

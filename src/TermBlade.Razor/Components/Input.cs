@@ -4,6 +4,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents input.
+/// </summary>
 public sealed class Input : RenderableComponentBase<InputRenderable>
 {
   [Parameter] public string? Value { get; set; }

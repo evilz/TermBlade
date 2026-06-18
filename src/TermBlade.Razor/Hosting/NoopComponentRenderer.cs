@@ -13,8 +13,15 @@ internal sealed class NoopComponentRenderer(IServiceProvider services, ILoggerFa
     private readonly AsyncLocal<bool> _isExecuting = new();
     private Task _tail = Task.CompletedTask;
 
+    /// <summary>
+    /// Gets the check access.
+    /// </summary>
     public override bool CheckAccess() => _isExecuting.Value;
 
+    /// <summary>
+    /// Invoke async.
+    /// </summary>
+    /// <param name="workItem">The workItem value.</param>
     public override Task InvokeAsync(Action workItem)
     {
       ArgumentNullException.ThrowIfNull(workItem);
@@ -25,6 +32,10 @@ internal sealed class NoopComponentRenderer(IServiceProvider services, ILoggerFa
       });
     }
 
+    /// <summary>
+    /// Invoke async.
+    /// </summary>
+    /// <param name="workItem">The workItem value.</param>
     public override Task InvokeAsync(Func<Task> workItem)
     {
       ArgumentNullException.ThrowIfNull(workItem);
@@ -41,12 +52,20 @@ internal sealed class NoopComponentRenderer(IServiceProvider services, ILoggerFa
       }
     }
 
+    /// <summary>
+    /// Member.
+    /// </summary>
+    /// <param name="workItem">The workItem value.</param>
     public override Task<TResult> InvokeAsync<TResult>(Func<TResult> workItem)
     {
       ArgumentNullException.ThrowIfNull(workItem);
       return InvokeAsync(() => Task.FromResult(workItem()));
     }
 
+    /// <summary>
+    /// Member.
+    /// </summary>
+    /// <param name="workItem">The workItem value.</param>
     public override Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> workItem)
     {
       ArgumentNullException.ThrowIfNull(workItem);
@@ -94,8 +113,15 @@ internal sealed class NoopComponentRenderer(IServiceProvider services, ILoggerFa
 
   private readonly Dispatcher _dispatcher = new SerializedDispatcher();
 
+  /// <summary>
+  /// Gets the dispatcher.
+  /// </summary>
   public override Dispatcher Dispatcher => _dispatcher;
 
+  /// <summary>
+  /// Dynamically accessed members.
+  /// </summary>
+  /// <param name="TComponent>(">The TComponent>( value.</param>
   public Task MountComponentAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] TComponent>()
       where TComponent : IComponent
   {

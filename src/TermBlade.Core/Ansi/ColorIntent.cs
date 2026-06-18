@@ -6,8 +6,17 @@ namespace TermBlade.Core.Ansi
   /// </summary>
   public enum ColorIntent : byte
   {
+    /// <summary>
+    /// The rgb value.
+    /// </summary>
     Rgb = 0,
+    /// <summary>
+    /// The indexed value.
+    /// </summary>
     Indexed = 1,
+    /// <summary>
+    /// The default value.
+    /// </summary>
     Default = 2,
   }
 }

@@ -10,31 +10,78 @@ using SysEncoding = System.Text.Encoding;
 
 namespace TermBlade.Core.Rendering;
 
+/// <summary>
+/// Represents cli renderer config.
+/// </summary>
 public class CliRendererConfig
 {
+  /// <summary>
+  /// Gets or sets the exit on ctrl c.
+  /// </summary>
   public bool ExitOnCtrlC { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the target fps.
+  /// </summary>
   public int TargetFps { get; set; } = 30;
+  /// <summary>
+  /// Gets or sets the testing.
+  /// </summary>
   public bool Testing { get; set; } = false;
+  /// <summary>
+  /// Gets or sets the background color.
+  /// </summary>
   public string? BackgroundColor { get; set; }
 }
 
+/// <summary>
+/// Represents resize event args.
+/// </summary>
 public class ResizeEventArgs : EventArgs
 {
+  /// <summary>
+  /// Gets the width.
+  /// </summary>
   public int Width { get; }
+  /// <summary>
+  /// Gets the height.
+  /// </summary>
   public int Height { get; }
+  /// <summary>
+  /// Resize event args.
+  /// </summary>
+  /// <param name="w">The w value.</param>
+  /// <param name="h">The h value.</param>
   public ResizeEventArgs(int w, int h) { Width = w; Height = h; }
 }
 
+/// <summary>
+/// Represents cli renderer.
+/// </summary>
 public class CliRenderer : IDisposable
 {
   internal readonly record struct ConsoleSize(int Width, int Height);
   private static readonly Regex TerminalSizeReportRegex = new(@"\x1b\[8;(?<rows>\d+);(?<cols>\d+)t", RegexOptions.Compiled);
 
+  /// <summary>
+  /// Gets or sets the terminal width.
+  /// </summary>
   public int TerminalWidth { get; private set; }
+  /// <summary>
+  /// Gets or sets the terminal height.
+  /// </summary>
   public int TerminalHeight { get; private set; }
+  /// <summary>
+  /// Gets or sets the root.
+  /// </summary>
   public RootRenderable Root { get; private set; }
+  /// <summary>
+  /// Gets the key input.
+  /// </summary>
   public KeyHandler KeyInput { get; } = new();
 
+  /// <summary>
+  /// Occurs when resize changes.
+  /// </summary>
   public event EventHandler<ResizeEventArgs>? Resize;
 
   private readonly CliRendererConfig _config;
@@ -50,6 +97,10 @@ public class CliRenderer : IDisposable
   private DateTime _lastFrame = DateTime.UtcNow;
   private IDisposable? _sigwinchReg;
 
+  /// <summary>
+  /// Cli renderer.
+  /// </summary>
+  /// <param name="config">The config value.</param>
   public CliRenderer(CliRendererConfig? config = null)
   {
     _config = config ?? new CliRendererConfig();
@@ -175,6 +226,9 @@ public class CliRenderer : IDisposable
     return true;
   }
 
+  /// <summary>
+  /// Gets or sets the current focus.
+  /// </summary>
   public Renderable? CurrentFocus { get; private set; }
 
   internal void OnRenderableFocused(Renderable r)
@@ -194,11 +248,18 @@ public class CliRenderer : IDisposable
       CurrentFocus = null;
   }
 
+  /// <summary>
+  /// Set background color.
+  /// </summary>
+  /// <param name="color">The color value.</param>
   public void SetBackgroundColor(string color)
   {
     _backgroundColor = Rgba.FromCss(color);
   }
 
+  /// <summary>
+  /// Request render.
+  /// </summary>
   public void RequestRender()
   {
     _renderRequested = true;
@@ -210,6 +271,9 @@ public class CliRenderer : IDisposable
     // Called when renderables register themselves
   }
 
+  /// <summary>
+  /// Start.
+  /// </summary>
   public void Start()
   {
     if (_disposed) return;
@@ -315,11 +379,17 @@ public class CliRenderer : IDisposable
       Thread.Sleep(50);
   }
 
+  /// <summary>
+  /// Stop.
+  /// </summary>
   public void Stop()
   {
     _running = false;
   }
 
+  /// <summary>
+  /// Gets the destroy.
+  /// </summary>
   public void Destroy() => Dispose(true);
 
   protected virtual void Dispose(bool disposing)
@@ -352,6 +422,9 @@ public class CliRenderer : IDisposable
     }
   }
 
+  /// <summary>
+  /// Dispose.
+  /// </summary>
   public void Dispose()
   {
     Dispose(true);
@@ -800,26 +873,59 @@ public class CliRenderer : IDisposable
   [StructLayout(LayoutKind.Sequential)]
   private struct Coord
   {
+    /// <summary>
+    /// Gets the x.
+    /// </summary>
     public short X;
+    /// <summary>
+    /// Gets the y.
+    /// </summary>
     public short Y;
   }
 
   [StructLayout(LayoutKind.Sequential)]
   private struct SmallRect
   {
+    /// <summary>
+    /// Gets the left.
+    /// </summary>
     public short Left;
+    /// <summary>
+    /// Gets the top.
+    /// </summary>
     public short Top;
+    /// <summary>
+    /// Gets the right.
+    /// </summary>
     public short Right;
+    /// <summary>
+    /// Gets the bottom.
+    /// </summary>
     public short Bottom;
   }
 
   [StructLayout(LayoutKind.Sequential)]
   private struct ConsoleScreenBufferInfo
   {
+    /// <summary>
+    /// Gets the size.
+    /// </summary>
     public Coord Size;
+    /// <summary>
+    /// Gets the cursor position.
+    /// </summary>
     public Coord CursorPosition;
+    /// <summary>
+    /// Gets the attributes.
+    /// </summary>
     public short Attributes;
+    /// <summary>
+    /// Gets the window.
+    /// </summary>
     public SmallRect Window;
+    /// <summary>
+    /// Gets the maximum window size.
+    /// </summary>
     public Coord MaximumWindowSize;
   }
 
@@ -845,9 +951,21 @@ public class CliRenderer : IDisposable
   [StructLayout(LayoutKind.Sequential)]
   private struct MouseEventRecord
   {
+    /// <summary>
+    /// Gets the mouse position.
+    /// </summary>
     public Coord MousePosition;
+    /// <summary>
+    /// Gets the button state.
+    /// </summary>
     public uint ButtonState;
+    /// <summary>
+    /// Gets the control key state.
+    /// </summary>
     public uint ControlKeyState;
+    /// <summary>
+    /// Gets the event flags.
+    /// </summary>
     public uint EventFlags;
   }
 

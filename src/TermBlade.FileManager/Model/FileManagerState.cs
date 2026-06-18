@@ -29,22 +29,70 @@ internal sealed class FileManagerState
   private string? _cachedPreviewPath;
   private int _cachedPreviewMaxChars;
 
+  /// <summary>
+  /// Gets the panels.
+  /// </summary>
   public List<FilePanel> Panels { get; } = [];
+  /// <summary>
+  /// Gets or sets the sidebar entries.
+  /// </summary>
   public IReadOnlyList<SidebarEntry> SidebarEntries { get; private set; }
+  /// <summary>
+  /// Gets the clipboard.
+  /// </summary>
   public FileClipboard Clipboard { get; } = new();
+  /// <summary>
+  /// Gets or sets the active panel index.
+  /// </summary>
   public int ActivePanelIndex { get; private set; }
+  /// <summary>
+  /// Gets or sets the selected sidebar index.
+  /// </summary>
   public int SelectedSidebarIndex { get; private set; }
+  /// <summary>
+  /// Gets or sets the startup error.
+  /// </summary>
   public string? StartupError { get; private set; }
+  /// <summary>
+  /// Gets or sets the status.
+  /// </summary>
   public string Status { get; private set; } = "Ready";
+  /// <summary>
+  /// Gets or sets the focus.
+  /// </summary>
   public FileManagerFocus Focus { get; private set; } = FileManagerFocus.File;
+  /// <summary>
+  /// Gets or sets the prompt mode.
+  /// </summary>
   public PromptMode PromptMode { get; private set; }
+  /// <summary>
+  /// Gets or sets the prompt text.
+  /// </summary>
   public string PromptText { get; private set; } = string.Empty;
+  /// <summary>
+  /// Gets or sets the preview visible.
+  /// </summary>
   public bool PreviewVisible { get; private set; } = true;
+  /// <summary>
+  /// Gets or sets the preview scroll x.
+  /// </summary>
   public int PreviewScrollX { get; private set; }
+  /// <summary>
+  /// Gets or sets the preview scroll y.
+  /// </summary>
   public int PreviewScrollY { get; private set; }
+  /// <summary>
+  /// Gets or sets the footer visible.
+  /// </summary>
   public bool FooterVisible { get; private set; }
+  /// <summary>
+  /// Gets or sets the pending confirmation.
+  /// </summary>
   public ConfirmationRequest? PendingConfirmation { get; private set; }
 
+  /// <summary>
+  /// Gets the active panel.
+  /// </summary>
   public FilePanel ActivePanel => Panels[ActivePanelIndex];
 
   private FileManagerState(string startPath, IFileSystemOperations fileSystem, IReadOnlyList<SidebarEntry> sidebarEntries)
@@ -54,6 +102,9 @@ internal sealed class FileManagerState
     Panels.Add(new FilePanel(startPath));
   }
 
+  /// <summary>
+  /// Create.
+  /// </summary>
   public static FileManagerState Create(
       string startPath,
       IFileSystemOperations fileSystem,
@@ -71,6 +122,9 @@ internal sealed class FileManagerState
     return state;
   }
 
+  /// <summary>
+  /// Refresh active panel.
+  /// </summary>
   public void RefreshActivePanel()
   {
     Try(() =>
@@ -88,6 +142,9 @@ internal sealed class FileManagerState
     });
   }
 
+  /// <summary>
+  /// Open selected.
+  /// </summary>
   public void OpenSelected()
   {
     var entry = ActivePanel.SelectedEntry;
@@ -110,6 +167,9 @@ internal sealed class FileManagerState
     });
   }
 
+  /// <summary>
+  /// Navigate parent.
+  /// </summary>
   public void NavigateParent()
   {
     Try(() =>
@@ -126,6 +186,10 @@ internal sealed class FileManagerState
     });
   }
 
+  /// <summary>
+  /// Move selection.
+  /// </summary>
+  /// <param name="delta">The delta value.</param>
   public void MoveSelection(int delta)
   {
     var previousSelectedPath = ActivePanel.SelectedEntry?.FullPath;
@@ -134,6 +198,10 @@ internal sealed class FileManagerState
       ResetPreviewState();
   }
 
+  /// <summary>
+  /// Move sidebar selection.
+  /// </summary>
+  /// <param name="delta">The delta value.</param>
   public void MoveSidebarSelection(int delta)
   {
     if (SidebarEntries.Count == 0)
@@ -142,6 +210,9 @@ internal sealed class FileManagerState
     SelectedSidebarIndex = Math.Clamp(SelectedSidebarIndex + delta, 0, SidebarEntries.Count - 1);
   }
 
+  /// <summary>
+  /// Activate selected sidebar entry.
+  /// </summary>
   public void ActivateSelectedSidebarEntry()
   {
     if (SidebarEntries.Count == 0)
@@ -152,6 +223,9 @@ internal sealed class FileManagerState
     Focus = FileManagerFocus.File;
   }
 
+  /// <summary>
+  /// Split active panel.
+  /// </summary>
   public void SplitActivePanel()
   {
     var panel = new FilePanel(ActivePanel.CurrentPath);
@@ -162,6 +236,9 @@ internal sealed class FileManagerState
     Status = $"Opened panel {ActivePanelIndex + 1}";
   }
 
+  /// <summary>
+  /// Close active panel.
+  /// </summary>
   public void CloseActivePanel()
   {
     if (Panels.Count <= 1)
@@ -173,6 +250,9 @@ internal sealed class FileManagerState
     Status = $"Closed panel {ActivePanelIndex + 1}";
   }
 
+  /// <summary>
+  /// Focus next panel.
+  /// </summary>
   public void FocusNextPanel()
   {
     ActivePanelIndex = (ActivePanelIndex + 1) % Panels.Count;
@@ -180,6 +260,9 @@ internal sealed class FileManagerState
     Focus = FileManagerFocus.File;
   }
 
+  /// <summary>
+  /// Focus previous panel.
+  /// </summary>
   public void FocusPreviousPanel()
   {
     ActivePanelIndex = (ActivePanelIndex - 1 + Panels.Count) % Panels.Count;
@@ -187,18 +270,37 @@ internal sealed class FileManagerState
     Focus = FileManagerFocus.File;
   }
 
+  /// <summary>
+  /// Gets the toggle preview.
+  /// </summary>
   public void TogglePreview() => PreviewVisible = !PreviewVisible;
 
+  /// <summary>
+  /// Gets the toggle footer.
+  /// </summary>
   public void ToggleFooter() => FooterVisible = !FooterVisible;
 
+  /// <summary>
+  /// Toggle focus.
+  /// </summary>
+  /// <param name="focus">The focus value.</param>
   public void ToggleFocus(FileManagerFocus focus)
   {
     Focus = Focus == focus ? FileManagerFocus.File : focus;
   }
 
+  /// <summary>
+  /// Open prompt.
+  /// </summary>
+  /// <param name="mode">The mode value.</param>
   public void OpenPrompt(PromptMode mode)
       => OpenPrompt(mode, string.Empty);
 
+  /// <summary>
+  /// Open prompt.
+  /// </summary>
+  /// <param name="mode">The mode value.</param>
+  /// <param name="initialText">The initialText value.</param>
   public void OpenPrompt(PromptMode mode, string initialText)
   {
     Focus = FileManagerFocus.Prompt;
@@ -206,6 +308,9 @@ internal sealed class FileManagerState
     PromptText = initialText;
   }
 
+  /// <summary>
+  /// Close prompt.
+  /// </summary>
   public void ClosePrompt()
   {
     Focus = FileManagerFocus.File;
@@ -213,14 +318,24 @@ internal sealed class FileManagerState
     PromptText = string.Empty;
   }
 
+  /// <summary>
+  /// Gets the append prompt char.
+  /// </summary>
+  /// <param name="value">The value value.</param>
   public void AppendPromptChar(char value) => PromptText += value;
 
+  /// <summary>
+  /// Backspace prompt.
+  /// </summary>
   public void BackspacePrompt()
   {
     if (PromptText.Length > 0)
       PromptText = PromptText[..^1];
   }
 
+  /// <summary>
+  /// Submit prompt async.
+  /// </summary>
   public async Task SubmitPromptAsync()
   {
     var mode = PromptMode;
@@ -237,6 +352,10 @@ internal sealed class FileManagerState
       await ExecuteShellAsync(text).ConfigureAwait(false);
   }
 
+  /// <summary>
+  /// Execute spf.
+  /// </summary>
+  /// <param name="command">The command value.</param>
   public void ExecuteSpf(SpfCommand command)
   {
     switch (command.Kind)
@@ -280,6 +399,10 @@ internal sealed class FileManagerState
     }
   }
 
+  /// <summary>
+  /// Handle spf key.
+  /// </summary>
+  /// <param name="key">The key value.</param>
   public FileManagerKeyResult HandleSpfKey(KeyEvent key)
   {
     if (PendingConfirmation is not null)
@@ -383,6 +506,9 @@ internal sealed class FileManagerState
     }
   }
 
+  /// <summary>
+  /// Build spf metadata content.
+  /// </summary>
   public string BuildSpfMetadataContent()
   {
     var entry = ActivePanel.SelectedEntry;
@@ -403,6 +529,9 @@ internal sealed class FileManagerState
         $"Group         {entry.Value.Group}");
   }
 
+  /// <summary>
+  /// Build spf clipboard content.
+  /// </summary>
   public string BuildSpfClipboardContent()
   {
     if (Clipboard.SourcePath is null)
@@ -420,8 +549,15 @@ internal sealed class FileManagerState
     return entry.IsDirectory ? "drwxrwxrwx" : "-rw-rw-rw-";
   }
 
+  /// <summary>
+  /// Gets the build spf processes content.
+  /// </summary>
   public string BuildSpfProcessesContent() => NoProcessesContent;
 
+  /// <summary>
+  /// Create directory.
+  /// </summary>
+  /// <param name="name">The name value.</param>
   public void CreateDirectory(string name)
   {
     Try(() =>
@@ -431,6 +567,10 @@ internal sealed class FileManagerState
     });
   }
 
+  /// <summary>
+  /// Create file.
+  /// </summary>
+  /// <param name="name">The name value.</param>
   public void CreateFile(string name)
   {
     Try(() =>
@@ -440,6 +580,10 @@ internal sealed class FileManagerState
     });
   }
 
+  /// <summary>
+  /// Rename selected.
+  /// </summary>
+  /// <param name="newName">The newName value.</param>
   public void RenameSelected(string newName)
   {
     var entry = ActivePanel.SelectedEntry;
@@ -453,6 +597,10 @@ internal sealed class FileManagerState
     });
   }
 
+  /// <summary>
+  /// Copy selected.
+  /// </summary>
+  /// <param name="cut">The cut value.</param>
   public void CopySelected(bool cut)
   {
     var entry = ActivePanel.SelectedEntry;
@@ -463,6 +611,9 @@ internal sealed class FileManagerState
     Status = $"{(cut ? "Cut" : "Copied")} {entry.Value.Name}";
   }
 
+  /// <summary>
+  /// Paste clipboard.
+  /// </summary>
   public ConfirmationRequest? PasteClipboard(string? destinationName = null)
   {
     if (!Clipboard.HasValue || Clipboard.SourcePath == null)
@@ -502,6 +653,9 @@ internal sealed class FileManagerState
     }
   }
 
+  /// <summary>
+  /// Request delete selected.
+  /// </summary>
   public ConfirmationRequest? RequestDeleteSelected()
   {
     var entry = ActivePanel.SelectedEntry;
@@ -522,6 +676,9 @@ internal sealed class FileManagerState
     return PendingConfirmation;
   }
 
+  /// <summary>
+  /// Confirm pending.
+  /// </summary>
   public void ConfirmPending()
   {
     var confirmation = PendingConfirmation;
@@ -529,12 +686,20 @@ internal sealed class FileManagerState
     confirmation?.Confirm();
   }
 
+  /// <summary>
+  /// Cancel pending.
+  /// </summary>
   public void CancelPending()
   {
     PendingConfirmation = null;
     Status = "Cancelled";
   }
 
+  /// <summary>
+  /// Build preview content.
+  /// </summary>
+  /// <param name="maxLines">The maxLines value.</param>
+  /// <param name="maxChars">The maxChars value.</param>
   public string BuildPreviewContent(int maxLines, int maxChars)
   {
     var document = BuildPreviewDocument(maxChars);
@@ -545,6 +710,10 @@ internal sealed class FileManagerState
     return $"File: {ActivePanel.SelectedEntry?.Name}\n{string.Join('\n', lines)}";
   }
 
+  /// <summary>
+  /// Build preview document.
+  /// </summary>
+  /// <param name="maxChars">The maxChars value.</param>
   public PreviewDocument BuildPreviewDocument(int maxChars)
   {
     var entry = ActivePanel.SelectedEntry;
@@ -600,6 +769,9 @@ internal sealed class FileManagerState
     return document;
   }
 
+  /// <summary>
+  /// Build selected directory preview entries.
+  /// </summary>
   public IReadOnlyList<FileManagerEntry> BuildSelectedDirectoryPreviewEntries()
   {
     var entry = ActivePanel.SelectedEntry;
@@ -616,6 +788,13 @@ internal sealed class FileManagerState
     }
   }
 
+  /// <summary>
+  /// Scroll preview.
+  /// </summary>
+  /// <param name="deltaX">The deltaX value.</param>
+  /// <param name="deltaY">The deltaY value.</param>
+  /// <param name="viewportWidth">The viewportWidth value.</param>
+  /// <param name="viewportHeight">The viewportHeight value.</param>
   public void ScrollPreview(int deltaX, int deltaY, int viewportWidth, int viewportHeight)
   {
     var document = BuildPreviewDocument(maxChars: 64 * 1024);

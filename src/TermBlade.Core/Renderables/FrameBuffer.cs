@@ -3,13 +3,28 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents frame buffer renderable.
+/// </summary>
 public class FrameBufferRenderable : Renderable
 {
+  /// <summary>
+  /// Gets the buffer width.
+  /// </summary>
   public int BufferWidth { get; }
+  /// <summary>
+  /// Gets the buffer height.
+  /// </summary>
   public int BufferHeight { get; }
 
   private readonly Rgba[] _pixels;
 
+  /// <summary>
+  /// Frame buffer renderable.
+  /// </summary>
+  /// <param name="renderer">The renderer value.</param>
+  /// <param name="pixelWidth">The pixelWidth value.</param>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public FrameBufferRenderable(CliRenderer? renderer, int pixelWidth, int pixelHeight) : base(renderer)
   {
     BufferWidth = pixelWidth;
@@ -18,17 +33,35 @@ public class FrameBufferRenderable : Renderable
     Clear(Rgba.FromInts(0, 0, 0));
   }
 
+  /// <summary>
+  /// Set pixel.
+  /// </summary>
+  /// <param name="x">The x value.</param>
+  /// <param name="y">The y value.</param>
+  /// <param name="color">The color value.</param>
   public void SetPixel(int x, int y, Rgba color)
   {
     if (x < 0 || x >= BufferWidth || y < 0 || y >= BufferHeight) return;
     _pixels[y * BufferWidth + x] = color;
   }
 
+  /// <summary>
+  /// Clear.
+  /// </summary>
+  /// <param name="color">The color value.</param>
   public void Clear(Rgba color)
   {
     for (int i = 0; i < _pixels.Length; i++) _pixels[i] = color;
   }
 
+  /// <summary>
+  /// Draw line.
+  /// </summary>
+  /// <param name="x1">The x1 value.</param>
+  /// <param name="y1">The y1 value.</param>
+  /// <param name="x2">The x2 value.</param>
+  /// <param name="y2">The y2 value.</param>
+  /// <param name="color">The color value.</param>
   public void DrawLine(int x1, int y1, int x2, int y2, Rgba color)
   {
     int dx = Math.Abs(x2 - x1), dy = Math.Abs(y2 - y1);
@@ -46,6 +79,14 @@ public class FrameBufferRenderable : Renderable
     }
   }
 
+  /// <summary>
+  /// Fill rect.
+  /// </summary>
+  /// <param name="px">The px value.</param>
+  /// <param name="py">The py value.</param>
+  /// <param name="pw">The pw value.</param>
+  /// <param name="ph">The ph value.</param>
+  /// <param name="color">The color value.</param>
   public void FillRect(int px, int py, int pw, int ph, Rgba color)
   {
     for (int y = py; y < py + ph; y++)
@@ -53,6 +94,13 @@ public class FrameBufferRenderable : Renderable
         SetPixel(x, y, color);
   }
 
+  /// <summary>
+  /// Draw circle.
+  /// </summary>
+  /// <param name="cx">The cx value.</param>
+  /// <param name="cy">The cy value.</param>
+  /// <param name="r">The r value.</param>
+  /// <param name="color">The color value.</param>
   public void DrawCircle(int cx, int cy, int r, Rgba color)
   {
     for (float angle = 0; angle < 2 * MathF.PI; angle += 0.01f)

@@ -27,6 +27,10 @@ internal readonly record struct SpfCommand(SpfCommandKind Kind, string? Argument
 
 internal static class PromptParser
 {
+  /// <summary>
+  /// Parse spf.
+  /// </summary>
+  /// <param name="input">The input value.</param>
   public static SpfCommand ParseSpf(string input)
   {
     var trimmed = input.Trim();

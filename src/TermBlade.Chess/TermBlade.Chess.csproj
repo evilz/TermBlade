@@ -22,7 +22,6 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Description>A terminal chess game powered by TermBlade Razor. Play against a bot or a friend.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

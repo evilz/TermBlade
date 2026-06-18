@@ -4,28 +4,84 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents text options.
+/// </summary>
 public class TextOptions
 {
+  /// <summary>
+  /// Gets or sets the content.
+  /// </summary>
   public string Content { get; set; } = "";
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
+  /// <summary>
+  /// Gets or sets the bg.
+  /// </summary>
   public string? Bg { get; set; }
+  /// <summary>
+  /// Gets or sets the text align.
+  /// </summary>
   public string TextAlign { get; set; } = "left";
+  /// <summary>
+  /// Gets or sets the wrap.
+  /// </summary>
   public bool Wrap { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the attributes.
+  /// </summary>
   public TextAttributes Attributes { get; set; } = TextAttributes.None;
+  /// <summary>
+  /// Gets or sets the width.
+  /// </summary>
   public object? Width { get; set; }
+  /// <summary>
+  /// Gets or sets the height.
+  /// </summary>
   public object? Height { get; set; }
+  /// <summary>
+  /// Gets or sets the flex grow.
+  /// </summary>
   public float FlexGrow { get; set; } = 0;
 }
 
+/// <summary>
+/// Represents text renderable.
+/// </summary>
 public class TextRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the content.
+  /// </summary>
   public string Content { get; set; }
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
+  /// <summary>
+  /// Gets or sets the bg.
+  /// </summary>
   public string? Bg { get; set; }
+  /// <summary>
+  /// Gets or sets the text align.
+  /// </summary>
   public string TextAlign { get; set; }
+  /// <summary>
+  /// Gets or sets the wrap.
+  /// </summary>
   public bool Wrap { get; set; }
+  /// <summary>
+  /// Gets or sets the attributes.
+  /// </summary>
   public TextAttributes Attributes { get; set; }
 
+  /// <summary>
+  /// Text renderable.
+  /// </summary>
+  /// <param name="renderer">The renderer value.</param>
+  /// <param name="options">The options value.</param>
   public TextRenderable(CliRenderer? renderer, TextOptions? options = null) : base(renderer)
   {
     var opts = options ?? new TextOptions();

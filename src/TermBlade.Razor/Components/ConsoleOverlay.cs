@@ -3,6 +3,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents console overlay.
+/// </summary>
 public sealed class ConsoleOverlay : RenderableComponentBase<TermBlade.Core.Console.ConsoleOverlay>
 {
   [Parameter] public OverlayPosition Position { get; set; } = OverlayPosition.BottomRight;
