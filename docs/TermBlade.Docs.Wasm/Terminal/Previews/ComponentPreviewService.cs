@@ -166,7 +166,7 @@ public static class ComponentPreviewService
     Draw(b, 4, 5, "TermBlade.Core │ Stable  │ 94%", DefaultFg);
     Draw(b, 4, 6, "Razor          │ Preview │ 88%", DefaultFg);
     Draw(b, 4, 7, "Gallery        │ Demo    │ 82%", DefaultFg);
-    Draw(b, 4, 9, " arrows scroll rows/columns · Table ", MutedFg);
+    Draw(b, 4, 9, " arrows scroll rows/columns ", MutedFg);
   }
 
   private static void RenderCalendar(RenderBuffer b)
