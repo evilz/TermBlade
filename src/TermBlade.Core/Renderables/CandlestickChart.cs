@@ -48,6 +48,10 @@ public class CandlestickChartRenderable : Renderable
   private double _elapsed;
   private bool _animationComplete;
 
+  /// <summary>
+  /// Candlestick chart renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public CandlestickChartRenderable(CliRenderer? renderer) : base(renderer) { }
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)

@@ -4,6 +4,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents textarea.
+/// </summary>
 public sealed class Textarea : RenderableComponentBase<TextareaRenderable>
 {
   [Parameter] public string Value { get; set; } = string.Empty;

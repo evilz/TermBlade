@@ -2,6 +2,9 @@ using System.Text;
 
 namespace TermBlade.Core.Input;
 
+/// <summary>
+/// Represents stdin parser.
+/// </summary>
 public class StdinParser
 {
   private const string EscapeKey = "escape";
@@ -9,6 +12,10 @@ public class StdinParser
 
   private readonly List<byte> _buf = new();
 
+  /// <summary>
+  /// Feed.
+  /// </summary>
+  /// <param name="data">The data value.</param>
   public IEnumerable<object> Feed(ReadOnlySpan<byte> data)
   {
     _buf.AddRange(data);

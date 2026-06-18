@@ -7,6 +7,10 @@ namespace TermBlade.FileManager;
 
 internal static class Program
 {
+  /// <summary>
+  /// Main.
+  /// </summary>
+  /// <param name="args">The args value.</param>
   public static async Task Main(string[] args)
   {
     Console.OutputEncoding = Encoding.UTF8;

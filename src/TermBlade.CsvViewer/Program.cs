@@ -7,6 +7,10 @@ namespace TermBlade.CsvViewer;
 
 internal static class Program
 {
+  /// <summary>
+  /// Main.
+  /// </summary>
+  /// <param name="args">The args value.</param>
   public static async Task<int> Main(string[] args)
   {
     Console.OutputEncoding = Encoding.UTF8;

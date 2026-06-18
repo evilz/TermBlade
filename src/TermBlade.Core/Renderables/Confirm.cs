@@ -5,21 +5,53 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents confirm renderable.
+/// </summary>
 public class ConfirmRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the message.
+  /// </summary>
   public string Message { get; set; } = "Are you sure?";
+  /// <summary>
+  /// Gets or sets the value.
+  /// </summary>
   public bool Value { get; set; }
+  /// <summary>
+  /// Gets or sets the yes label.
+  /// </summary>
   public string YesLabel { get; set; } = "Yes";
+  /// <summary>
+  /// Gets or sets the no label.
+  /// </summary>
   public string NoLabel { get; set; } = "No";
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
+  /// <summary>
+  /// Gets or sets the bg.
+  /// </summary>
   public string? Bg { get; set; }
+  /// <summary>
+  /// Gets or sets the active bg.
+  /// </summary>
   public string? ActiveBg { get; set; } = "#0055aa";
 
+  /// <summary>
+  /// Confirm renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public ConfirmRenderable(CliRenderer? renderer) : base(renderer)
   {
     Focusable = true;
   }
 
+  /// <summary>
+  /// Handle key.
+  /// </summary>
+  /// <param name="key">The key value.</param>
   public override void HandleKey(KeyEvent key)
   {
     switch (key.Name)

@@ -52,6 +52,10 @@ public class CalendarRenderable : Renderable
   /// </summary>
   public bool ShowOtherMonthDays { get; set; } = true;
 
+  /// <summary>
+  /// Calendar renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public CalendarRenderable(CliRenderer? renderer) : base(renderer) { }
 
   // The calendar content is always 20 characters wide:

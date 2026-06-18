@@ -3,6 +3,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents code.
+/// </summary>
 public sealed class Code : RenderableComponentBase<CodeRenderable>
 {
   [Parameter] public string Content { get; set; } = string.Empty;

@@ -4,6 +4,11 @@ namespace TermBlade.CsvViewer;
 
 internal static class CsvParser
 {
+  /// <summary>
+  /// Parse.
+  /// </summary>
+  /// <param name="content">The content value.</param>
+  /// <param name="delimiter">The delimiter value.</param>
   public static IReadOnlyList<IReadOnlyList<string>> Parse(string content, char delimiter)
   {
     var rows = new List<IReadOnlyList<string>>();

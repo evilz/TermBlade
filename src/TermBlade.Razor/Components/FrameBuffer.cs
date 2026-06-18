@@ -3,6 +3,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents frame buffer.
+/// </summary>
 public sealed class FrameBuffer : RenderableComponentBase<FrameBufferRenderable>
 {
   [Parameter] public int PixelWidth { get; set; } = 120;

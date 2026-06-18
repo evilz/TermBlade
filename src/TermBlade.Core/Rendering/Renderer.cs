@@ -7,6 +7,9 @@ using SysConsole = System.Console;
 
 namespace TermBlade.Core.Rendering
 {
+  /// <summary>
+  /// Defines cursor style values.
+  /// </summary>
   public enum CursorStyle { Block, Line, Underline, Default }
 
   /// <summary>
@@ -16,10 +19,25 @@ namespace TermBlade.Core.Rendering
   /// </summary>
   public sealed class Renderer : IDisposable
   {
+    /// <summary>
+    /// Gets or sets the width.
+    /// </summary>
     public int Width { get; private set; }
+    /// <summary>
+    /// Gets or sets the height.
+    /// </summary>
     public int Height { get; private set; }
+    /// <summary>
+    /// Gets or sets the background color.
+    /// </summary>
     public Rgba BackgroundColor { get; set; } = Rgba.FromInts(0, 0, 0);
+    /// <summary>
+    /// Gets or sets the use alternate screen.
+    /// </summary>
     public bool UseAlternateScreen { get; set; } = true;
+    /// <summary>
+    /// Gets or sets the testing.
+    /// </summary>
     public bool Testing { get; set; }
 
     private readonly CellBuffer _current;
@@ -29,8 +47,20 @@ namespace TermBlade.Core.Rendering
     private bool _disposed;
     private (int X, int Y, bool Visible) _cursor = (0, 0, false);
 
+    /// <summary>
+    /// Occurs when resized changes.
+    /// </summary>
+    /// <param name="Width">The Width value.</param>
+    /// <param name="Height">The Height value.</param>
     public event EventHandler<(int Width, int Height)>? Resized;
 
+    /// <summary>
+    /// Renderer.
+    /// </summary>
+    /// <param name="width">The width value.</param>
+    /// <param name="height">The height value.</param>
+    /// <param name="output">The output value.</param>
+    /// <param name="testing">The testing value.</param>
     public Renderer(int width, int height, TextWriter? output = null, bool testing = false)
     {
       Width = width;
@@ -41,6 +71,9 @@ namespace TermBlade.Core.Rendering
       _next = new CellBuffer(width, height, "renderer-next");
     }
 
+    /// <summary>
+    /// Initialize.
+    /// </summary>
     public void Initialize()
     {
       if (_initialized || Testing) return;
@@ -50,6 +83,9 @@ namespace TermBlade.Core.Rendering
       _out.Write(AnsiCodes.ClearAndHome);
     }
 
+    /// <summary>
+    /// Shutdown.
+    /// </summary>
     public void Shutdown()
     {
       if (!_initialized || Testing) return;
@@ -61,9 +97,19 @@ namespace TermBlade.Core.Rendering
     /// <summary>Returns the writable next-frame buffer for callers to draw into.</summary>
     public CellBuffer GetFrameBuffer() => _next;
 
+    /// <summary>
+    /// Set cursor position.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="y">The y value.</param>
     public void SetCursorPosition(int x, int y, bool visible = true)
         => _cursor = (x, y, visible);
 
+    /// <summary>
+    /// Resize.
+    /// </summary>
+    /// <param name="width">The width value.</param>
+    /// <param name="height">The height value.</param>
     public void Resize(int width, int height)
     {
       if (Width == width && Height == height) return;
@@ -142,6 +188,9 @@ namespace TermBlade.Core.Rendering
       _out.Flush();
     }
 
+    /// <summary>
+    /// Dispose.
+    /// </summary>
     public void Dispose()
     {
       if (_disposed) return;

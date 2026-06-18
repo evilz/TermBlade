@@ -4,6 +4,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents spinner.
+/// </summary>
 public sealed class Spinner : RenderableComponentBase<SpinnerRenderable>
 {
   [Parameter] public string Title { get; set; } = "";

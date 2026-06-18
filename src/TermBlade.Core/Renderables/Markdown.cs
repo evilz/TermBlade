@@ -6,8 +6,14 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents markdown renderable.
+/// </summary>
 public class MarkdownRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the content.
+  /// </summary>
   public string Content { get; set; } = "";
 
   private static readonly Rgba H1Color = Rgba.FromCss("#61afef");
@@ -20,6 +26,10 @@ public class MarkdownRenderable : Renderable
   private static readonly Rgba LinkColor = Rgba.FromCss("#56b6c2");
   private static readonly Rgba BlockquoteFg = Rgba.FromInts(150, 150, 150);
 
+  /// <summary>
+  /// Markdown renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public MarkdownRenderable(CliRenderer? renderer) : base(renderer) { }
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)

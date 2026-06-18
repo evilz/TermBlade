@@ -3,6 +3,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents scroll bar.
+/// </summary>
 public sealed class ScrollBar : RenderableComponentBase<ScrollBarRenderable>
 {
   [Parameter] public string Orientation { get; set; } = "vertical";

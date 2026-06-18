@@ -3,6 +3,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents markdown.
+/// </summary>
 public sealed class Markdown : RenderableComponentBase<MarkdownRenderable>
 {
   [Parameter] public string Content { get; set; } = string.Empty;

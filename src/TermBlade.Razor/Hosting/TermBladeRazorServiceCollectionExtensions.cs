@@ -4,10 +4,16 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace TermBlade.Razor.Hosting;
 
+/// <summary>
+/// Represents term blade razor service collection extensions.
+/// </summary>
 public static class TermBladeRazorServiceCollectionExtensions
 {
   extension(IServiceProvider services)
   {
+    /// <summary>
+    /// Has term blade razor services.
+    /// </summary>
     public bool HasTermBladeRazorServices =>
         services.GetService<IServiceProviderIsService>() is { } serviceChecker &&
         serviceChecker.IsService(typeof(TermBladeAppContext)) &&
@@ -16,6 +22,9 @@ public static class TermBladeRazorServiceCollectionExtensions
 
   extension(IServiceCollection services)
   {
+    /// <summary>
+    /// Add term blade razor.
+    /// </summary>
     public IServiceCollection AddTermBladeRazor()
     {
       services.AddOptions<TermBladeRazorOptions>();

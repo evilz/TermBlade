@@ -4,10 +4,20 @@ namespace TermBlade.FileManager;
 
 internal sealed class SystemFileSystemOperations : IFileSystemOperations
 {
+  /// <summary>
+  /// Gets the directory exists.
+  /// </summary>
   public bool DirectoryExists(string path) => Directory.Exists(path);
 
+  /// <summary>
+  /// Gets the file exists.
+  /// </summary>
   public bool FileExists(string path) => File.Exists(path);
 
+  /// <summary>
+  /// List entries.
+  /// </summary>
+  /// <param name="path">The path value.</param>
   public IReadOnlyList<FileManagerEntry> ListEntries(string path)
   {
     var directory = new DirectoryInfo(path);
@@ -21,17 +31,33 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
         .ToList();
   }
 
+  /// <summary>
+  /// Get parent path.
+  /// </summary>
+  /// <param name="path">The path value.</param>
   public string GetParentPath(string path)
       => Directory.GetParent(path)?.FullName ?? Path.GetFullPath(path);
 
+  /// <summary>
+  /// Gets the combine.
+  /// </summary>
+  /// <param name="path">The path value.</param>
   public string Combine(string path, string name) => Path.GetFullPath(Path.Combine(path, name));
 
+  /// <summary>
+  /// Get file name.
+  /// </summary>
+  /// <param name="path">The path value.</param>
   public string GetFileName(string path)
   {
     var trimmed = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
     return Path.GetFileName(trimmed);
   }
 
+  /// <summary>
+  /// Open file.
+  /// </summary>
+  /// <param name="path">The path value.</param>
   public void OpenFile(string path)
   {
     if (!File.Exists(path))
@@ -44,8 +70,15 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     });
   }
 
+  /// <summary>
+  /// Gets the create directory.
+  /// </summary>
   public void CreateDirectory(string path) => Directory.CreateDirectory(path);
 
+  /// <summary>
+  /// Create file.
+  /// </summary>
+  /// <param name="path">The path value.</param>
   public void CreateFile(string path)
   {
     if (File.Exists(path))
@@ -57,6 +90,11 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     using var _ = File.Create(path);
   }
 
+  /// <summary>
+  /// Rename.
+  /// </summary>
+  /// <param name="path">The path value.</param>
+  /// <param name="newName">The newName value.</param>
   public void Rename(string path, string newName)
   {
     var parent = Directory.GetParent(path)?.FullName ?? Environment.CurrentDirectory;
@@ -67,6 +105,12 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
       File.Move(path, destination);
   }
 
+  /// <summary>
+  /// Copy.
+  /// </summary>
+  /// <param name="sourcePath">The sourcePath value.</param>
+  /// <param name="destinationPath">The destinationPath value.</param>
+  /// <param name="overwrite">The overwrite value.</param>
   public void Copy(string sourcePath, string destinationPath, bool overwrite)
   {
     if (Directory.Exists(sourcePath))
@@ -83,6 +127,12 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     File.Copy(sourcePath, destinationPath, overwrite);
   }
 
+  /// <summary>
+  /// Move.
+  /// </summary>
+  /// <param name="sourcePath">The sourcePath value.</param>
+  /// <param name="destinationPath">The destinationPath value.</param>
+  /// <param name="overwrite">The overwrite value.</param>
   public void Move(string sourcePath, string destinationPath, bool overwrite)
   {
     if (PathsEqual(sourcePath, destinationPath))
@@ -97,6 +147,11 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
       File.Move(sourcePath, destinationPath);
   }
 
+  /// <summary>
+  /// Delete.
+  /// </summary>
+  /// <param name="path">The path value.</param>
+  /// <param name="recursive">The recursive value.</param>
   public void Delete(string path, bool recursive)
   {
     if (Directory.Exists(path))
@@ -105,6 +160,11 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
       File.Delete(path);
   }
 
+  /// <summary>
+  /// Read text preview.
+  /// </summary>
+  /// <param name="path">The path value.</param>
+  /// <param name="maxChars">The maxChars value.</param>
   public string? ReadTextPreview(string path, int maxChars)
   {
     if (!File.Exists(path) || maxChars <= 0)

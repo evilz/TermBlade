@@ -2,6 +2,9 @@ namespace TermBlade.Razor.Components;
 
 internal static class TableLayout
 {
+  /// <summary>
+  /// Create.
+  /// </summary>
   public static TableLayoutResult Create(
       IReadOnlyList<string> headers,
       IReadOnlyList<IReadOnlyList<string>> rows,

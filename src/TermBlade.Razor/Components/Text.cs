@@ -4,6 +4,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents text.
+/// </summary>
 public sealed class Text : RenderableComponentBase<TextRenderable>
 {
   [Parameter] public string Content { get; set; } = string.Empty;

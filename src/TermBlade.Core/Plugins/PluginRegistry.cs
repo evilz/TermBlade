@@ -9,6 +9,10 @@ namespace TermBlade.Core.Plugins
     private readonly Dictionary<string, IPlugin> _plugins =
         new(StringComparer.OrdinalIgnoreCase);
 
+    /// <summary>
+    /// Register.
+    /// </summary>
+    /// <param name="plugin">The plugin value.</param>
     public void Register(IPlugin plugin)
     {
       if (_plugins.ContainsKey(plugin.Name))
@@ -17,6 +21,10 @@ namespace TermBlade.Core.Plugins
       plugin.Register(this);
     }
 
+    /// <summary>
+    /// Unregister.
+    /// </summary>
+    /// <param name="name">The name value.</param>
     public void Unregister(string name)
     {
       if (_plugins.TryGetValue(name, out var plugin))
@@ -26,8 +34,17 @@ namespace TermBlade.Core.Plugins
       }
     }
 
+    /// <summary>
+    /// Gets the get.
+    /// </summary>
     public IPlugin? Get(string name) => _plugins.TryGetValue(name, out var p) ? p : null;
+    /// <summary>
+    /// Gets the has.
+    /// </summary>
     public bool Has(string name) => _plugins.ContainsKey(name);
+    /// <summary>
+    /// Gets the all.
+    /// </summary>
     public IEnumerable<IPlugin> All => _plugins.Values;
   }
 }

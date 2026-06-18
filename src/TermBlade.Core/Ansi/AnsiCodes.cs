@@ -42,18 +42,59 @@ namespace TermBlade.Core.Ansi
     public static string MoveTo(int col, int row) => $"\x1b[{row};{col}H";
 
     // ── color sequences ───────────────────────────────────────────────────────
+    /// <summary>
+    /// Gets the fg color.
+    /// </summary>
+    /// <param name="r">The r value.</param>
+    /// <param name="g">The g value.</param>
+    /// <param name="b">The b value.</param>
     public static string FgColor(byte r, byte g, byte b) => $"\x1b[38;2;{r};{g};{b}m";
+    /// <summary>
+    /// Gets the fg indexed.
+    /// </summary>
+    /// <param name="index">The index value.</param>
     public static string FgIndexed(byte index) => $"\x1b[38;5;{index}m";
     public const string FgDefault = "\x1b[39m";
+    /// <summary>
+    /// Gets the bg color.
+    /// </summary>
+    /// <param name="r">The r value.</param>
+    /// <param name="g">The g value.</param>
+    /// <param name="b">The b value.</param>
     public static string BgColor(byte r, byte g, byte b) => $"\x1b[48;2;{r};{g};{b}m";
+    /// <summary>
+    /// Gets the bg indexed.
+    /// </summary>
+    /// <param name="index">The index value.</param>
     public static string BgIndexed(byte index) => $"\x1b[48;5;{index}m";
     public const string BgDefault = "\x1b[49m";
+    /// <summary>
+    /// Gets the cursor color.
+    /// </summary>
+    /// <param name="r">The r value.</param>
+    /// <param name="g">The g value.</param>
+    /// <param name="b">The b value.</param>
     public static string CursorColor(byte r, byte g, byte b) => $"\x1b]12;#{r:x2}{g:x2}{b:x2}\x07";
+    /// <summary>
+    /// Gets the set terminal bg.
+    /// </summary>
+    /// <param name="r">The r value.</param>
+    /// <param name="g">The g value.</param>
+    /// <param name="b">The b value.</param>
     public static string SetTerminalBg(byte r, byte g, byte b) => $"\x1b]11;rgb:{r:x2}/{g:x2}/{b:x2}\x07";
+    /// <summary>
+    /// Gets the set mouse pointer.
+    /// </summary>
+    /// <param name="shape">The shape value.</param>
     public static string SetMousePointer(string shape) => $"\x1b]22;{shape}\x07";
 
     // ── writer helpers ────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Write fg color.
+    /// </summary>
+    /// <param name="w">The w value.</param>
+    /// <param name="color">The color value.</param>
     public static void WriteFgColor(TextWriter w, Rgba color)
     {
       switch (color.Intent)
@@ -64,6 +105,11 @@ namespace TermBlade.Core.Ansi
       }
     }
 
+    /// <summary>
+    /// Write bg color.
+    /// </summary>
+    /// <param name="w">The w value.</param>
+    /// <param name="color">The color value.</param>
     public static void WriteBgColor(TextWriter w, Rgba color)
     {
       switch (color.Intent)
@@ -74,6 +120,11 @@ namespace TermBlade.Core.Ansi
       }
     }
 
+    /// <summary>
+    /// Write attributes.
+    /// </summary>
+    /// <param name="w">The w value.</param>
+    /// <param name="attrs">The attrs value.</param>
     public static void WriteAttributes(TextWriter w, TextAttributes attrs)
     {
       if (attrs == TextAttributes.None) return;

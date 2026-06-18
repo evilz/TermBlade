@@ -15,14 +15,33 @@ namespace TermBlade.Core.Buffer
   {
     private static int _idSeq;
 
+    /// <summary>
+    /// Gets the id.
+    /// </summary>
     public string Id { get; }
+    /// <summary>
+    /// Gets or sets the width.
+    /// </summary>
     public int Width { get; private set; }
+    /// <summary>
+    /// Gets or sets the height.
+    /// </summary>
     public int Height { get; private set; }
+    /// <summary>
+    /// Gets or sets the respect alpha.
+    /// </summary>
     public bool RespectAlpha { get; set; }
 
     private Cell[] _cells;
     private bool _disposed;
 
+    /// <summary>
+    /// Cell buffer.
+    /// </summary>
+    /// <param name="width">The width value.</param>
+    /// <param name="height">The height value.</param>
+    /// <param name="id">The id value.</param>
+    /// <param name="respectAlpha">The respectAlpha value.</param>
     public CellBuffer(int width, int height, string? id = null, bool respectAlpha = false)
     {
       if (width <= 0) throw new ArgumentOutOfRangeException(nameof(width));
@@ -35,6 +54,11 @@ namespace TermBlade.Core.Buffer
       FillAll(Rgba.FromInts(0, 0, 0));
     }
 
+    /// <summary>
+    /// Create.
+    /// </summary>
+    /// <param name="width">The width value.</param>
+    /// <param name="height">The height value.</param>
     public static CellBuffer Create(int width, int height, string? id = null, bool respectAlpha = false)
         => new CellBuffer(width, height, id, respectAlpha);
 
@@ -53,6 +77,9 @@ namespace TermBlade.Core.Buffer
       for (int i = 0; i < _cells.Length; i++) _cells[i] = empty;
     }
 
+    /// <summary>
+    /// Clear.
+    /// </summary>
     public void Clear(Rgba? bg = null)
     {
       Guard();
@@ -65,6 +92,11 @@ namespace TermBlade.Core.Buffer
 
     // ── cell access ───────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Get cell.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="y">The y value.</param>
     public Cell? GetCell(int x, int y)
     {
       Guard();
@@ -72,6 +104,9 @@ namespace TermBlade.Core.Buffer
       return _cells[y * Width + x];
     }
 
+    /// <summary>
+    /// Set cell.
+    /// </summary>
     public void SetCell(int x, int y, int codepoint, Rgba fg, Rgba bg,
                         TextAttributes attrs = TextAttributes.None)
     {
@@ -82,6 +117,9 @@ namespace TermBlade.Core.Buffer
 
     // ── draw text ─────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Draw text.
+    /// </summary>
     public void DrawText(string text, int x, int y, Rgba fg, Rgba? bg = null,
                          TextAttributes attrs = TextAttributes.None)
     {
@@ -101,6 +139,9 @@ namespace TermBlade.Core.Buffer
 
     // ── draw box ──────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Draw box.
+    /// </summary>
     public void DrawBox(int x, int y, int width, int height,
                         Rgba borderColor, Rgba bg,
                         BorderStyle style = BorderStyle.Single,
@@ -166,6 +207,14 @@ namespace TermBlade.Core.Buffer
       }
     }
 
+    /// <summary>
+    /// Fill rect.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="y">The y value.</param>
+    /// <param name="w">The w value.</param>
+    /// <param name="h">The h value.</param>
+    /// <param name="bg">The bg value.</param>
     public void FillRect(int x, int y, int w, int h, Rgba bg)
     {
       Guard();
@@ -206,6 +255,11 @@ namespace TermBlade.Core.Buffer
 
     // ── resize ────────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Resize.
+    /// </summary>
+    /// <param name="width">The width value.</param>
+    /// <param name="height">The height value.</param>
     public void Resize(int width, int height)
     {
       Guard();
@@ -286,6 +340,9 @@ namespace TermBlade.Core.Buffer
 
     // ── IDisposable ───────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Dispose.
+    /// </summary>
     public void Dispose() { _disposed = true; }
   }
 }

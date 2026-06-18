@@ -3,13 +3,32 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents line numbers renderable.
+/// </summary>
 public class LineNumbersRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the line count.
+  /// </summary>
   public int LineCount { get; set; } = 0;
+  /// <summary>
+  /// Gets or sets the start line.
+  /// </summary>
   public int StartLine { get; set; } = 1;
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; } = "#666666";
+  /// <summary>
+  /// Gets or sets the bg.
+  /// </summary>
   public string? Bg { get; set; }
 
+  /// <summary>
+  /// Line numbers renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public LineNumbersRenderable(CliRenderer? renderer) : base(renderer) { }
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)

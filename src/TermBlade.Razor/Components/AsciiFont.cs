@@ -3,6 +3,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents ascii font.
+/// </summary>
 public sealed class AsciiFont : RenderableComponentBase<ASCIIFontRenderable>
 {
   [Parameter] public string Text { get; set; } = string.Empty;

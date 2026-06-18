@@ -3,6 +3,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents scroll box.
+/// </summary>
 public sealed class ScrollBox : ContainerRenderableComponentBase<ScrollBoxRenderable>
 {
   [Parameter] public int ScrollX { get; set; }

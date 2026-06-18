@@ -4,6 +4,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents multi select.
+/// </summary>
 public sealed class MultiSelect : RenderableComponentBase<MultiSelectRenderable>
 {
   [Parameter] public List<SelectOption> Options { get; set; } = [];

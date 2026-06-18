@@ -4,29 +4,70 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents select option.
+/// </summary>
 public class SelectOption
 {
+  /// <summary>
+  /// Gets or sets the name.
+  /// </summary>
   public string Name { get; set; } = "";
+  /// <summary>
+  /// Gets or sets the description.
+  /// </summary>
   public string? Description { get; set; }
+  /// <summary>
+  /// Gets or sets the value.
+  /// </summary>
   public object? Value { get; set; }
 }
 
+/// <summary>
+/// Represents select renderable.
+/// </summary>
 public class SelectRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the options.
+  /// </summary>
   public List<SelectOption> Options { get; set; } = new();
+  /// <summary>
+  /// Gets or sets the selected index.
+  /// </summary>
   public int SelectedIndex { get; set; } = 0;
+  /// <summary>
+  /// Gets or sets the show description.
+  /// </summary>
   public bool ShowDescription { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the show scroll indicator.
+  /// </summary>
   public bool ShowScrollIndicator { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the selected bg.
+  /// </summary>
   public string? SelectedBg { get; set; } = "#0055aa";
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
 
   private int _scrollOffset = 0;
 
+  /// <summary>
+  /// Select renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public SelectRenderable(CliRenderer? renderer) : base(renderer)
   {
     Focusable = true;
   }
 
+  /// <summary>
+  /// Handle key.
+  /// </summary>
+  /// <param name="key">The key value.</param>
   public override void HandleKey(KeyEvent key)
   {
     switch (key.Name)

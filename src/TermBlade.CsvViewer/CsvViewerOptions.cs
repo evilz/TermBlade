@@ -2,6 +2,10 @@ namespace TermBlade.CsvViewer;
 
 internal sealed record CsvViewerOptions(string? FilePath, char? Delimiter, bool HasHeader)
 {
+  /// <summary>
+  /// Parse.
+  /// </summary>
+  /// <param name="args">The args value.</param>
   public static CsvViewerOptions Parse(string[] args)
   {
     ArgumentNullException.ThrowIfNull(args);

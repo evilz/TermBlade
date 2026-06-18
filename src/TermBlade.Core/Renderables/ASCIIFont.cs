@@ -6,13 +6,34 @@ namespace TermBlade.Core.Renderables;
 
 [SuppressMessage("Naming", "S101:Types should be named in PascalCase", Justification = "Public API keeps the established ASCII acronym casing.")]
 [SuppressMessage("Design", "S1192:String literals should not be duplicated", Justification = "Glyph rows are intentionally repeated in this compact font data table.")]
+/// <summary>
+/// Represents asciifont renderable.
+/// </summary>
 public class ASCIIFontRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the text.
+  /// </summary>
   public string Text { get; set; } = "";
+  /// <summary>
+  /// Gets or sets the font.
+  /// </summary>
   public string Font { get; set; } = "normal";
+  /// <summary>
+  /// Gets or sets the color.
+  /// </summary>
   public string? Color { get; set; }
+  /// <summary>
+  /// Gets or sets the background color.
+  /// </summary>
   public string? BackgroundColor { get; set; }
+  /// <summary>
+  /// Gets or sets the selection bg.
+  /// </summary>
   public string SelectionBg { get; set; } = "#4a5568";
+  /// <summary>
+  /// Gets or sets the selection fg.
+  /// </summary>
   public string SelectionFg { get; set; } = "#ffffff";
 
   private int? _selectionStart;
@@ -112,11 +133,24 @@ public class ASCIIFontRenderable : Renderable
   private static readonly Dictionary<char, string[]> SlickFont = BuildTransformedFont('╱');
   private const int GlyphSpacing = 1;
 
+  /// <summary>
+  /// Asciifont renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public ASCIIFontRenderable(CliRenderer? renderer) : base(renderer) { }
 
+  /// <summary>
+  /// Contains point.
+  /// </summary>
+  /// <param name="x">The x value.</param>
+  /// <param name="y">The y value.</param>
   public bool ContainsPoint(int x, int y)
       => x >= ScreenX && x < ScreenX + ComputedWidth && y >= ScreenY && y < ScreenY + ComputedHeight;
 
+  /// <summary>
+  /// Column to text index.
+  /// </summary>
+  /// <param name="x">The x value.</param>
   public int ColumnToTextIndex(int x)
   {
     int relative = Math.Max(0, x - ScreenX);
@@ -136,6 +170,11 @@ public class ASCIIFontRenderable : Renderable
     return Text.Length;
   }
 
+  /// <summary>
+  /// Set selection.
+  /// </summary>
+  /// <param name="start">The start value.</param>
+  /// <param name="end">The end value.</param>
   public void SetSelection(int start, int end)
   {
     _selectionStart = Math.Clamp(Math.Min(start, end), 0, Text.Length);
@@ -143,6 +182,9 @@ public class ASCIIFontRenderable : Renderable
     RequestRender();
   }
 
+  /// <summary>
+  /// Clear selection.
+  /// </summary>
   public void ClearSelection()
   {
     _selectionStart = null;
@@ -150,14 +192,23 @@ public class ASCIIFontRenderable : Renderable
     RequestRender();
   }
 
+  /// <summary>
+  /// Gets the has selection.
+  /// </summary>
   public bool HasSelection() => _selectionStart.HasValue && _selectionEnd.HasValue && _selectionEnd > _selectionStart;
 
+  /// <summary>
+  /// Get selected text.
+  /// </summary>
   public string GetSelectedText()
   {
     if (!HasSelection()) return "";
     return Text[_selectionStart!.Value.._selectionEnd!.Value];
   }
 
+  /// <summary>
+  /// Gets the supported fonts.
+  /// </summary>
   public static IReadOnlyList<string> SupportedFonts { get; } = new[] { "tiny", "block", "shade", "slick" };
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)

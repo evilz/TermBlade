@@ -4,6 +4,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents select.
+/// </summary>
 public sealed class Select : RenderableComponentBase<SelectRenderable>
 {
   [Parameter] public List<SelectOption> Options { get; set; } = [];

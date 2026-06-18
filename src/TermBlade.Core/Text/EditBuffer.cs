@@ -7,13 +7,34 @@ namespace TermBlade.Core.Text
   /// <summary>Logical cursor position inside an <see cref="EditBuffer"/>.</summary>
   public sealed class LogicalCursor
   {
+    /// <summary>
+    /// Gets or sets the row.
+    /// </summary>
     public int Row { get; set; }
+    /// <summary>
+    /// Gets or sets the col.
+    /// </summary>
     public int Col { get; set; }
+    /// <summary>
+    /// Gets or sets the offset.
+    /// </summary>
     public int Offset { get; set; }
 
+    /// <summary>
+    /// Logical cursor.
+    /// </summary>
     public LogicalCursor() { }
+    /// <summary>
+    /// Logical cursor.
+    /// </summary>
+    /// <param name="row">The row value.</param>
+    /// <param name="col">The col value.</param>
+    /// <param name="offset">The offset value.</param>
     public LogicalCursor(int row, int col, int offset) { Row = row; Col = col; Offset = offset; }
 
+    /// <summary>
+    /// Gets the clone.
+    /// </summary>
     public LogicalCursor Clone() => new LogicalCursor(Row, Col, Offset);
   }
 
@@ -25,6 +46,9 @@ namespace TermBlade.Core.Text
   {
     private static int _idSeq;
 
+    /// <summary>
+    /// Gets the id.
+    /// </summary>
     public int Id { get; } = System.Threading.Interlocked.Increment(ref _idSeq);
 
     private Rope _rope;
@@ -34,15 +58,30 @@ namespace TermBlade.Core.Text
     private readonly Stack<(Rope Rope, LogicalCursor Cursor)> _undoStack = new();
     private readonly Stack<(Rope Rope, LogicalCursor Cursor)> _redoStack = new();
 
+    /// <summary>
+    /// Gets or sets the default fg.
+    /// </summary>
     public Rgba? DefaultFg { get; set; }
+    /// <summary>
+    /// Gets or sets the default bg.
+    /// </summary>
     public Rgba? DefaultBg { get; set; }
+    /// <summary>
+    /// Gets or sets the default attributes.
+    /// </summary>
     public TextAttributes? DefaultAttributes { get; set; }
 
     /// <summary>Fired after every mutation with the new full text.</summary>
     public event EventHandler<string>? TextChanged;
 
+    /// <summary>
+    /// Edit buffer.
+    /// </summary>
     public EditBuffer() { _rope = new Rope(""); }
 
+    /// <summary>
+    /// Gets the create.
+    /// </summary>
     public static EditBuffer Create() => new EditBuffer();
 
     // ── guard ─────────────────────────────────────────────────────────────────
@@ -60,10 +99,22 @@ namespace TermBlade.Core.Text
       _redoStack.Clear();
     }
 
+    /// <summary>
+    /// Can undo.
+    /// </summary>
     public bool CanUndo() { Guard(); return _undoStack.Count > 0; }
+    /// <summary>
+    /// Can redo.
+    /// </summary>
     public bool CanRedo() { Guard(); return _redoStack.Count > 0; }
+    /// <summary>
+    /// Clear history.
+    /// </summary>
     public void ClearHistory() { Guard(); _undoStack.Clear(); _redoStack.Clear(); }
 
+    /// <summary>
+    /// Undo.
+    /// </summary>
     public string? Undo()
     {
       Guard();
@@ -74,6 +125,9 @@ namespace TermBlade.Core.Text
       return "undo";
     }
 
+    /// <summary>
+    /// Redo.
+    /// </summary>
     public string? Redo()
     {
       Guard();
@@ -86,6 +140,10 @@ namespace TermBlade.Core.Text
 
     // ── text access ───────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Set text.
+    /// </summary>
+    /// <param name="text">The text value.</param>
     public void SetText(string text)
     {
       Guard();
@@ -96,20 +154,38 @@ namespace TermBlade.Core.Text
       TextChanged?.Invoke(this, text);
     }
 
+    /// <summary>
+    /// Get text.
+    /// </summary>
     public string GetText() { Guard(); return _rope.GetText(); }
 
+    /// <summary>
+    /// Get line count.
+    /// </summary>
     public int GetLineCount()
     {
       Guard();
       return _rope.GetText().Split('\n').Length;
     }
 
+    /// <summary>
+    /// Get text range.
+    /// </summary>
+    /// <param name="startOffset">The startOffset value.</param>
+    /// <param name="endOffset">The endOffset value.</param>
     public string GetTextRange(int startOffset, int endOffset)
     {
       Guard();
       return _rope.GetRange(startOffset, endOffset);
     }
 
+    /// <summary>
+    /// Get text range by coords.
+    /// </summary>
+    /// <param name="startRow">The startRow value.</param>
+    /// <param name="startCol">The startCol value.</param>
+    /// <param name="endRow">The endRow value.</param>
+    /// <param name="endCol">The endCol value.</param>
     public string GetTextRangeByCoords(int startRow, int startCol, int endRow, int endCol)
     {
       Guard();
@@ -120,6 +196,11 @@ namespace TermBlade.Core.Text
 
     // ── position helpers ──────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Position to offset.
+    /// </summary>
+    /// <param name="row">The row value.</param>
+    /// <param name="col">The col value.</param>
     public int PositionToOffset(int row, int col)
     {
       var text = _rope.GetText();
@@ -131,6 +212,10 @@ namespace TermBlade.Core.Text
       return offset;
     }
 
+    /// <summary>
+    /// Offset to position.
+    /// </summary>
+    /// <param name="offset">The offset value.</param>
     public LogicalCursor? OffsetToPosition(int offset)
     {
       Guard();
@@ -145,6 +230,10 @@ namespace TermBlade.Core.Text
       return new LogicalCursor(row, col, offset);
     }
 
+    /// <summary>
+    /// Get line start offset.
+    /// </summary>
+    /// <param name="row">The row value.</param>
     public int GetLineStartOffset(int row)
     {
       Guard();
@@ -168,8 +257,16 @@ namespace TermBlade.Core.Text
 
     // ── cursor ────────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Get cursor position.
+    /// </summary>
     public LogicalCursor GetCursorPosition() { Guard(); return _cursor; }
 
+    /// <summary>
+    /// Set cursor.
+    /// </summary>
+    /// <param name="row">The row value.</param>
+    /// <param name="col">The col value.</param>
     public void SetCursor(int row, int col)
     {
       Guard();
@@ -179,6 +276,10 @@ namespace TermBlade.Core.Text
       _cursor = new LogicalCursor(row, col, PositionToOffset(row, col));
     }
 
+    /// <summary>
+    /// Set cursor by offset.
+    /// </summary>
+    /// <param name="offset">The offset value.</param>
     public void SetCursorByOffset(int offset)
     {
       Guard();
@@ -186,6 +287,9 @@ namespace TermBlade.Core.Text
       SyncRowCol();
     }
 
+    /// <summary>
+    /// Move cursor left.
+    /// </summary>
     public void MoveCursorLeft()
     {
       Guard();
@@ -194,6 +298,9 @@ namespace TermBlade.Core.Text
       SyncRowCol();
     }
 
+    /// <summary>
+    /// Move cursor right.
+    /// </summary>
     public void MoveCursorRight()
     {
       Guard();
@@ -202,6 +309,9 @@ namespace TermBlade.Core.Text
       SyncRowCol();
     }
 
+    /// <summary>
+    /// Move cursor up.
+    /// </summary>
     public void MoveCursorUp()
     {
       Guard();
@@ -212,6 +322,9 @@ namespace TermBlade.Core.Text
       SetCursor(newRow, newCol);
     }
 
+    /// <summary>
+    /// Move cursor down.
+    /// </summary>
     public void MoveCursorDown()
     {
       Guard();
@@ -222,8 +335,14 @@ namespace TermBlade.Core.Text
       SetCursor(newRow, newCol);
     }
 
+    /// <summary>
+    /// Goto line.
+    /// </summary>
     public void GotoLine(int line) { Guard(); SetCursor(line, 0); }
 
+    /// <summary>
+    /// Get eol.
+    /// </summary>
     public LogicalCursor GetEol()
     {
       Guard();
@@ -232,6 +351,9 @@ namespace TermBlade.Core.Text
       return new LogicalCursor(_cursor.Row, col, PositionToOffset(_cursor.Row, col));
     }
 
+    /// <summary>
+    /// Get next word boundary.
+    /// </summary>
     public LogicalCursor GetNextWordBoundary()
     {
       Guard();
@@ -242,6 +364,9 @@ namespace TermBlade.Core.Text
       return OffsetToPosition(offset) ?? new LogicalCursor(0, 0, 0);
     }
 
+    /// <summary>
+    /// Get prev word boundary.
+    /// </summary>
     public LogicalCursor GetPrevWordBoundary()
     {
       Guard();
@@ -255,6 +380,10 @@ namespace TermBlade.Core.Text
 
     // ── mutations ─────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Insert char.
+    /// </summary>
+    /// <param name="ch">The ch value.</param>
     public void InsertChar(string ch)
     {
       Guard();
@@ -265,6 +394,10 @@ namespace TermBlade.Core.Text
       TextChanged?.Invoke(this, _rope.GetText());
     }
 
+    /// <summary>
+    /// Insert text.
+    /// </summary>
+    /// <param name="text">The text value.</param>
     public void InsertText(string text)
     {
       Guard();
@@ -275,6 +408,9 @@ namespace TermBlade.Core.Text
       TextChanged?.Invoke(this, _rope.GetText());
     }
 
+    /// <summary>
+    /// Delete char.
+    /// </summary>
     public void DeleteChar()
     {
       Guard();
@@ -284,6 +420,9 @@ namespace TermBlade.Core.Text
       TextChanged?.Invoke(this, _rope.GetText());
     }
 
+    /// <summary>
+    /// Delete char backward.
+    /// </summary>
     public void DeleteCharBackward()
     {
       Guard();
@@ -295,6 +434,13 @@ namespace TermBlade.Core.Text
       TextChanged?.Invoke(this, _rope.GetText());
     }
 
+    /// <summary>
+    /// Delete range.
+    /// </summary>
+    /// <param name="startLine">The startLine value.</param>
+    /// <param name="startCol">The startCol value.</param>
+    /// <param name="endLine">The endLine value.</param>
+    /// <param name="endCol">The endCol value.</param>
     public void DeleteRange(int startLine, int startCol, int endLine, int endCol)
     {
       Guard();
@@ -309,8 +455,14 @@ namespace TermBlade.Core.Text
       TextChanged?.Invoke(this, _rope.GetText());
     }
 
+    /// <summary>
+    /// Gets the new line.
+    /// </summary>
     public void NewLine() => InsertChar("\n");
 
+    /// <summary>
+    /// Delete line.
+    /// </summary>
     public void DeleteLine()
     {
       Guard();
@@ -327,6 +479,9 @@ namespace TermBlade.Core.Text
       TextChanged?.Invoke(this, _rope.GetText());
     }
 
+    /// <summary>
+    /// Clear.
+    /// </summary>
     public void Clear()
     {
       Guard();
@@ -336,6 +491,9 @@ namespace TermBlade.Core.Text
       TextChanged?.Invoke(this, "");
     }
 
+    /// <summary>
+    /// Dispose.
+    /// </summary>
     public void Dispose() { _disposed = true; }
   }
 }

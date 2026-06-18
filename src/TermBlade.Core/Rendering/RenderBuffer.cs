@@ -3,14 +3,28 @@ using TermBlade.Core.Buffer;
 
 namespace TermBlade.Core.Rendering;
 
+/// <summary>
+/// Represents render buffer.
+/// </summary>
 public class RenderBuffer
 {
+  /// <summary>
+  /// Gets the width.
+  /// </summary>
   public int Width { get; }
+  /// <summary>
+  /// Gets the height.
+  /// </summary>
   public int Height { get; }
 
   private readonly Cell[] _cells;
   private int? _clipX, _clipY, _clipW, _clipH;
 
+  /// <summary>
+  /// Render buffer.
+  /// </summary>
+  /// <param name="width">The width value.</param>
+  /// <param name="height">The height value.</param>
   public RenderBuffer(int width, int height)
   {
     Width = width;
@@ -20,6 +34,13 @@ public class RenderBuffer
     for (int i = 0; i < _cells.Length; i++) _cells[i] = empty;
   }
 
+  /// <summary>
+  /// Set clip region.
+  /// </summary>
+  /// <param name="x">The x value.</param>
+  /// <param name="y">The y value.</param>
+  /// <param name="width">The width value.</param>
+  /// <param name="height">The height value.</param>
   public void SetClipRegion(int? x, int? y, int? width, int? height)
   {
     _clipX = x; _clipY = y; _clipW = width; _clipH = height;
@@ -35,15 +56,39 @@ public class RenderBuffer
 
   private bool InBounds(int x, int y) => (uint)x < (uint)Width && (uint)y < (uint)Height;
 
+  /// <summary>
+  /// Set cell.
+  /// </summary>
+  /// <param name="x">The x value.</param>
+  /// <param name="y">The y value.</param>
+  /// <param name="ch">The ch value.</param>
+  /// <param name="fg">The fg value.</param>
+  /// <param name="bg">The bg value.</param>
   public void SetCell(int x, int y, char ch, Rgba fg, Rgba bg, TextAttributes attrs = 0)
       => SetCell(x, y, (int)ch, fg, bg, attrs);
 
+  /// <summary>
+  /// Set cell.
+  /// </summary>
+  /// <param name="x">The x value.</param>
+  /// <param name="y">The y value.</param>
+  /// <param name="codepoint">The codepoint value.</param>
+  /// <param name="fg">The fg value.</param>
+  /// <param name="bg">The bg value.</param>
   public void SetCell(int x, int y, int codepoint, Rgba fg, Rgba bg, TextAttributes attrs = 0)
   {
     if (!InBounds(x, y) || !InClip(x, y)) return;
     _cells[y * Width + x] = new Cell { Codepoint = codepoint, Fg = fg, Bg = bg, Attributes = attrs };
   }
 
+  /// <summary>
+  /// Draw text.
+  /// </summary>
+  /// <param name="x">The x value.</param>
+  /// <param name="y">The y value.</param>
+  /// <param name="text">The text value.</param>
+  /// <param name="fg">The fg value.</param>
+  /// <param name="bg">The bg value.</param>
   public void DrawText(int x, int y, string text, Rgba fg, Rgba bg, TextAttributes attrs = 0)
   {
     int col = x;
@@ -58,6 +103,14 @@ public class RenderBuffer
     }
   }
 
+  /// <summary>
+  /// Fill rect.
+  /// </summary>
+  /// <param name="x">The x value.</param>
+  /// <param name="y">The y value.</param>
+  /// <param name="width">The width value.</param>
+  /// <param name="height">The height value.</param>
+  /// <param name="bg">The bg value.</param>
   public void FillRect(int x, int y, int width, int height, Rgba bg)
   {
     for (int fy = y; fy < y + height; fy++)
@@ -65,6 +118,16 @@ public class RenderBuffer
         SetCell(fx, fy, ' ', Rgba.FromInts(255, 255, 255), bg);
   }
 
+  /// <summary>
+  /// Draw border.
+  /// </summary>
+  /// <param name="x">The x value.</param>
+  /// <param name="y">The y value.</param>
+  /// <param name="width">The width value.</param>
+  /// <param name="height">The height value.</param>
+  /// <param name="style">The style value.</param>
+  /// <param name="color">The color value.</param>
+  /// <param name="bg">The bg value.</param>
   public void DrawBorder(int x, int y, int width, int height, string style, Rgba color, Rgba bg)
   {
     if (width <= 0 || height <= 0) return;
@@ -91,6 +154,9 @@ public class RenderBuffer
     }
   }
 
+  /// <summary>
+  /// Draw border with titles.
+  /// </summary>
   public void DrawBorderWithTitles(int x, int y, int width, int height, string style,
       Rgba color, Rgba bg, string? title, string titleAlign,
       string? bottomTitle, string bottomTitleAlign)
@@ -122,12 +188,21 @@ public class RenderBuffer
     }
   }
 
+  /// <summary>
+  /// Get cell.
+  /// </summary>
+  /// <param name="x">The x value.</param>
+  /// <param name="y">The y value.</param>
   public Cell? GetCell(int x, int y)
   {
     if (!InBounds(x, y)) return null;
     return _cells[y * Width + x];
   }
 
+  /// <summary>
+  /// Clear.
+  /// </summary>
+  /// <param name="bg">The bg value.</param>
   public void Clear(Rgba bg)
   {
     var empty = Cell.Empty(bg);

@@ -3,15 +3,40 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents scroll bar renderable.
+/// </summary>
 public class ScrollBarRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the orientation.
+  /// </summary>
   public string Orientation { get; set; } = "vertical";
+  /// <summary>
+  /// Gets or sets the scroll position.
+  /// </summary>
   public int ScrollPosition { get; set; } = 0;
+  /// <summary>
+  /// Gets or sets the scroll size.
+  /// </summary>
   public int ScrollSize { get; set; } = 100;
+  /// <summary>
+  /// Gets or sets the viewport size.
+  /// </summary>
   public int ViewportSize { get; set; } = 10;
+  /// <summary>
+  /// Gets or sets the track color.
+  /// </summary>
   public string? TrackColor { get; set; } = "#333333";
+  /// <summary>
+  /// Gets or sets the thumb color.
+  /// </summary>
   public string? ThumbColor { get; set; } = "#888888";
 
+  /// <summary>
+  /// Scroll bar renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public ScrollBarRenderable(CliRenderer? renderer) : base(renderer) { }
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)

@@ -4,6 +4,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents slider.
+/// </summary>
 public sealed class Slider : RenderableComponentBase<SliderRenderable>
 {
   [Parameter] public float Min { get; set; } = 0;

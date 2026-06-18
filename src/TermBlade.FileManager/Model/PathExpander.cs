@@ -4,6 +4,10 @@ namespace TermBlade.FileManager;
 
 internal static partial class PathExpander
 {
+  /// <summary>
+  /// Expand.
+  /// </summary>
+  /// <param name="path">The path value.</param>
   public static string Expand(string path)
   {
     var expanded = path;

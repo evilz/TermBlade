@@ -3,6 +3,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents box.
+/// </summary>
 public sealed class Box : ContainerRenderableComponentBase<BoxRenderable>
 {
   [Parameter] public string BackgroundColor { get; set; } = "transparent";

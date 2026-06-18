@@ -54,6 +54,10 @@ public class HeatMapRenderable : Renderable
   private double _elapsed;
   private bool _animationComplete;
 
+  /// <summary>
+  /// Heat map renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public HeatMapRenderable(CliRenderer? renderer) : base(renderer) { }
 
   // Block characters for intensity: ░ ▒ ▓ █

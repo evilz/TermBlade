@@ -4,22 +4,53 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents spinner renderable.
+/// </summary>
 public class SpinnerRenderable : Renderable
 {
   private static readonly string[] DefaultFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
+  /// <summary>
+  /// Gets or sets the title.
+  /// </summary>
   public string Title { get; set; } = "";
+  /// <summary>
+  /// Gets or sets the frames.
+  /// </summary>
   public string[] Frames { get; set; } = DefaultFrames;
+  /// <summary>
+  /// Gets or sets the interval.
+  /// </summary>
   public double Interval { get; set; } = 0.08;
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
+  /// <summary>
+  /// Gets or sets the bg.
+  /// </summary>
   public string? Bg { get; set; }
+  /// <summary>
+  /// Gets or sets the spinner color.
+  /// </summary>
   public string? SpinnerColor { get; set; }
+  /// <summary>
+  /// Gets or sets the is spinning.
+  /// </summary>
   public bool IsSpinning { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the completed text.
+  /// </summary>
   public string? CompletedText { get; set; }
 
   private double _elapsed;
   private int _frameIndex;
 
+  /// <summary>
+  /// Spinner renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public SpinnerRenderable(CliRenderer? renderer) : base(renderer)
   {
   }

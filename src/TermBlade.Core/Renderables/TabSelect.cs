@@ -5,21 +5,50 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents tab select renderable.
+/// </summary>
 public class TabSelectRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the tabs.
+  /// </summary>
   public List<string> Tabs { get; set; } = new();
+  /// <summary>
+  /// Gets or sets the selected index.
+  /// </summary>
   public int SelectedIndex { get; set; } = 0;
+  /// <summary>
+  /// Gets or sets the active fg.
+  /// </summary>
   public string? ActiveFg { get; set; }
+  /// <summary>
+  /// Gets or sets the active bg.
+  /// </summary>
   public string? ActiveBg { get; set; }
+  /// <summary>
+  /// Gets or sets the inactive fg.
+  /// </summary>
   public string? InactiveFg { get; set; }
+  /// <summary>
+  /// Gets or sets the inactive bg.
+  /// </summary>
   public string? InactiveBg { get; set; }
 
+  /// <summary>
+  /// Tab select renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public TabSelectRenderable(CliRenderer? renderer) : base(renderer)
   {
     Focusable = true;
     LayoutNode.Height = LayoutDimension.Fixed(1);
   }
 
+  /// <summary>
+  /// Handle key.
+  /// </summary>
+  /// <param name="key">The key value.</param>
   public override void HandleKey(KeyEvent key)
   {
     switch (key.Name)

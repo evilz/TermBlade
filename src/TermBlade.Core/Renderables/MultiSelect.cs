@@ -5,24 +5,59 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents multi select renderable.
+/// </summary>
 public class MultiSelectRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the options.
+  /// </summary>
   public List<SelectOption> Options { get; set; } = new();
+  /// <summary>
+  /// Gets or sets the selected indices.
+  /// </summary>
   public HashSet<int> SelectedIndices { get; set; } = new();
+  /// <summary>
+  /// Gets or sets the cursor index.
+  /// </summary>
   public int CursorIndex { get; set; }
+  /// <summary>
+  /// Gets or sets the show description.
+  /// </summary>
   public bool ShowDescription { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the show scroll indicator.
+  /// </summary>
   public bool ShowScrollIndicator { get; set; } = true;
+  /// <summary>
+  /// Gets or sets the cursor bg.
+  /// </summary>
   public string? CursorBg { get; set; } = "#333333";
+  /// <summary>
+  /// Gets or sets the selected bg.
+  /// </summary>
   public string? SelectedBg { get; set; } = "#0055aa";
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
 
   private int _scrollOffset;
 
+  /// <summary>
+  /// Multi select renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public MultiSelectRenderable(CliRenderer? renderer) : base(renderer)
   {
     Focusable = true;
   }
 
+  /// <summary>
+  /// Handle key.
+  /// </summary>
+  /// <param name="key">The key value.</param>
   public override void HandleKey(KeyEvent key)
   {
     switch (key.Name)

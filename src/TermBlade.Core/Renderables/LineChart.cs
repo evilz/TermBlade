@@ -45,6 +45,10 @@ public class LineChartRenderable : Renderable
   private double _elapsed;
   private bool _animationComplete;
 
+  /// <summary>
+  /// Line chart renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public LineChartRenderable(CliRenderer? renderer) : base(renderer) { }
 
   // Braille patterns: each cell is 2x4 dots (2 cols, 4 rows)

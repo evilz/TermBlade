@@ -14,11 +14,30 @@ namespace TermBlade.Core.Ansi;
 /// </summary>
 public readonly struct Rgba : IEquatable<Rgba>
 {
+  /// <summary>
+  /// Gets the r.
+  /// </summary>
   public readonly ushort R;
+  /// <summary>
+  /// Gets the g.
+  /// </summary>
   public readonly ushort G;
+  /// <summary>
+  /// Gets the b.
+  /// </summary>
   public readonly ushort B;
+  /// <summary>
+  /// Gets the a.
+  /// </summary>
   public readonly ushort A;
 
+  /// <summary>
+  /// Rgba.
+  /// </summary>
+  /// <param name="r">The r value.</param>
+  /// <param name="g">The g value.</param>
+  /// <param name="b">The b value.</param>
+  /// <param name="a">The a value.</param>
   public Rgba(ushort r, ushort g, ushort b, ushort a)
   {
     R = r; G = g; B = b; A = a;
@@ -26,25 +45,58 @@ public readonly struct Rgba : IEquatable<Rgba>
 
   // ── channel accessors ──────────────────────────────────────────────────────
 
+  /// <summary>
+  /// Gets the red byte.
+  /// </summary>
   public byte RedByte => (byte)(R & 0xFF);
+  /// <summary>
+  /// Gets the green byte.
+  /// </summary>
   public byte GreenByte => (byte)(G & 0xFF);
+  /// <summary>
+  /// Gets the blue byte.
+  /// </summary>
   public byte BlueByte => (byte)(B & 0xFF);
+  /// <summary>
+  /// Gets the alpha byte.
+  /// </summary>
   public byte AlphaByte => (byte)(A & 0xFF);
 
+  /// <summary>
+  /// Gets the red f.
+  /// </summary>
   public float RedF => RedByte / 255f;
+  /// <summary>
+  /// Gets the green f.
+  /// </summary>
   public float GreenF => GreenByte / 255f;
+  /// <summary>
+  /// Gets the blue f.
+  /// </summary>
   public float BlueF => BlueByte / 255f;
+  /// <summary>
+  /// Gets the alpha f.
+  /// </summary>
   public float AlphaF => AlphaByte / 255f;
 
   // ── metadata accessors ────────────────────────────────────────────────────
 
+  /// <summary>
+  /// Meta.
+  /// </summary>
   public uint Meta =>
     (uint)(R >> 8) |
     ((uint)(G >> 8) << 8) |
     ((uint)(B >> 8) << 16) |
     ((uint)(A >> 8) << 24);
 
+  /// <summary>
+  /// Gets the intent.
+  /// </summary>
   public ColorIntent Intent => (ColorIntent)((Meta >> 8) & 0xFF);
+  /// <summary>
+  /// Gets the slot.
+  /// </summary>
   public byte Slot => (byte)(Meta & 0xFF);
 
   // ── private helpers ───────────────────────────────────────────────────────
@@ -145,6 +197,13 @@ public readonly struct Rgba : IEquatable<Rgba>
 
   // ── conversion helpers ────────────────────────────────────────────────────
 
+  /// <summary>
+  /// Public.
+  /// </summary>
+  /// <param name="R">The R value.</param>
+  /// <param name="G">The G value.</param>
+  /// <param name="B">The B value.</param>
+  /// <param name="ToInts(">The ToInts( value.</param>
   public (byte R, byte G, byte B, byte A) ToInts() =>
     (RedByte, GreenByte, BlueByte, AlphaByte);
 
@@ -171,6 +230,10 @@ public readonly struct Rgba : IEquatable<Rgba>
 
   private static readonly byte[] CubeLevels = { 0, 95, 135, 175, 215, 255 };
 
+  /// <summary>
+  /// Ansi256 to rgb.
+  /// </summary>
+  /// <param name="index">The index value.</param>
   public static Rgba Ansi256ToRgb(int index)
   {
     if (index < 16)
@@ -189,12 +252,34 @@ public readonly struct Rgba : IEquatable<Rgba>
 
   // ── equality ──────────────────────────────────────────────────────────────
 
+  /// <summary>
+  /// Gets the equals.
+  /// </summary>
+  /// <param name="other">The other value.</param>
   public bool Equals(Rgba other) => R == other.R && G == other.G && B == other.B && A == other.A;
+  /// <summary>
+  /// Gets the equals.
+  /// </summary>
   public override bool Equals(object? obj) => obj is Rgba other && Equals(other);
+  /// <summary>
+  /// Gets the get hash code.
+  /// </summary>
   public override int GetHashCode() => HashCode.Combine(R, G, B, A);
+  /// <summary>
+  /// Gets the equals.
+  /// </summary>
+  /// <param name="a">The a value.</param>
   public static bool operator ==(Rgba a, Rgba b) => a.Equals(b);
+  /// <summary>
+  /// Equals.
+  /// </summary>
+  /// <param name="a">The a value.</param>
+  /// <param name="b">The b value.</param>
   public static bool operator !=(Rgba a, Rgba b) => !a.Equals(b);
 
+  /// <summary>
+  /// To string.
+  /// </summary>
   public override string ToString()
   {
     var r = RedF.ToString("F2", CultureInfo.InvariantCulture);

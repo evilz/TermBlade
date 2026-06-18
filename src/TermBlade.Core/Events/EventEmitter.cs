@@ -11,6 +11,11 @@ namespace TermBlade.Core.Events
   {
     private readonly Dictionary<string, List<Action<object?>>> _handlers = new();
 
+    /// <summary>
+    /// On.
+    /// </summary>
+    /// <param name="eventName">The eventName value.</param>
+    /// <param name="handler">The handler value.</param>
     public void On(string eventName, Action<object?> handler)
     {
       if (!_handlers.TryGetValue(eventName, out var list))
@@ -18,12 +23,22 @@ namespace TermBlade.Core.Events
       list.Add(handler);
     }
 
+    /// <summary>
+    /// Off.
+    /// </summary>
+    /// <param name="eventName">The eventName value.</param>
+    /// <param name="handler">The handler value.</param>
     public void Off(string eventName, Action<object?> handler)
     {
       if (_handlers.TryGetValue(eventName, out var list))
         list.Remove(handler);
     }
 
+    /// <summary>
+    /// Once.
+    /// </summary>
+    /// <param name="eventName">The eventName value.</param>
+    /// <param name="handler">The handler value.</param>
     public void Once(string eventName, Action<object?> handler)
     {
       Action<object?>? wrapper = null;
@@ -31,6 +46,10 @@ namespace TermBlade.Core.Events
       On(eventName, wrapper);
     }
 
+    /// <summary>
+    /// Emit.
+    /// </summary>
+    /// <param name="eventName">The eventName value.</param>
     public void Emit(string eventName, object? data = null)
     {
       if (!_handlers.TryGetValue(eventName, out var list)) return;
@@ -38,6 +57,9 @@ namespace TermBlade.Core.Events
         h(data);
     }
 
+    /// <summary>
+    /// Remove all listeners.
+    /// </summary>
     public void RemoveAllListeners(string? eventName = null)
     {
       if (eventName == null) _handlers.Clear();

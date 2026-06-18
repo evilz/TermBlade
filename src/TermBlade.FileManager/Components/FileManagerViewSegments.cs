@@ -6,18 +6,28 @@ namespace TermBlade.FileManager.Components;
 
 internal static class FileManagerViewSegments
 {
+  /// <summary>
+  /// Sidebar header.
+  /// </summary>
   public static IReadOnlyList<SegmentedTextSegment> SidebarHeader =>
   [
       new("\udb80\udc4b ", FileManagerTheme.Accent),
       new(FileManagerSidebarModel.HeaderText, FileManagerTheme.Accent, Attributes: TextAttributes.Bold)
   ];
 
+  /// <summary>
+  /// Search.
+  /// </summary>
   public static IReadOnlyList<SegmentedTextSegment> Search =>
   [
       new(" ", FileManagerTheme.Green),
       new("(/) Type something", FileManagerTheme.Muted)
   ];
 
+  /// <summary>
+  /// Sidebar group.
+  /// </summary>
+  /// <param name="title">The title value.</param>
   public static IReadOnlyList<SegmentedTextSegment> SidebarGroup(string title) =>
   [
       new(GetSidebarGroupIcon(title), FileManagerTheme.Accent),
@@ -33,6 +43,11 @@ internal static class FileManagerViewSegments
       _ => string.Empty
     };
 
+  /// <summary>
+  /// Sidebar entry.
+  /// </summary>
+  /// <param name="entry">The entry value.</param>
+  /// <param name="selected">The selected value.</param>
   public static IReadOnlyList<SegmentedTextSegment> SidebarEntry(SidebarEntry entry, bool selected)
   {
     var icon = entry.Kind switch
@@ -53,6 +68,11 @@ internal static class FileManagerViewSegments
     return [new(selected ? "❯ " : "  ", FileManagerTheme.ActiveBorder), new(label, selected ? FileManagerTheme.Text : FileManagerTheme.Muted)];
   }
 
+  /// <summary>
+  /// Entry.
+  /// </summary>
+  /// <param name="entry">The entry value.</param>
+  /// <param name="selected">The selected value.</param>
   public static IReadOnlyList<SegmentedTextSegment> Entry(FileManagerEntry entry, bool selected, bool compact = false)
   {
     var icon = entry.IsDirectory ? "󰉋 " : "󰈔 ";
@@ -73,12 +93,20 @@ internal static class FileManagerViewSegments
     return selected ? "❯ " : "  ";
   }
 
+  /// <summary>
+  /// Status.
+  /// </summary>
+  /// <param name="content">The content value.</param>
   public static IReadOnlyList<SegmentedTextSegment> Status(string content)
   {
     var color = content.StartsWith('✖') ? FileManagerTheme.Muted : FileManagerTheme.Text;
     return [new(content, color)];
   }
 
+  /// <summary>
+  /// Command.
+  /// </summary>
+  /// <param name="state">The state value.</param>
   public static IReadOnlyList<SegmentedTextSegment> Command(FileManagerState state)
   {
     if (state.Focus == FileManagerFocus.Prompt)

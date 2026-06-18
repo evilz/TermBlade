@@ -4,6 +4,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents confirm.
+/// </summary>
 public sealed class Confirm : RenderableComponentBase<ConfirmRenderable>
 {
   [Parameter] public string Message { get; set; } = "Are you sure?";

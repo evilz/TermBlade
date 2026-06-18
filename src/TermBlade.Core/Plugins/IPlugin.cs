@@ -1,5 +1,8 @@
 namespace TermBlade.Core.Plugins
 {
+  /// <summary>
+  /// Represents iplugin.
+  /// </summary>
   public interface IPlugin
   {
     string Name { get; }

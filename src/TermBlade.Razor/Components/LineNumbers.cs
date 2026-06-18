@@ -3,6 +3,9 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents line numbers.
+/// </summary>
 public sealed class LineNumbers : RenderableComponentBase<LineNumbersRenderable>
 {
   [Parameter] public int LineCount { get; set; }

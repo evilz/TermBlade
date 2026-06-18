@@ -4,10 +4,22 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents code renderable.
+/// </summary>
 public class CodeRenderable : Renderable
 {
+  /// <summary>
+  /// Gets or sets the content.
+  /// </summary>
   public string Content { get; set; } = "";
+  /// <summary>
+  /// Gets or sets the language.
+  /// </summary>
   public string Language { get; set; } = "";
+  /// <summary>
+  /// Gets or sets the show line numbers.
+  /// </summary>
   public bool ShowLineNumbers { get; set; } = true;
 
   private static readonly Rgba KeywordColor = Rgba.FromCss("#569cd6");
@@ -34,6 +46,10 @@ public class CodeRenderable : Renderable
         "async", "await", "type", "interface", "extends", "implements",
     };
 
+  /// <summary>
+  /// Code renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public CodeRenderable(CliRenderer? renderer) : base(renderer) { }
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)

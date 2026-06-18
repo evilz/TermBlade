@@ -46,6 +46,10 @@ public class PieChartRenderable : Renderable
   private double _elapsed;
   private bool _animationComplete;
 
+  /// <summary>
+  /// Pie chart renderable.
+  /// </summary>
+  /// <param name="base(renderer">The base(renderer value.</param>
   public PieChartRenderable(CliRenderer? renderer) : base(renderer) { }
 
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)

@@ -4,21 +4,57 @@ using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
 
+/// <summary>
+/// Represents input options.
+/// </summary>
 public class InputOptions
 {
+  /// <summary>
+  /// Gets or sets the placeholder.
+  /// </summary>
   public string? Placeholder { get; set; }
+  /// <summary>
+  /// Gets or sets the placeholder color.
+  /// </summary>
   public string? PlaceholderColor { get; set; }
+  /// <summary>
+  /// Gets or sets the cursor color.
+  /// </summary>
   public string? CursorColor { get; set; }
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
+  /// <summary>
+  /// Gets or sets the bg.
+  /// </summary>
   public string? Bg { get; set; }
+  /// <summary>
+  /// Gets or sets the max length.
+  /// </summary>
   public int? MaxLength { get; set; }
+  /// <summary>
+  /// Gets or sets the width.
+  /// </summary>
   public object? Width { get; set; }
+  /// <summary>
+  /// Gets or sets the height.
+  /// </summary>
   public object? Height { get; set; }
+  /// <summary>
+  /// Gets or sets the value.
+  /// </summary>
   public string? Value { get; set; }
 }
 
+/// <summary>
+/// Represents input renderable.
+/// </summary>
 public class InputRenderable : Renderable
 {
+  /// <summary>
+  /// Member.
+  /// </summary>
   public string Value
   {
     get;
@@ -30,16 +66,39 @@ public class InputRenderable : Renderable
       RequestRender();
     }
   } = "";
+  /// <summary>
+  /// Gets or sets the placeholder.
+  /// </summary>
   public string? Placeholder { get; set; }
+  /// <summary>
+  /// Gets or sets the placeholder color.
+  /// </summary>
   public string? PlaceholderColor { get; set; }
+  /// <summary>
+  /// Gets or sets the cursor color.
+  /// </summary>
   public string? CursorColor { get; set; }
+  /// <summary>
+  /// Gets or sets the fg.
+  /// </summary>
   public string? Fg { get; set; }
+  /// <summary>
+  /// Gets or sets the bg.
+  /// </summary>
   public string? Bg { get; set; }
+  /// <summary>
+  /// Gets or sets the max length.
+  /// </summary>
   public int? MaxLength { get; set; }
 
   private int _cursorPos = 0;
   private int _scrollOffset = 0;
 
+  /// <summary>
+  /// Input renderable.
+  /// </summary>
+  /// <param name="renderer">The renderer value.</param>
+  /// <param name="options">The options value.</param>
   public InputRenderable(CliRenderer? renderer, InputOptions? options = null) : base(renderer)
   {
     var opts = options ?? new InputOptions();
@@ -66,6 +125,10 @@ public class InputRenderable : Renderable
     });
   }
 
+  /// <summary>
+  /// Handle key.
+  /// </summary>
+  /// <param name="key">The key value.</param>
   public override void HandleKey(KeyEvent key)
   {
     switch (key.Name)

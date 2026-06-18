@@ -5,6 +5,9 @@ using TermBlade.Razor.Hosting;
 
 namespace TermBlade.Razor.Components;
 
+/// <summary>
+/// Represents renderable component base.
+/// </summary>
 public abstract class RenderableComponentBase<TRenderable> : ComponentBase, IDisposable where TRenderable : Renderable
 {
   private bool _initialized;
@@ -40,6 +43,9 @@ public abstract class RenderableComponentBase<TRenderable> : ComponentBase, IDis
   [Parameter] public bool? Focusable { get; set; }
   [Parameter] public bool AutoFocus { get; set; }
 
+  /// <summary>
+  /// Gets or sets the renderable.
+  /// </summary>
   public TRenderable Renderable { get; private set; } = null!;
 
   protected override void OnInitialized()
@@ -149,6 +155,9 @@ public abstract class RenderableComponentBase<TRenderable> : ComponentBase, IDis
     _initialized = false;
   }
 
+  /// <summary>
+  /// Dispose.
+  /// </summary>
   public void Dispose()
   {
     Dispose(true);
@@ -180,6 +189,10 @@ public abstract class RenderableComponentBase<TRenderable> : ComponentBase, IDis
       float Opacity,
       bool Focusable)
   {
+    /// <summary>
+    /// Capture.
+    /// </summary>
+    /// <param name="renderable">The renderable value.</param>
     public static CommonParameterState Capture(Renderable renderable)
         => new(
             renderable.Id,
@@ -206,6 +219,10 @@ public abstract class RenderableComponentBase<TRenderable> : ComponentBase, IDis
             renderable.Opacity,
             renderable.Focusable);
 
+    /// <summary>
+    /// Apply.
+    /// </summary>
+    /// <param name="renderable">The renderable value.</param>
     public void Apply(Renderable renderable)
     {
       renderable.FlexDirection = FlexDirection;
