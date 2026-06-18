@@ -66,6 +66,7 @@
             <a href="#asciifont">AsciiFont</a>
             <a href="#linenumbers">LineNumbers</a>
             <a href="#framebuffer">FrameBuffer</a>
+            <a href="#table">Table</a>
             <a href="#calendar">Calendar</a>
             <a href="#spinner">Spinner</a>
           </div>
@@ -768,6 +769,67 @@ Console.WriteLine(""Hello"");
               </table>
             </div>
           </details>
+        </section>
+
+        <section id="table" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Content Component</p>
+            <h2>Table</h2>
+            <p>Displays tabular data with headers, borders, row separators, captions, and viewport offsets.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">table-preview</span>
+              </div>
+              <pre class="terminal-body"><code>╭ Release Matrix ─────────────────────╮
+│ Package        │ Status  │ Coverage │
+│────────────────┼─────────┼──────────│
+│ TermBlade.Core │ Stable  │ 94%      │
+│ Razor          │ Preview │ 88%      │
+╰──────────── arrows scroll rows/cols ╯</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code><span class="tag">&lt;Table</span> <span class="attr">Headers</span>=<span class="kw">"@Headers"</span>
+       <span class="attr">Rows</span>=<span class="kw">"@Rows"</span>
+       <span class="attr">VisibleRowCount</span>=<span class="str">"10"</span>
+       <span class="attr">MaxColumnWidth</span>=<span class="str">"24"</span>
+       <span class="attr">Title</span>=<span class="str">" Release Matrix "</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(TableDemo.razor)</small></h3>
+            <pre class="code-block"><code><span class="tag">&lt;Table</span> <span class="attr">Width</span>=<span class="str">"100%"</span> <span class="attr">Height</span>=<span class="str">"100%"</span>
+       <span class="attr">Headers</span>=<span class="kw">"@Headers"</span>
+       <span class="attr">Rows</span>=<span class="kw">"@Rows"</span>
+       <span class="attr">VisibleRowCount</span>=<span class="str">"6"</span>
+       <span class="attr">ShowRowSeparators</span>=<span class="str">"true"</span> <span class="punct">/&gt;</span></code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Parameters</h3>
+            <div class="table-wrapper">
+              <table class="components-table">
+                <thead><tr><th>Name</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+                <tbody>
+                  <tr><td><code>Headers</code></td><td><code>IReadOnlyList&lt;string&gt;</code></td><td><code>[]</code></td><td>Column header labels.</td></tr>
+                  <tr><td><code>Rows</code></td><td><code>IReadOnlyList&lt;IReadOnlyList&lt;string&gt;&gt;</code></td><td><code>[]</code></td><td>Cell values grouped by row.</td></tr>
+                  <tr><td><code>RowOffset</code> / <code>ColumnOffset</code></td><td><code>int</code></td><td><code>0</code></td><td>Viewport offsets for scrolling rows and columns.</td></tr>
+                  <tr><td><code>VisibleRowCount</code></td><td><code>int</code></td><td><code>20</code></td><td>Maximum number of body rows rendered.</td></tr>
+                  <tr><td><code>MinColumnWidth</code> / <code>MaxColumnWidth</code></td><td><code>int</code></td><td><code>6</code> / <code>32</code></td><td>Column width bounds before truncation.</td></tr>
+                  <tr><td><code>MaxVisibleWidth</code></td><td><code>int</code></td><td><code>120</code></td><td>Maximum table layout width before horizontal clipping.</td></tr>
+                  <tr><td><code>ShowHeaders</code></td><td><code>bool</code></td><td><code>true</code></td><td>Whether to render the header row and separator.</td></tr>
+                  <tr><td><code>ShowBorder</code></td><td><code>bool</code></td><td><code>true</code></td><td>Whether the wrapping box draws a border.</td></tr>
+                  <tr><td><code>ShowRowSeparators</code></td><td><code>bool</code></td><td><code>false</code></td><td>Whether to draw a separator after each visible row.</td></tr>
+                  <tr><td><code>Title</code> / <code>Caption</code></td><td><code>string?</code></td><td><code>null</code></td><td>Top and bottom border labels.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
         <section id="calendar" class="component-section feature-card">

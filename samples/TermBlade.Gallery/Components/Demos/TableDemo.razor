@@ -1,0 +1,30 @@
+<Table Width="100%" Height="100%"
+       Headers="@Headers"
+       Rows="@Rows"
+       VisibleRowCount="6"
+       MaxColumnWidth="18"
+       MaxVisibleWidth="58"
+       Title=" Release Matrix "
+       Caption=" arrows scroll rows/columns "
+       BorderStyle="rounded"
+       ShowRowSeparators="true" />
+
+@code {
+    private static readonly IReadOnlyList<string> Headers =
+    [
+        "Package",
+        "Status",
+        "Coverage",
+        "Owner"
+    ];
+
+    private static readonly IReadOnlyList<IReadOnlyList<string>> Rows =
+    [
+        ["TermBlade.Core", "Stable", "94%", "Rendering"],
+        ["TermBlade.Razor", "Preview", "88%", "Components"],
+        ["TermBlade.Gallery", "Demo", "82%", "Docs"],
+        ["CsvViewer", "Beta", "79%", "Tools"],
+        ["Chess", "Sample", "71%", "Games"],
+        ["FileManager", "Alpha", "65%", "Shell"]
+    ];
+}

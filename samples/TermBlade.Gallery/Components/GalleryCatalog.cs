@@ -44,6 +44,11 @@ public static class GalleryCatalog
             "Components/Demos/FrameBufferDemo.razor",
             ReadDemo("FrameBufferDemo.razor")),
 
+        new("Table",
+            "Displays scrollable tabular data with headers, borders, captions, and column sizing.",
+            "Components/Demos/TableDemo.razor",
+            ReadDemo("TableDemo.razor")),
+
         new("Select",
             "A navigable selection list with descriptions.",
             "Components/Demos/SelectDemo.razor",

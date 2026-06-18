@@ -26,14 +26,15 @@ public partial class GalleryDocumentationTests
   public void GalleryCatalog_IncludesEveryPublicRazorComponent()
   {
     var root = FindRepositoryRoot();
-    var componentFiles = Directory.EnumerateFiles(
-            Path.Combine(root, "src", "TermBlade.Razor", "Components"),
-            "*.cs")
+    var componentsPath = Path.Combine(root, "src", "TermBlade.Razor", "Components");
+    var componentFiles = Directory.EnumerateFiles(componentsPath, "*.cs")
+        .Concat(Directory.EnumerateFiles(componentsPath, "*.razor"))
         .Select(Path.GetFileNameWithoutExtension)
         .Where(name => name is not null
             and not "RenderableComponentBase"
             and not "ContainerRenderableComponentBase"
-            and not "IRenderableParent")
+            and not "IRenderableParent"
+            and not "_Imports")
         .Order(StringComparer.OrdinalIgnoreCase)
         .ToArray();
     var gallery = GalleryCatalog.Entries

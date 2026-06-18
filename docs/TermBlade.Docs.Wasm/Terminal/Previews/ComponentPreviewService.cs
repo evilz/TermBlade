@@ -42,6 +42,7 @@ public static class ComponentPreviewService
       case "asciifont": RenderAsciiFont(buffer); break;
       case "linenumbers": RenderLineNumbers(buffer); break;
       case "framebuffer": RenderFrameBuffer(buffer); break;
+      case "table": RenderTable(buffer); break;
       case "calendar": RenderCalendar(buffer); break;
       case "input": RenderInput(buffer); break;
       case "textarea": RenderTextarea(buffer); break;
@@ -155,6 +156,17 @@ public static class ComponentPreviewService
     Draw(b, 5, 4, "│ ▣ │  composable cell grid", AccentFg);
     Draw(b, 5, 5, "└───┘", AccentFg);
     Draw(b, 5, 7, "blit + alpha blend", MutedFg);
+  }
+
+  private static void RenderTable(RenderBuffer b)
+  {
+    DrawBox(b, 2, 1, 49, 10, " Table ", CyanFg, "rounded");
+    Draw(b, 4, 3, "Package        Status    Coverage", YellowFg, TextAttributes.Bold);
+    Draw(b, 4, 4, "────────────── ───────── ────────", CyanFg);
+    Draw(b, 4, 5, "TermBlade.Core Stable    94%", DefaultFg);
+    Draw(b, 4, 6, "Razor          Preview   88%", DefaultFg);
+    Draw(b, 4, 7, "Gallery        Demo      82%", DefaultFg);
+    Draw(b, 4, 9, "headers + clipped rows + captions", MutedFg);
   }
 
   private static void RenderCalendar(RenderBuffer b)
