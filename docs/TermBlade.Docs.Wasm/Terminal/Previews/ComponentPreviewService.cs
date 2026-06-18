@@ -160,13 +160,13 @@ public static class ComponentPreviewService
 
   private static void RenderTable(RenderBuffer b)
   {
-    DrawBox(b, 2, 1, 49, 10, " Table ", CyanFg, "rounded");
-    Draw(b, 4, 3, "Package        Status    Coverage", YellowFg, TextAttributes.Bold);
-    Draw(b, 4, 4, "────────────── ───────── ────────", CyanFg);
-    Draw(b, 4, 5, "TermBlade.Core Stable    94%", DefaultFg);
-    Draw(b, 4, 6, "Razor          Preview   88%", DefaultFg);
-    Draw(b, 4, 7, "Gallery        Demo      82%", DefaultFg);
-    Draw(b, 4, 9, "headers + clipped rows + captions", MutedFg);
+    DrawBox(b, 2, 1, 49, 10, " Release Matrix ", CyanFg, "rounded");
+    Draw(b, 4, 3, "Package        │ Status  │ Coverage", YellowFg, TextAttributes.Bold);
+    Draw(b, 4, 4, "───────────────┼─────────┼─────────", CyanFg);
+    Draw(b, 4, 5, "TermBlade.Core │ Stable  │ 94%", DefaultFg);
+    Draw(b, 4, 6, "Razor          │ Preview │ 88%", DefaultFg);
+    Draw(b, 4, 7, "Gallery        │ Demo    │ 82%", DefaultFg);
+    Draw(b, 4, 9, " arrows scroll rows/columns · Table ", MutedFg);
   }
 
   private static void RenderCalendar(RenderBuffer b)

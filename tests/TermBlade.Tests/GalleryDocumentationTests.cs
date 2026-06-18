@@ -29,12 +29,13 @@ public partial class GalleryDocumentationTests
     var componentsPath = Path.Combine(root, "src", "TermBlade.Razor", "Components");
     var componentFiles = Directory.EnumerateFiles(componentsPath, "*.cs")
         .Concat(Directory.EnumerateFiles(componentsPath, "*.razor"))
-        .Select(Path.GetFileNameWithoutExtension)
+        .Select(path => Path.GetFileName(path).Split('.')[0])
         .Where(name => name is not null
             and not "RenderableComponentBase"
             and not "ContainerRenderableComponentBase"
             and not "IRenderableParent"
             and not "_Imports")
+        .Distinct(StringComparer.OrdinalIgnoreCase)
         .Order(StringComparer.OrdinalIgnoreCase)
         .ToArray();
     var gallery = GalleryCatalog.Entries
