@@ -8,7 +8,7 @@ TermBlade is a terminal UI core library for modern .NET. It provides a cell-base
 
 ## Solution Layout
 
-The repository is structured as follows under the `csharp/` directory:
+The repository is structured as follows:
 
 - `src/TermBlade.Core/`: Core library containing all public APIs (e.g., Ansi, Buffer, Text, Rendering).
 - `src/TermBlade.Razor/`: Razor host + component wrappers for renderables.
@@ -21,7 +21,7 @@ The repository is structured as follows under the `csharp/` directory:
 When tasked with implementing features, fixing bugs, or refactoring:
 
 1. **Understand the Goal**: Review the relevant issues, files, and project layout. Ensure your changes align with the core rendering engine or text buffer architecture.
-2. **Build and Test First**: Always verify that the project builds and existing tests pass before making changes. Run the tests in `csharp/` using:
+2. **Build and Test First**: Always verify that the project builds and existing tests pass before making changes. Run the tests from the repository root using:
    - `dotnet restore`
    - `dotnet build`
    - `dotnet test`
