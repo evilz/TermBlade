@@ -16,6 +16,11 @@
     <ProjectReference Include="../../src/TermBlade.Core/TermBlade.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../../src/TermBlade.Razor/TermBlade.Razor.csproj" />
+    <Content Include="../../samples/TermBlade.Gallery/Components/Demos/*.razor" Link="Terminal/Previews/Demos/%(Filename)%(Extension)" />
+  </ItemGroup>
+
   <!-- Exclude node_modules and source TS from publish -->
   <ItemGroup>
     <Content Remove="node_modules/**" />

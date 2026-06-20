@@ -22,7 +22,7 @@
 
         _xterm = new XtermInterop(JS);
         await _xterm.InitReadOnlyAsync("preview-xterm-container");
-        await _xterm.WriteAsync(ComponentPreviewService.RenderPreview(Component ?? "text"));
+        await _xterm.WriteAsync(await ComponentPreviewService.RenderPreviewAsync(Component ?? "text"));
         await _xterm.FitAsync();
     }
 
