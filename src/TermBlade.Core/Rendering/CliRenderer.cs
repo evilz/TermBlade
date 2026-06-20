@@ -28,6 +28,14 @@ public class CliRendererConfig
   /// </summary>
   public bool Testing { get; set; } = false;
   /// <summary>
+  /// Gets or sets the testing terminal width.
+  /// </summary>
+  public int? TestingWidth { get; set; }
+  /// <summary>
+  /// Gets or sets the testing terminal height.
+  /// </summary>
+  public int? TestingHeight { get; set; }
+  /// <summary>
   /// Gets or sets the background color.
   /// </summary>
   public string? BackgroundColor { get; set; }
@@ -108,8 +116,11 @@ public class CliRenderer : IDisposable
         ? Rgba.FromCss(_config.BackgroundColor)
         : Rgba.FromInts(0, 0, 0);
 
+    var testingSize = new ConsoleSize(
+        Math.Max(1, _config.TestingWidth ?? 80),
+        Math.Max(1, _config.TestingHeight ?? 24));
     var initialSize = _config.Testing
-        ? new ConsoleSize(80, 24)
+        ? testingSize
         : GetCurrentConsoleSize(new ConsoleSize(80, 24), queryTerminal: false);
     TerminalWidth = initialSize.Width;
     TerminalHeight = initialSize.Height;

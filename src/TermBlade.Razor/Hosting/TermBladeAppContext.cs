@@ -22,6 +22,14 @@ public sealed class TermBladeRazorOptions
   /// </summary>
   public bool Testing { get; set; }
   /// <summary>
+  /// Gets or sets the testing terminal width.
+  /// </summary>
+  public int? TestingWidth { get; set; }
+  /// <summary>
+  /// Gets or sets the testing terminal height.
+  /// </summary>
+  public int? TestingHeight { get; set; }
+  /// <summary>
   /// Gets or sets the background color.
   /// </summary>
   public string? BackgroundColor { get; set; }
@@ -53,6 +61,8 @@ public sealed class TermBladeAppContext : IDisposable
       ExitOnCtrlC = settings.ExitOnCtrlC,
       TargetFps = settings.TargetFps,
       Testing = settings.Testing,
+      TestingWidth = settings.TestingWidth,
+      TestingHeight = settings.TestingHeight,
       BackgroundColor = settings.BackgroundColor
     });
   }

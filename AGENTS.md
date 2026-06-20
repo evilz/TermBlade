@@ -28,6 +28,8 @@ When tasked with implementing features, fixing bugs, or refactoring:
 3. **Run Samples**: To manually verify visual or behavioral changes, run the sample apps.
    - Example: `dotnet run --project samples/TermBlade.Samples -- layout`
 4. **Test-Driven Changes**: Write or update xUnit tests in `tests/TermBlade.Tests/` for any new functionality or bug fix. Test coverage is critical.
+5. **Blazor WebAssembly Rendering**: Do not block on asynchronous work in docs or WASM code with `.Result`, `.Wait()`, or `.GetAwaiter().GetResult()`. Expose async APIs and `await` renderer/component work to avoid single-threaded WebAssembly deadlocks.
+6. **Trim-Safe Component Resolution**: Avoid string-based component type resolution for linked Razor pages in publishable WASM code. Prefer static `typeof(...)` registries or explicit dynamic dependency annotations so trimming keeps component types.
 
 ## Code Style & Conventions
 

@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.RenderTree;
@@ -7,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using TermBlade.Core.Ansi;
 using TermBlade.Core.Layout;
 using TermBlade.Core.Rendering;
+using TermBlade.Docs.Wasm.Terminal.Previews.Demos;
+using TermBlade.Razor.Components;
 using TermBlade.Razor.Hosting;
 using RazorRenderer = Microsoft.AspNetCore.Components.RenderTree.Renderer;
 
@@ -20,14 +21,51 @@ namespace TermBlade.Docs.Wasm.Terminal.Previews;
 /// </summary>
 public static class ComponentPreviewService
 {
-  private const string DemoTypeSuffix = "Demo";
+  private const int PreviewWidth = 80;
+  private const int PreviewHeight = 12;
+  private const double PreviewDeltaTime = 2.0;
+  private const string PreviewBackgroundColor = "#0d1117";
+
+  private static readonly IReadOnlyDictionary<string, Type> DemoTypes = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase)
+  {
+    ["AsciiFont"] = typeof(AsciiFontDemo),
+    ["BarChart"] = typeof(BarChartDemo),
+    ["Box"] = typeof(BoxDemo),
+    ["Calendar"] = typeof(CalendarDemo),
+    ["CandlestickChart"] = typeof(CandlestickChartDemo),
+    ["Code"] = typeof(CodeDemo),
+    ["Confirm"] = typeof(ConfirmDemo),
+    ["ConsoleOverlay"] = typeof(ConsoleOverlayDemo),
+    ["Diff"] = typeof(DiffDemo),
+    ["DoughnutChart"] = typeof(DoughnutChartDemo),
+    ["FrameBuffer"] = typeof(FrameBufferDemo),
+    ["HeatMap"] = typeof(HeatMapDemo),
+    ["Input"] = typeof(InputDemo),
+    ["LineChart"] = typeof(LineChartDemo),
+    ["LineNumbers"] = typeof(LineNumbersDemo),
+    ["Markdown"] = typeof(MarkdownDemo),
+    ["MultiSelect"] = typeof(MultiSelectDemo),
+    ["PieChart"] = typeof(PieChartDemo),
+    ["ScrollBar"] = typeof(ScrollBarDemo),
+    ["ScrollBox"] = typeof(ScrollBoxDemo),
+    ["SegmentedText"] = typeof(SegmentedTextDemo),
+    ["Select"] = typeof(SelectDemo),
+    ["Slider"] = typeof(SliderDemo),
+    ["Spinner"] = typeof(SpinnerDemo),
+    ["TabSelect"] = typeof(TabSelectDemo),
+    ["Table"] = typeof(TableDemo),
+    ["Text"] = typeof(TextDemo),
+    ["Textarea"] = typeof(TextareaDemo),
+    ["TimeSeriesLineChart"] = typeof(TimeSeriesLineChartDemo),
+    ["TreeView"] = typeof(TreeViewDemo),
+  };
 
   /// <summary>
   /// Renders the named gallery component preview as ANSI terminal output.
   /// </summary>
   /// <param name="component">The gallery component name, such as <c>Text</c> or <c>Table</c>.</param>
   /// <returns>ANSI output for the terminal frame produced by the Razor demo page.</returns>
-  public static string RenderPreview(string component)
+  public static async Task<string> RenderPreviewAsync(string component)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(component);
 
@@ -38,22 +76,19 @@ public static class ComponentPreviewService
 
     try
     {
-      renderer.MountComponentAsync(demoType).GetAwaiter().GetResult();
+      await renderer.MountPreviewAsync(demoType).ConfigureAwait(false);
       return RenderTerminalFrame(app.Renderer);
     }
     finally
     {
-      renderer.Dispose();
+      await renderer.DisposeAsync().ConfigureAwait(false);
       app.Dispose();
-      provider.Dispose();
+      await provider.DisposeAsync().ConfigureAwait(false);
     }
   }
 
   private static Type ResolveDemoType(string component)
-  {
-    var demoTypeName = $"TermBlade.Docs.Wasm.Terminal.Previews.Demos.{component}{DemoTypeSuffix}";
-    return typeof(ComponentPreviewService).Assembly.GetType(demoTypeName) ?? typeof(UnknownPreviewDemo);
-  }
+    => DemoTypes.TryGetValue(component, out var demoType) ? demoType : typeof(UnknownPreviewDemo);
 
   private static ServiceProvider CreateServiceProvider()
   {
@@ -62,7 +97,9 @@ public static class ComponentPreviewService
     services.AddOptions<TermBladeRazorOptions>().Configure(options =>
     {
       options.Testing = true;
-      options.BackgroundColor = "#0d1117";
+      options.TestingWidth = PreviewWidth;
+      options.TestingHeight = PreviewHeight;
+      options.BackgroundColor = PreviewBackgroundColor;
     });
     services.AddSingleton<IComponentActivator, PreviewComponentActivator>();
     services.AddSingleton<TermBladeAppContext>();
@@ -72,11 +109,13 @@ public static class ComponentPreviewService
 
   private static string RenderTerminalFrame(CliRenderer renderer)
   {
+    renderer.Root.FlexDirection = FlexDirection.Column;
+
     var buffer = new RenderBuffer(renderer.TerminalWidth, renderer.TerminalHeight);
-    buffer.Clear(Rgba.FromCss("#0d1117"));
+    buffer.Clear(Rgba.FromCss(PreviewBackgroundColor));
 
     FlexLayout.Calculate(renderer.Root.LayoutNode, renderer.TerminalWidth, renderer.TerminalHeight);
-    renderer.Root.Render(buffer, deltaTime: 0);
+    renderer.Root.Render(buffer, PreviewDeltaTime);
 
     return ToAnsi(buffer);
   }
@@ -84,6 +123,7 @@ public static class ComponentPreviewService
   private static string ToAnsi(RenderBuffer buffer)
   {
     var sb = new StringBuilder(buffer.Width * buffer.Height * 4);
+    using var writer = new StringWriter(sb);
     Rgba? lastFg = null;
     Rgba? lastBg = null;
     TextAttributes? lastAttrs = null;
@@ -97,7 +137,7 @@ public static class ComponentPreviewService
         if (lastAttrs is null || cell.Attributes != lastAttrs.Value)
         {
           sb.Append("\x1b[0m");
-          AnsiCodes.WriteAttributes(new StringWriter(sb), cell.Attributes);
+          AnsiCodes.WriteAttributes(writer, cell.Attributes);
           lastFg = null;
           lastBg = null;
           lastAttrs = cell.Attributes;
@@ -105,13 +145,13 @@ public static class ComponentPreviewService
 
         if (lastFg is null || cell.Fg != lastFg.Value)
         {
-          AnsiCodes.WriteFgColor(new StringWriter(sb), cell.Fg);
+          AnsiCodes.WriteFgColor(writer, cell.Fg);
           lastFg = cell.Fg;
         }
 
         if (lastBg is null || cell.Bg != lastBg.Value)
         {
-          AnsiCodes.WriteBgColor(new StringWriter(sb), cell.Bg);
+          AnsiCodes.WriteBgColor(writer, cell.Bg);
           lastBg = cell.Bg;
         }
 
@@ -130,11 +170,32 @@ public static class ComponentPreviewService
   {
     protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder)
     {
-      builder.OpenComponent<TermBlade.Razor.Components.Text>(0);
+      builder.OpenComponent<Text>(0);
       builder.AddAttribute(1, "Content", "Unknown preview");
       builder.AddAttribute(2, "Fg", "#f7768e");
       builder.AddAttribute(3, "Width", "24");
       builder.AddAttribute(4, "Height", "1");
+      builder.CloseComponent();
+    }
+  }
+
+  private sealed class PreviewHost : ComponentBase
+  {
+    [Parameter]
+    public Type DemoType { get; set; } = typeof(UnknownPreviewDemo);
+
+    protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder)
+    {
+      builder.OpenComponent<Box>(0);
+      builder.AddAttribute(1, nameof(Box.Width), "100%");
+      builder.AddAttribute(2, nameof(Box.Height), "100%");
+      builder.AddAttribute(3, nameof(Box.FlexDirection), FlexDirection.Column);
+      builder.AddAttribute(4, nameof(Box.BackgroundColor), PreviewBackgroundColor);
+      builder.AddAttribute(5, nameof(Box.ChildContent), (RenderFragment)(childBuilder =>
+      {
+        childBuilder.OpenComponent(6, DemoType);
+        childBuilder.CloseComponent();
+      }));
       builder.CloseComponent();
     }
   }
@@ -234,14 +295,17 @@ public static class ComponentPreviewService
 
     public override Dispatcher Dispatcher => _dispatcher;
 
-    public Task MountComponentAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type componentType)
+    public Task MountPreviewAsync(Type demoType)
     {
-      ArgumentNullException.ThrowIfNull(componentType);
+      ArgumentNullException.ThrowIfNull(demoType);
       return Dispatcher.InvokeAsync(async () =>
       {
-        var component = InstantiateComponent(componentType);
+        var component = InstantiateComponent(typeof(PreviewHost));
         var componentId = AssignRootComponentId(component);
-        await RenderRootComponentAsync(componentId).ConfigureAwait(false);
+        await RenderRootComponentAsync(componentId, ParameterView.FromDictionary(new Dictionary<string, object?>
+        {
+          [nameof(PreviewHost.DemoType)] = demoType,
+        })).ConfigureAwait(false);
       });
     }
 

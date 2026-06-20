@@ -47,15 +47,34 @@ public partial class GalleryDocumentationTests
   }
 
   [Fact]
-  public void ComponentPreviewService_RendersEveryGallerySample()
+  public async Task ComponentPreviewService_RendersEveryGallerySample()
   {
     foreach (var entry in GalleryCatalog.Entries)
     {
-      var ansi = ComponentPreviewService.RenderPreview(entry.Name);
+      var ansi = await ComponentPreviewService.RenderPreviewAsync(entry.Name);
 
       Assert.DoesNotContain("Unknown preview", ansi);
       Assert.NotEmpty(ansi);
     }
+  }
+
+
+  [Fact]
+  public async Task ComponentPreviewService_ResolvesLowercaseQuerySlugs()
+  {
+    var ansi = await ComponentPreviewService.RenderPreviewAsync("text");
+
+    Assert.DoesNotContain("Unknown preview", ansi);
+    Assert.Contains("Normal text", ansi);
+  }
+
+  [Fact]
+  public async Task ComponentPreviewService_UsesEmbeddedPreviewHeight()
+  {
+    var ansi = await ComponentPreviewService.RenderPreviewAsync("Text");
+    var rows = ansi.Split("\r\n");
+
+    Assert.Equal(12, rows.Length);
   }
 
   [Fact]
