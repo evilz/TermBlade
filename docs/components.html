@@ -2641,53 +2641,6 @@ Console.WriteLine(""Hello"");
             <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
           </details>
         </section>
-        <section id="table" class="component-section feature-card">
-          <header class="component-header">
-            <p class="hero-tagline">Widgets Component</p>
-            <h2>Table</h2>
-            <p>Renders rows and columns as a compact text table.</p>
-          </header>
-          <div class="component-block">
-            <h3>Preview</h3>
-            <div class="hero-terminal component-preview">
-              <div class="terminal-bar">
-                <span class="terminal-dot red"></span>
-                <span class="terminal-dot yellow"></span>
-                <span class="terminal-dot green"></span>
-                <span class="terminal-title">table-preview</span>
-              </div>
-              <pre class="terminal-body"><code> Table
- Widget     | Area
- Table      | Widgets
- Panel      | Widgets
- Razor demo: TableDemo.razor</code></pre>
-            </div>
-          </div>
-          <div class="component-block">
-            <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Table Headers=&quot;@Headers&quot; Rows=&quot;@Rows&quot; Width=&quot;52&quot; Height=&quot;6&quot; Title=&quot;Widgets&quot; /&gt;</code></pre>
-          </div>
-          <div class="component-block">
-            <h3>Demo Source <small>(TableDemo.razor)</small></h3>
-            <pre class="code-block"><code>@using TermBlade.Core.Renderables
-
-&lt;Table Headers=&quot;@Headers&quot; Rows=&quot;@Rows&quot; Width=&quot;52&quot; Height=&quot;6&quot; Title=&quot;Widgets&quot; /&gt;
-
-@code {
-    private static readonly IReadOnlyList&lt;string&gt; Headers = [&quot;Widget&quot;, &quot;Area&quot;];
-    private static readonly IReadOnlyList&lt;IReadOnlyList&lt;string&gt;&gt; Rows = [[&quot;Table&quot;, &quot;Widgets&quot;], [&quot;Panel&quot;, &quot;Widgets&quot;]];
-}
-</code></pre>
-          </div>
-          <div class="component-block">
-            <h3>API Documentation</h3>
-            <p>Razor component: <code>TermBlade.Razor.Components.Table</code>. Core renderable: <code>TermBlade.Core.Renderables.TableRenderable</code>.</p>
-          </div>
-          <details class="common-parameters">
-            <summary>Common Layout Parameters</summary>
-            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
-          </details>
-        </section>
         <section id="tree" class="component-section feature-card">
           <header class="component-header">
             <p class="hero-tagline">Widgets Component</p>
