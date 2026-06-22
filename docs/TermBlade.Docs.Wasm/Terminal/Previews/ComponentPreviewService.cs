@@ -126,6 +126,17 @@ public static class ComponentPreviewService
     return ToAnsi(buffer);
   }
 
+  /// <summary>
+  /// Renders the named gallery component preview as ANSI terminal output.
+  /// </summary>
+  /// <param name="component">The gallery component name, such as <c>Text</c> or <c>Table</c>.</param>
+  /// <returns>ANSI output for the terminal frame.</returns>
+  public static Task<string> RenderPreviewAsync(string component)
+  {
+    ArgumentException.ThrowIfNullOrWhiteSpace(component);
+    return Task.FromResult(RenderPreview(component));
+  }
+
   private static void RenderText(RenderBuffer b)
   {
     Draw(b, 2, 1, "TermBlade Text", YellowFg, TextAttributes.Bold);
