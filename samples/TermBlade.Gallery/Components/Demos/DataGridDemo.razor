@@ -1,0 +1,8 @@
+@using TermBlade.Core.Renderables
+
+<DataGrid Columns="@Columns" Rows="@Rows" Width="52" Height="5" />
+
+@code {
+    private static readonly IReadOnlyList<string> Columns = ["Name", "Area"];
+    private static readonly IReadOnlyList<IReadOnlyList<string>> Rows = [["Panel", "Widget"], ["Button", "Control"]];
+}

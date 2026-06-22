@@ -1,0 +1,7 @@
+@using TermBlade.Core.Renderables
+
+<ComboBox Options="@Options" SelectedIndex="2" Width="34" Height="4" />
+
+@code {
+    private static readonly List<SelectOption> Options = [new() { Name = "Small" }, new() { Name = "Medium" }, new() { Name = "Large" }];
+}

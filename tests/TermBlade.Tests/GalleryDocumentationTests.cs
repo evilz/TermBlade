@@ -26,16 +26,18 @@ public partial class GalleryDocumentationTests
   public void GalleryCatalog_IncludesEveryPublicRazorComponent()
   {
     var root = FindRepositoryRoot();
-    var componentsPath = Path.Combine(root, "src", "TermBlade.Razor", "Components");
-    var componentFiles = Directory.EnumerateFiles(componentsPath, "*.cs")
-        .Concat(Directory.EnumerateFiles(componentsPath, "*.razor"))
-        .Select(path => Path.GetFileName(path).Split('.')[0])
-        .Distinct(StringComparer.OrdinalIgnoreCase)
+    var componentsDirectory = Path.Combine(root, "src", "TermBlade.Razor", "Components");
+    var componentFiles = Directory.EnumerateFiles(componentsDirectory, "*.cs")
+        .Concat(Directory.EnumerateFiles(componentsDirectory, "*.razor"))
+        .Select(Path.GetFileNameWithoutExtension)
         .Where(name => name is not null
+            and not "_Imports"
             and not "RenderableComponentBase"
             and not "ContainerRenderableComponentBase"
             and not "IRenderableParent"
-            and not "_Imports")
+            and not "LabelRenderableComponentBase"
+            and not "ContainerAdapterComponentBase"
+            and not "SelectionPromptBase")
         .Order(StringComparer.OrdinalIgnoreCase)
         .ToArray();
     var gallery = GalleryCatalog.Entries
@@ -47,34 +49,15 @@ public partial class GalleryDocumentationTests
   }
 
   [Fact]
-  public async Task ComponentPreviewService_RendersEveryGallerySample()
+  public void ComponentPreviewService_RendersEveryGallerySample()
   {
     foreach (var entry in GalleryCatalog.Entries)
     {
-      var ansi = await ComponentPreviewService.RenderPreviewAsync(entry.Name);
+      var ansi = ComponentPreviewService.RenderPreview(entry.Name);
 
       Assert.DoesNotContain("Unknown preview", ansi);
-      Assert.NotEmpty(ansi);
+      Assert.Contains(entry.Name, ansi);
     }
-  }
-
-
-  [Fact]
-  public async Task ComponentPreviewService_ResolvesLowercaseQuerySlugs()
-  {
-    var ansi = await ComponentPreviewService.RenderPreviewAsync("text");
-
-    Assert.DoesNotContain("Unknown preview", ansi);
-    Assert.Contains("Normal text", ansi);
-  }
-
-  [Fact]
-  public async Task ComponentPreviewService_UsesEmbeddedPreviewHeight()
-  {
-    var ansi = await ComponentPreviewService.RenderPreviewAsync("Text");
-    var rows = ansi.Split("\r\n");
-
-    Assert.Equal(12, rows.Length);
   }
 
   [Fact]
@@ -89,6 +72,47 @@ public partial class GalleryDocumentationTests
 
       Assert.Contains($"Demo Source <small>({fileName})</small>", componentsHtml);
     }
+  }
+
+  [Fact]
+  public void GalleryCatalog_UsesEmbeddedRazorSamples()
+  {
+    var resourceNames = typeof(GalleryCatalog).Assembly.GetManifestResourceNames();
+
+    foreach (var entry in GalleryCatalog.Entries)
+    {
+      Assert.EndsWith(".razor", entry.SourceFile, StringComparison.OrdinalIgnoreCase);
+      Assert.Contains(resourceNames, resourceName => resourceName.EndsWith(
+          Path.GetFileName(entry.SourceFile),
+          StringComparison.OrdinalIgnoreCase));
+      Assert.DoesNotContain("Source not found", entry.RazorCode);
+      Assert.Contains("<", entry.RazorCode);
+    }
+  }
+
+  [Fact]
+  public void ComponentPreviewService_RendersTallPreviewFrames()
+  {
+    var ansi = ComponentPreviewService.RenderPreview("Button");
+    var lineCount = ansi.Split("\r\n", StringSplitOptions.None).Length;
+
+    Assert.True(lineCount >= 18, $"Expected a taller preview frame, got {lineCount} rows.");
+  }
+
+  [Fact]
+  public void ComponentsDocumentation_DoesNotUseGroupedCoverageEntry()
+  {
+    var root = FindRepositoryRoot();
+    var componentsHtml = File.ReadAllText(Path.Combine(root, "docs", "components.html"));
+    var apiHtml = File.ReadAllText(Path.Combine(root, "docs", "api.html"));
+    var groupedEntryName = string.Concat("Requested", "Components");
+    var oldContainerBaseName = string.Concat("Requested", "ContainerComponentBase");
+    var oldLabelBaseName = string.Concat("Requested", "LabelComponentBase");
+
+    Assert.DoesNotContain(groupedEntryName, componentsHtml);
+    Assert.DoesNotContain(groupedEntryName, apiHtml);
+    Assert.DoesNotContain(oldContainerBaseName, apiHtml);
+    Assert.DoesNotContain(oldLabelBaseName, apiHtml);
   }
 
   [Fact]

@@ -37,7 +37,7 @@
       <h1 class="hero-title">API <span class="accent">Reference</span></h1>
       <p class="hero-description">Generated from the compiled public surface of TermBlade.Core, TermBlade.Razor, and TermBlade.FileManager. XML documentation summaries are shown where the source provides them; otherwise the reference falls back to signatures so every exported type and declared public member is visible.</p>
       <div class="api-stats" aria-label="API inventory summary">
-        <span><strong>127</strong> public types</span>
+        <span><strong>229</strong> public types</span>
         <span><strong>1126</strong> declared public members</span>
         <span><strong>3</strong> assemblies</span>
       </div>
@@ -8120,22 +8120,24 @@
               </div>
             </article>
             <article id="t-termblade-razor-components-table" class="api-type">
-              <header>
+              <div class="api-type-header">
+                <span class="api-kind">class</span>
                 <h3>Table</h3>
-              </header>
-              <pre class="code-block api-signature"><code>public class Table : ComponentBase, IComponent, IHandleAfterRender, IHandleEvent</code></pre>
-              <p>Razor component for rendering structured tabular data with configurable headers, rows, borders, row separators, title, caption, and fixed-width columns.</p>
-              <h4>Constructors</h4>
-              <table class="api-table">
-                <thead><tr><th>Name</th><th>Signature</th><th>Description</th></tr></thead>
-                <tbody>
-                  <tr>
-                    <td><code>Table</code></td>
-                    <td><code>public Table()</code></td>
-                    <td>Initializes a new instance of the Table Razor component.</td>
-                  </tr>
-                </tbody>
-              </table>
+              </div>
+              <pre class="code-block api-signature"><code>public sealed class Table : RenderableComponentBase&lt;TableRenderable&gt;, IComponent, IDisposable, IHandleAfterRender, IHandleEvent</code></pre>
+              <p>Razor component wrapper for the TermBlade table renderable. See the component reference for gallery-synced usage and live previews.</p>
+              <p class="api-crosslink"><a href="components.html#table">Open gallery-backed component documentation</a></p>
+              <h4>Public API</h4>
+              <div class="table-wrapper">
+                <table class="api-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>Columns</code></td><td>property</td><td><code>public IReadOnlyList&lt;string&gt; Columns { get; set; }</code></td><td>Column headings displayed at the top of the table.</td></tr>
+                    <tr><td><code>Rows</code></td><td>property</td><td><code>public IReadOnlyList&lt;IReadOnlyList&lt;string&gt;&gt; Rows { get; set; }</code></td><td>Rows displayed in the table body.</td></tr>
+                    <tr><td><code>Fg</code></td><td>property</td><td><code>public string? Fg { get; set; }</code></td><td>Optional foreground color as a CSS color string.</td></tr>
+                  </tbody>
+                </table>
+              </div>
             </article>
 
             <article id="t-termblade-razor-components-tabselect" class="api-type">
@@ -8906,7 +8908,244 @@
           </section>
         </section>
       </div>
-    </div>
+        <section class="api-section" id="api-generated-supplement">
+          <header class="api-section-header">
+            <h2>Generated API Coverage Supplement</h2>
+            <p>Additional generated anchors for public package types exported by the current build.</p>
+          </header>
+          <div class="api-type-list">
+              <article id="t-termblade-core-ansi-ansicodes" class="api-type-card api-generated-supplement"><h3>AnsiCodes</h3><p><code>TermBlade.Core.Ansi.AnsiCodes</code></p></article>
+              <article id="t-termblade-core-ansi-colorintent" class="api-type-card api-generated-supplement"><h3>ColorIntent</h3><p><code>TermBlade.Core.Ansi.ColorIntent</code></p></article>
+              <article id="t-termblade-core-ansi-rgba" class="api-type-card api-generated-supplement"><h3>Rgba</h3><p><code>TermBlade.Core.Ansi.Rgba</code></p></article>
+              <article id="t-termblade-core-ansi-textattributes" class="api-type-card api-generated-supplement"><h3>TextAttributes</h3><p><code>TermBlade.Core.Ansi.TextAttributes</code></p></article>
+              <article id="t-termblade-core-buffer-borderchars" class="api-type-card api-generated-supplement"><h3>BorderChars</h3><p><code>TermBlade.Core.Buffer.BorderChars</code></p></article>
+              <article id="t-termblade-core-buffer-bordersides" class="api-type-card api-generated-supplement"><h3>BorderSides</h3><p><code>TermBlade.Core.Buffer.BorderSides</code></p></article>
+              <article id="t-termblade-core-buffer-borderstyle" class="api-type-card api-generated-supplement"><h3>BorderStyle</h3><p><code>TermBlade.Core.Buffer.BorderStyle</code></p></article>
+              <article id="t-termblade-core-buffer-cell" class="api-type-card api-generated-supplement"><h3>Cell</h3><p><code>TermBlade.Core.Buffer.Cell</code></p></article>
+              <article id="t-termblade-core-buffer-cellbuffer" class="api-type-card api-generated-supplement"><h3>CellBuffer</h3><p><code>TermBlade.Core.Buffer.CellBuffer</code></p></article>
+              <article id="t-termblade-core-buffer-textalignment" class="api-type-card api-generated-supplement"><h3>TextAlignment</h3><p><code>TermBlade.Core.Buffer.TextAlignment</code></p></article>
+              <article id="t-termblade-core-console-consoleoverlay" class="api-type-card api-generated-supplement"><h3>ConsoleOverlay</h3><p><code>TermBlade.Core.Console.ConsoleOverlay</code></p></article>
+              <article id="t-termblade-core-console-overlayposition" class="api-type-card api-generated-supplement"><h3>OverlayPosition</h3><p><code>TermBlade.Core.Console.OverlayPosition</code></p></article>
+              <article id="t-termblade-core-events-eventemitter" class="api-type-card api-generated-supplement"><h3>EventEmitter</h3><p><code>TermBlade.Core.Events.EventEmitter</code></p></article>
+              <article id="t-termblade-core-input-keyevent" class="api-type-card api-generated-supplement"><h3>KeyEvent</h3><p><code>TermBlade.Core.Input.KeyEvent</code></p></article>
+              <article id="t-termblade-core-input-keyhandler" class="api-type-card api-generated-supplement"><h3>KeyHandler</h3><p><code>TermBlade.Core.Input.KeyHandler</code></p></article>
+              <article id="t-termblade-core-input-mousebutton" class="api-type-card api-generated-supplement"><h3>MouseButton</h3><p><code>TermBlade.Core.Input.MouseButton</code></p></article>
+              <article id="t-termblade-core-input-mouseevent" class="api-type-card api-generated-supplement"><h3>MouseEvent</h3><p><code>TermBlade.Core.Input.MouseEvent</code></p></article>
+              <article id="t-termblade-core-input-stdinparser" class="api-type-card api-generated-supplement"><h3>StdinParser</h3><p><code>TermBlade.Core.Input.StdinParser</code></p></article>
+              <article id="t-termblade-core-layout-alignitems" class="api-type-card api-generated-supplement"><h3>AlignItems</h3><p><code>TermBlade.Core.Layout.AlignItems</code></p></article>
+              <article id="t-termblade-core-layout-flexdirection" class="api-type-card api-generated-supplement"><h3>FlexDirection</h3><p><code>TermBlade.Core.Layout.FlexDirection</code></p></article>
+              <article id="t-termblade-core-layout-flexlayout" class="api-type-card api-generated-supplement"><h3>FlexLayout</h3><p><code>TermBlade.Core.Layout.FlexLayout</code></p></article>
+              <article id="t-termblade-core-layout-flexnode" class="api-type-card api-generated-supplement"><h3>FlexNode</h3><p><code>TermBlade.Core.Layout.FlexNode</code></p></article>
+              <article id="t-termblade-core-layout-justifycontent" class="api-type-card api-generated-supplement"><h3>JustifyContent</h3><p><code>TermBlade.Core.Layout.JustifyContent</code></p></article>
+              <article id="t-termblade-core-layout-layoutdimension" class="api-type-card api-generated-supplement"><h3>LayoutDimension</h3><p><code>TermBlade.Core.Layout.LayoutDimension</code></p></article>
+              <article id="t-termblade-core-layout-layoutdimension-dimtype" class="api-type-card api-generated-supplement"><h3>DimType</h3><p><code>TermBlade.Core.Layout.LayoutDimension+DimType</code></p></article>
+              <article id="t-termblade-core-plugins-iplugin" class="api-type-card api-generated-supplement"><h3>IPlugin</h3><p><code>TermBlade.Core.Plugins.IPlugin</code></p></article>
+              <article id="t-termblade-core-plugins-pluginregistry" class="api-type-card api-generated-supplement"><h3>PluginRegistry</h3><p><code>TermBlade.Core.Plugins.PluginRegistry</code></p></article>
+              <article id="t-termblade-core-renderables-asciifontrenderable" class="api-type-card api-generated-supplement"><h3>ASCIIFontRenderable</h3><p><code>TermBlade.Core.Renderables.ASCIIFontRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-alignrenderable" class="api-type-card api-generated-supplement"><h3>AlignRenderable</h3><p><code>TermBlade.Core.Renderables.AlignRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-autocompleterenderable" class="api-type-card api-generated-supplement"><h3>AutoCompleteRenderable</h3><p><code>TermBlade.Core.Renderables.AutoCompleteRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-barchartrenderable" class="api-type-card api-generated-supplement"><h3>BarChartRenderable</h3><p><code>TermBlade.Core.Renderables.BarChartRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-boxoptions" class="api-type-card api-generated-supplement"><h3>BoxOptions</h3><p><code>TermBlade.Core.Renderables.BoxOptions</code></p></article>
+              <article id="t-termblade-core-renderables-boxrenderable" class="api-type-card api-generated-supplement"><h3>BoxRenderable</h3><p><code>TermBlade.Core.Renderables.BoxRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-breakdownchartrenderable" class="api-type-card api-generated-supplement"><h3>BreakdownChartRenderable</h3><p><code>TermBlade.Core.Renderables.BreakdownChartRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-buttonrenderable" class="api-type-card api-generated-supplement"><h3>ButtonRenderable</h3><p><code>TermBlade.Core.Renderables.ButtonRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-calendarpickerrenderable" class="api-type-card api-generated-supplement"><h3>CalendarPickerRenderable</h3><p><code>TermBlade.Core.Renderables.CalendarPickerRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-calendarpikerrenderable" class="api-type-card api-generated-supplement"><h3>CalendarPikerRenderable</h3><p><code>TermBlade.Core.Renderables.CalendarPikerRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-calendarrenderable" class="api-type-card api-generated-supplement"><h3>CalendarRenderable</h3><p><code>TermBlade.Core.Renderables.CalendarRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-candlestickchartrenderable" class="api-type-card api-generated-supplement"><h3>CandlestickChartRenderable</h3><p><code>TermBlade.Core.Renderables.CandlestickChartRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-candlestickpoint" class="api-type-card api-generated-supplement"><h3>CandlestickPoint</h3><p><code>TermBlade.Core.Renderables.CandlestickPoint</code></p></article>
+              <article id="t-termblade-core-renderables-canvasimagerenderable" class="api-type-card api-generated-supplement"><h3>CanvasImageRenderable</h3><p><code>TermBlade.Core.Renderables.CanvasImageRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-canvasrenderable" class="api-type-card api-generated-supplement"><h3>CanvasRenderable</h3><p><code>TermBlade.Core.Renderables.CanvasRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-carouselrenderable" class="api-type-card api-generated-supplement"><h3>CarouselRenderable</h3><p><code>TermBlade.Core.Renderables.CarouselRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-checkboxrenderable" class="api-type-card api-generated-supplement"><h3>CheckBoxRenderable</h3><p><code>TermBlade.Core.Renderables.CheckBoxRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-checkstate" class="api-type-card api-generated-supplement"><h3>CheckState</h3><p><code>TermBlade.Core.Renderables.CheckState</code></p></article>
+              <article id="t-termblade-core-renderables-coderenderable" class="api-type-card api-generated-supplement"><h3>CodeRenderable</h3><p><code>TermBlade.Core.Renderables.CodeRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-columnsrenderable" class="api-type-card api-generated-supplement"><h3>ColumnsRenderable</h3><p><code>TermBlade.Core.Renderables.ColumnsRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-comboboxrenderable" class="api-type-card api-generated-supplement"><h3>ComboBoxRenderable</h3><p><code>TermBlade.Core.Renderables.ComboBoxRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-confirmrenderable" class="api-type-card api-generated-supplement"><h3>ConfirmRenderable</h3><p><code>TermBlade.Core.Renderables.ConfirmRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-datagridrenderable" class="api-type-card api-generated-supplement"><h3>DataGridRenderable</h3><p><code>TermBlade.Core.Renderables.DataGridRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-dialogrenderable" class="api-type-card api-generated-supplement"><h3>DialogRenderable</h3><p><code>TermBlade.Core.Renderables.DialogRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-diffrenderable" class="api-type-card api-generated-supplement"><h3>DiffRenderable</h3><p><code>TermBlade.Core.Renderables.DiffRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-dislogrenderable" class="api-type-card api-generated-supplement"><h3>DislogRenderable</h3><p><code>TermBlade.Core.Renderables.DislogRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-doughnutchartrenderable" class="api-type-card api-generated-supplement"><h3>DoughnutChartRenderable</h3><p><code>TermBlade.Core.Renderables.DoughnutChartRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-expanderrenderable" class="api-type-card api-generated-supplement"><h3>ExpanderRenderable</h3><p><code>TermBlade.Core.Renderables.ExpanderRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-figlettextrenderable" class="api-type-card api-generated-supplement"><h3>FigletTextRenderable</h3><p><code>TermBlade.Core.Renderables.FigletTextRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-flyoutrenderable" class="api-type-card api-generated-supplement"><h3>FlyoutRenderable</h3><p><code>TermBlade.Core.Renderables.FlyoutRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-framebufferrenderable" class="api-type-card api-generated-supplement"><h3>FrameBufferRenderable</h3><p><code>TermBlade.Core.Renderables.FrameBufferRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-gradientbrushrenderable" class="api-type-card api-generated-supplement"><h3>GradientBrushRenderable</h3><p><code>TermBlade.Core.Renderables.GradientBrushRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-gridrenderable" class="api-type-card api-generated-supplement"><h3>GridRenderable</h3><p><code>TermBlade.Core.Renderables.GridRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-heatmaprenderable" class="api-type-card api-generated-supplement"><h3>HeatMapRenderable</h3><p><code>TermBlade.Core.Renderables.HeatMapRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-iconrenderable" class="api-type-card api-generated-supplement"><h3>IconRenderable</h3><p><code>TermBlade.Core.Renderables.IconRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-imagerenderable" class="api-type-card api-generated-supplement"><h3>ImageRenderable</h3><p><code>TermBlade.Core.Renderables.ImageRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-inputoptions" class="api-type-card api-generated-supplement"><h3>InputOptions</h3><p><code>TermBlade.Core.Renderables.InputOptions</code></p></article>
+              <article id="t-termblade-core-renderables-inputrenderable" class="api-type-card api-generated-supplement"><h3>InputRenderable</h3><p><code>TermBlade.Core.Renderables.InputRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-jsontextrenderable" class="api-type-card api-generated-supplement"><h3>JsonTextRenderable</h3><p><code>TermBlade.Core.Renderables.JsonTextRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-labelrenderable" class="api-type-card api-generated-supplement"><h3>LabelRenderable</h3><p><code>TermBlade.Core.Renderables.LabelRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-layoutrenderable" class="api-type-card api-generated-supplement"><h3>LayoutRenderable</h3><p><code>TermBlade.Core.Renderables.LayoutRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-linechartrenderable" class="api-type-card api-generated-supplement"><h3>LineChartRenderable</h3><p><code>TermBlade.Core.Renderables.LineChartRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-linenumbersrenderable" class="api-type-card api-generated-supplement"><h3>LineNumbersRenderable</h3><p><code>TermBlade.Core.Renderables.LineNumbersRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-livedisplayrenderable" class="api-type-card api-generated-supplement"><h3>LiveDisplayRenderable</h3><p><code>TermBlade.Core.Renderables.LiveDisplayRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-markdownrenderable" class="api-type-card api-generated-supplement"><h3>MarkdownRenderable</h3><p><code>TermBlade.Core.Renderables.MarkdownRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-markuprenderable" class="api-type-card api-generated-supplement"><h3>MarkupRenderable</h3><p><code>TermBlade.Core.Renderables.MarkupRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-massageboxrenderable" class="api-type-card api-generated-supplement"><h3>MassageBoxRenderable</h3><p><code>TermBlade.Core.Renderables.MassageBoxRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-messageboxrenderable" class="api-type-card api-generated-supplement"><h3>MessageBoxRenderable</h3><p><code>TermBlade.Core.Renderables.MessageBoxRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-multiselectrenderable" class="api-type-card api-generated-supplement"><h3>MultiSelectRenderable</h3><p><code>TermBlade.Core.Renderables.MultiSelectRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-multiselectionpromptrenderable" class="api-type-card api-generated-supplement"><h3>MultiSelectionPromptRenderable</h3><p><code>TermBlade.Core.Renderables.MultiSelectionPromptRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-notificationrenderable" class="api-type-card api-generated-supplement"><h3>NotificationRenderable</h3><p><code>TermBlade.Core.Renderables.NotificationRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-numericupdownrenderable" class="api-type-card api-generated-supplement"><h3>NumericUpDownRenderable</h3><p><code>TermBlade.Core.Renderables.NumericUpDownRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-padderrenderable" class="api-type-card api-generated-supplement"><h3>PadderRenderable</h3><p><code>TermBlade.Core.Renderables.PadderRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-panelrenderable" class="api-type-card api-generated-supplement"><h3>PanelRenderable</h3><p><code>TermBlade.Core.Renderables.PanelRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-piechartrenderable" class="api-type-card api-generated-supplement"><h3>PieChartRenderable</h3><p><code>TermBlade.Core.Renderables.PieChartRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-pieslice" class="api-type-card api-generated-supplement"><h3>PieSlice</h3><p><code>TermBlade.Core.Renderables.PieSlice</code></p></article>
+              <article id="t-termblade-core-renderables-progressbarrenderable" class="api-type-card api-generated-supplement"><h3>ProgressBarRenderable</h3><p><code>TermBlade.Core.Renderables.ProgressBarRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-progressdisplayrenderable" class="api-type-card api-generated-supplement"><h3>ProgressDisplayRenderable</h3><p><code>TermBlade.Core.Renderables.ProgressDisplayRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-radiobuttonrenderable" class="api-type-card api-generated-supplement"><h3>RadioButtonRenderable</h3><p><code>TermBlade.Core.Renderables.RadioButtonRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-relativepanelrenderable" class="api-type-card api-generated-supplement"><h3>RelativePanelRenderable</h3><p><code>TermBlade.Core.Renderables.RelativePanelRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-renderable" class="api-type-card api-generated-supplement"><h3>Renderable</h3><p><code>TermBlade.Core.Renderables.Renderable</code></p></article>
+              <article id="t-termblade-core-renderables-rootrenderable" class="api-type-card api-generated-supplement"><h3>RootRenderable</h3><p><code>TermBlade.Core.Renderables.RootRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-rowsrenderable" class="api-type-card api-generated-supplement"><h3>RowsRenderable</h3><p><code>TermBlade.Core.Renderables.RowsRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-rulerenderable" class="api-type-card api-generated-supplement"><h3>RuleRenderable</h3><p><code>TermBlade.Core.Renderables.RuleRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-scrollbarrenderable" class="api-type-card api-generated-supplement"><h3>ScrollBarRenderable</h3><p><code>TermBlade.Core.Renderables.ScrollBarRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-scrollboxrenderable" class="api-type-card api-generated-supplement"><h3>ScrollBoxRenderable</h3><p><code>TermBlade.Core.Renderables.ScrollBoxRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-scrollviewerrenderable" class="api-type-card api-generated-supplement"><h3>ScrollViewerRenderable</h3><p><code>TermBlade.Core.Renderables.ScrollViewerRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-segmentedtextrenderable" class="api-type-card api-generated-supplement"><h3>SegmentedTextRenderable</h3><p><code>TermBlade.Core.Renderables.SegmentedTextRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-segmentedtextsegment" class="api-type-card api-generated-supplement"><h3>SegmentedTextSegment</h3><p><code>TermBlade.Core.Renderables.SegmentedTextSegment</code></p></article>
+              <article id="t-termblade-core-renderables-selectoption" class="api-type-card api-generated-supplement"><h3>SelectOption</h3><p><code>TermBlade.Core.Renderables.SelectOption</code></p></article>
+              <article id="t-termblade-core-renderables-selectrenderable" class="api-type-card api-generated-supplement"><h3>SelectRenderable</h3><p><code>TermBlade.Core.Renderables.SelectRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-selectionpromptrenderable" class="api-type-card api-generated-supplement"><h3>SelectionPromptRenderable</h3><p><code>TermBlade.Core.Renderables.SelectionPromptRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-sliderrenderable" class="api-type-card api-generated-supplement"><h3>SliderRenderable</h3><p><code>TermBlade.Core.Renderables.SliderRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-spinnerrenderable" class="api-type-card api-generated-supplement"><h3>SpinnerRenderable</h3><p><code>TermBlade.Core.Renderables.SpinnerRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-srollviewerrenderable" class="api-type-card api-generated-supplement"><h3>SrollViewerRenderable</h3><p><code>TermBlade.Core.Renderables.SrollViewerRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-statusdisplayrenderable" class="api-type-card api-generated-supplement"><h3>StatusDisplayRenderable</h3><p><code>TermBlade.Core.Renderables.StatusDisplayRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-surfacerenderable" class="api-type-card api-generated-supplement"><h3>SurfaceRenderable</h3><p><code>TermBlade.Core.Renderables.SurfaceRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-tabrenderable" class="api-type-card api-generated-supplement"><h3>TabRenderable</h3><p><code>TermBlade.Core.Renderables.TabRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-tabselectrenderable" class="api-type-card api-generated-supplement"><h3>TabSelectRenderable</h3><p><code>TermBlade.Core.Renderables.TabSelectRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-tablerenderable" class="api-type-card api-generated-supplement"><h3>TableRenderable</h3><p><code>TermBlade.Core.Renderables.TableRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-textoptions" class="api-type-card api-generated-supplement"><h3>TextOptions</h3><p><code>TermBlade.Core.Renderables.TextOptions</code></p></article>
+              <article id="t-termblade-core-renderables-textpathrenderable" class="api-type-card api-generated-supplement"><h3>TextPathRenderable</h3><p><code>TermBlade.Core.Renderables.TextPathRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-textpromptrenderable" class="api-type-card api-generated-supplement"><h3>TextPromptRenderable</h3><p><code>TermBlade.Core.Renderables.TextPromptRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-textrenderable" class="api-type-card api-generated-supplement"><h3>TextRenderable</h3><p><code>TermBlade.Core.Renderables.TextRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-textareaoptions" class="api-type-card api-generated-supplement"><h3>TextareaOptions</h3><p><code>TermBlade.Core.Renderables.TextareaOptions</code></p></article>
+              <article id="t-termblade-core-renderables-textarearenderable" class="api-type-card api-generated-supplement"><h3>TextareaRenderable</h3><p><code>TermBlade.Core.Renderables.TextareaRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-timeserieslinechartrenderable" class="api-type-card api-generated-supplement"><h3>TimeSeriesLineChartRenderable</h3><p><code>TermBlade.Core.Renderables.TimeSeriesLineChartRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-timeseriespoint" class="api-type-card api-generated-supplement"><h3>TimeSeriesPoint</h3><p><code>TermBlade.Core.Renderables.TimeSeriesPoint</code></p></article>
+              <article id="t-termblade-core-renderables-toggleswitchrenderable" class="api-type-card api-generated-supplement"><h3>ToggleSwitchRenderable</h3><p><code>TermBlade.Core.Renderables.ToggleSwitchRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-treenode" class="api-type-card api-generated-supplement"><h3>TreeNode</h3><p><code>TermBlade.Core.Renderables.TreeNode</code></p></article>
+              <article id="t-termblade-core-renderables-treerenderable" class="api-type-card api-generated-supplement"><h3>TreeRenderable</h3><p><code>TermBlade.Core.Renderables.TreeRenderable</code></p></article>
+              <article id="t-termblade-core-renderables-treeviewrenderable" class="api-type-card api-generated-supplement"><h3>TreeViewRenderable</h3><p><code>TermBlade.Core.Renderables.TreeViewRenderable</code></p></article>
+              <article id="t-termblade-core-rendering-clirenderer" class="api-type-card api-generated-supplement"><h3>CliRenderer</h3><p><code>TermBlade.Core.Rendering.CliRenderer</code></p></article>
+              <article id="t-termblade-core-rendering-clirendererconfig" class="api-type-card api-generated-supplement"><h3>CliRendererConfig</h3><p><code>TermBlade.Core.Rendering.CliRendererConfig</code></p></article>
+              <article id="t-termblade-core-rendering-cursorstyle" class="api-type-card api-generated-supplement"><h3>CursorStyle</h3><p><code>TermBlade.Core.Rendering.CursorStyle</code></p></article>
+              <article id="t-termblade-core-rendering-renderbuffer" class="api-type-card api-generated-supplement"><h3>RenderBuffer</h3><p><code>TermBlade.Core.Rendering.RenderBuffer</code></p></article>
+              <article id="t-termblade-core-rendering-renderer" class="api-type-card api-generated-supplement"><h3>Renderer</h3><p><code>TermBlade.Core.Rendering.Renderer</code></p></article>
+              <article id="t-termblade-core-rendering-resizeeventargs" class="api-type-card api-generated-supplement"><h3>ResizeEventArgs</h3><p><code>TermBlade.Core.Rendering.ResizeEventArgs</code></p></article>
+              <article id="t-termblade-core-syntax-styledefinition" class="api-type-card api-generated-supplement"><h3>StyleDefinition</h3><p><code>TermBlade.Core.Syntax.StyleDefinition</code></p></article>
+              <article id="t-termblade-core-syntax-syntaxstyle" class="api-type-card api-generated-supplement"><h3>SyntaxStyle</h3><p><code>TermBlade.Core.Syntax.SyntaxStyle</code></p></article>
+              <article id="t-termblade-core-text-editbuffer" class="api-type-card api-generated-supplement"><h3>EditBuffer</h3><p><code>TermBlade.Core.Text.EditBuffer</code></p></article>
+              <article id="t-termblade-core-text-logicalcursor" class="api-type-card api-generated-supplement"><h3>LogicalCursor</h3><p><code>TermBlade.Core.Text.LogicalCursor</code></p></article>
+              <article id="t-termblade-core-text-rope" class="api-type-card api-generated-supplement"><h3>Rope</h3><p><code>TermBlade.Core.Text.Rope</code></p></article>
+              <article id="t-termblade-core-text-styledchunk" class="api-type-card api-generated-supplement"><h3>StyledChunk</h3><p><code>TermBlade.Core.Text.StyledChunk</code></p></article>
+              <article id="t-termblade-core-text-styledtext" class="api-type-card api-generated-supplement"><h3>StyledText</h3><p><code>TermBlade.Core.Text.StyledText</code></p></article>
+              <article id="t-termblade-core-text-textbuffer" class="api-type-card api-generated-supplement"><h3>TextBuffer</h3><p><code>TermBlade.Core.Text.TextBuffer</code></p></article>
+              <article id="t-termblade-filemanager-components-commandbarview" class="api-type-card api-generated-supplement"><h3>CommandBarView</h3><p><code>TermBlade.FileManager.Components.CommandBarView</code></p></article>
+              <article id="t-termblade-filemanager-components-filepanelview" class="api-type-card api-generated-supplement"><h3>FilePanelView</h3><p><code>TermBlade.FileManager.Components.FilePanelView</code></p></article>
+              <article id="t-termblade-filemanager-components-filepanelsview" class="api-type-card api-generated-supplement"><h3>FilePanelsView</h3><p><code>TermBlade.FileManager.Components.FilePanelsView</code></p></article>
+              <article id="t-termblade-filemanager-components-infopanelsview" class="api-type-card api-generated-supplement"><h3>InfoPanelsView</h3><p><code>TermBlade.FileManager.Components.InfoPanelsView</code></p></article>
+              <article id="t-termblade-filemanager-components-previewpanelview" class="api-type-card api-generated-supplement"><h3>PreviewPanelView</h3><p><code>TermBlade.FileManager.Components.PreviewPanelView</code></p></article>
+              <article id="t-termblade-filemanager-components-sidebarview" class="api-type-card api-generated-supplement"><h3>SidebarView</h3><p><code>TermBlade.FileManager.Components.SidebarView</code></p></article>
+              <article id="t-termblade-filemanager-components-startuperrorview" class="api-type-card api-generated-supplement"><h3>StartupErrorView</h3><p><code>TermBlade.FileManager.Components.StartupErrorView</code></p></article>
+              <article id="t-termblade-filemanager-filemanagerapp" class="api-type-card api-generated-supplement"><h3>FileManagerApp</h3><p><code>TermBlade.FileManager.FileManagerApp</code></p></article>
+              <article id="t-termblade-razor-components-align" class="api-type-card api-generated-supplement"><h3>Align</h3><p><code>TermBlade.Razor.Components.Align</code></p></article>
+              <article id="t-termblade-razor-components-asciifont" class="api-type-card api-generated-supplement"><h3>AsciiFont</h3><p><code>TermBlade.Razor.Components.AsciiFont</code></p></article>
+              <article id="t-termblade-razor-components-autocomplete" class="api-type-card api-generated-supplement"><h3>AutoComplete</h3><p><code>TermBlade.Razor.Components.AutoComplete</code></p></article>
+              <article id="t-termblade-razor-components-barchart" class="api-type-card api-generated-supplement"><h3>BarChart</h3><p><code>TermBlade.Razor.Components.BarChart</code></p></article>
+              <article id="t-termblade-razor-components-box" class="api-type-card api-generated-supplement"><h3>Box</h3><p><code>TermBlade.Razor.Components.Box</code></p></article>
+              <article id="t-termblade-razor-components-breakdownchart" class="api-type-card api-generated-supplement"><h3>BreakdownChart</h3><p><code>TermBlade.Razor.Components.BreakdownChart</code></p></article>
+              <article id="t-termblade-razor-components-button" class="api-type-card api-generated-supplement"><h3>Button</h3><p><code>TermBlade.Razor.Components.Button</code></p></article>
+              <article id="t-termblade-razor-components-calendar" class="api-type-card api-generated-supplement"><h3>Calendar</h3><p><code>TermBlade.Razor.Components.Calendar</code></p></article>
+              <article id="t-termblade-razor-components-calendarpicker" class="api-type-card api-generated-supplement"><h3>CalendarPicker</h3><p><code>TermBlade.Razor.Components.CalendarPicker</code></p></article>
+              <article id="t-termblade-razor-components-calendarpiker" class="api-type-card api-generated-supplement"><h3>CalendarPiker</h3><p><code>TermBlade.Razor.Components.CalendarPiker</code></p></article>
+              <article id="t-termblade-razor-components-candlestickchart" class="api-type-card api-generated-supplement"><h3>CandlestickChart</h3><p><code>TermBlade.Razor.Components.CandlestickChart</code></p></article>
+              <article id="t-termblade-razor-components-canvas" class="api-type-card api-generated-supplement"><h3>Canvas</h3><p><code>TermBlade.Razor.Components.Canvas</code></p></article>
+              <article id="t-termblade-razor-components-canvasimage" class="api-type-card api-generated-supplement"><h3>CanvasImage</h3><p><code>TermBlade.Razor.Components.CanvasImage</code></p></article>
+              <article id="t-termblade-razor-components-carousel" class="api-type-card api-generated-supplement"><h3>Carousel</h3><p><code>TermBlade.Razor.Components.Carousel</code></p></article>
+              <article id="t-termblade-razor-components-checkbox" class="api-type-card api-generated-supplement"><h3>CheckBox</h3><p><code>TermBlade.Razor.Components.CheckBox</code></p></article>
+              <article id="t-termblade-razor-components-code" class="api-type-card api-generated-supplement"><h3>Code</h3><p><code>TermBlade.Razor.Components.Code</code></p></article>
+              <article id="t-termblade-razor-components-columns" class="api-type-card api-generated-supplement"><h3>Columns</h3><p><code>TermBlade.Razor.Components.Columns</code></p></article>
+              <article id="t-termblade-razor-components-combobox" class="api-type-card api-generated-supplement"><h3>ComboBox</h3><p><code>TermBlade.Razor.Components.ComboBox</code></p></article>
+              <article id="t-termblade-razor-components-confirm" class="api-type-card api-generated-supplement"><h3>Confirm</h3><p><code>TermBlade.Razor.Components.Confirm</code></p></article>
+              <article id="t-termblade-razor-components-consoleoverlay" class="api-type-card api-generated-supplement"><h3>ConsoleOverlay</h3><p><code>TermBlade.Razor.Components.ConsoleOverlay</code></p></article>
+              <article id="t-termblade-razor-components-containerrenderablecomponentbase-1" class="api-type-card api-generated-supplement"><h3>ContainerRenderableComponentBase&lt;TRenderable&gt;</h3><p><code>TermBlade.Razor.Components.ContainerRenderableComponentBase`1</code></p></article>
+              <article id="t-termblade-razor-components-datagrid" class="api-type-card api-generated-supplement"><h3>DataGrid</h3><p><code>TermBlade.Razor.Components.DataGrid</code></p></article>
+              <article id="t-termblade-razor-components-dialog" class="api-type-card api-generated-supplement"><h3>Dialog</h3><p><code>TermBlade.Razor.Components.Dialog</code></p></article>
+              <article id="t-termblade-razor-components-diff" class="api-type-card api-generated-supplement"><h3>Diff</h3><p><code>TermBlade.Razor.Components.Diff</code></p></article>
+              <article id="t-termblade-razor-components-dislog" class="api-type-card api-generated-supplement"><h3>Dislog</h3><p><code>TermBlade.Razor.Components.Dislog</code></p></article>
+              <article id="t-termblade-razor-components-doughnutchart" class="api-type-card api-generated-supplement"><h3>DoughnutChart</h3><p><code>TermBlade.Razor.Components.DoughnutChart</code></p></article>
+              <article id="t-termblade-razor-components-expander" class="api-type-card api-generated-supplement"><h3>Expander</h3><p><code>TermBlade.Razor.Components.Expander</code></p></article>
+              <article id="t-termblade-razor-components-figlettext" class="api-type-card api-generated-supplement"><h3>FigletText</h3><p><code>TermBlade.Razor.Components.FigletText</code></p></article>
+              <article id="t-termblade-razor-components-flyout" class="api-type-card api-generated-supplement"><h3>Flyout</h3><p><code>TermBlade.Razor.Components.Flyout</code></p></article>
+              <article id="t-termblade-razor-components-framebuffer" class="api-type-card api-generated-supplement"><h3>FrameBuffer</h3><p><code>TermBlade.Razor.Components.FrameBuffer</code></p></article>
+              <article id="t-termblade-razor-components-gradientbrush" class="api-type-card api-generated-supplement"><h3>GradientBrush</h3><p><code>TermBlade.Razor.Components.GradientBrush</code></p></article>
+              <article id="t-termblade-razor-components-grid" class="api-type-card api-generated-supplement"><h3>Grid</h3><p><code>TermBlade.Razor.Components.Grid</code></p></article>
+              <article id="t-termblade-razor-components-heatmap" class="api-type-card api-generated-supplement"><h3>HeatMap</h3><p><code>TermBlade.Razor.Components.HeatMap</code></p></article>
+              <article id="t-termblade-razor-components-irenderableparent" class="api-type-card api-generated-supplement"><h3>IRenderableParent</h3><p><code>TermBlade.Razor.Components.IRenderableParent</code></p></article>
+              <article id="t-termblade-razor-components-icon" class="api-type-card api-generated-supplement"><h3>Icon</h3><p><code>TermBlade.Razor.Components.Icon</code></p></article>
+              <article id="t-termblade-razor-components-image" class="api-type-card api-generated-supplement"><h3>Image</h3><p><code>TermBlade.Razor.Components.Image</code></p></article>
+              <article id="t-termblade-razor-components-input" class="api-type-card api-generated-supplement"><h3>Input</h3><p><code>TermBlade.Razor.Components.Input</code></p></article>
+              <article id="t-termblade-razor-components-jsontext" class="api-type-card api-generated-supplement"><h3>JsonText</h3><p><code>TermBlade.Razor.Components.JsonText</code></p></article>
+              <article id="t-termblade-razor-components-layout" class="api-type-card api-generated-supplement"><h3>Layout</h3><p><code>TermBlade.Razor.Components.Layout</code></p></article>
+              <article id="t-termblade-razor-components-linechart" class="api-type-card api-generated-supplement"><h3>LineChart</h3><p><code>TermBlade.Razor.Components.LineChart</code></p></article>
+              <article id="t-termblade-razor-components-linenumbers" class="api-type-card api-generated-supplement"><h3>LineNumbers</h3><p><code>TermBlade.Razor.Components.LineNumbers</code></p></article>
+              <article id="t-termblade-razor-components-livedisplay" class="api-type-card api-generated-supplement"><h3>LiveDisplay</h3><p><code>TermBlade.Razor.Components.LiveDisplay</code></p></article>
+              <article id="t-termblade-razor-components-markdown" class="api-type-card api-generated-supplement"><h3>Markdown</h3><p><code>TermBlade.Razor.Components.Markdown</code></p></article>
+              <article id="t-termblade-razor-components-markup" class="api-type-card api-generated-supplement"><h3>Markup</h3><p><code>TermBlade.Razor.Components.Markup</code></p></article>
+              <article id="t-termblade-razor-components-massagebox" class="api-type-card api-generated-supplement"><h3>MassageBox</h3><p><code>TermBlade.Razor.Components.MassageBox</code></p></article>
+              <article id="t-termblade-razor-components-messagebox" class="api-type-card api-generated-supplement"><h3>MessageBox</h3><p><code>TermBlade.Razor.Components.MessageBox</code></p></article>
+              <article id="t-termblade-razor-components-multiselect" class="api-type-card api-generated-supplement"><h3>MultiSelect</h3><p><code>TermBlade.Razor.Components.MultiSelect</code></p></article>
+              <article id="t-termblade-razor-components-multiselectionprompt" class="api-type-card api-generated-supplement"><h3>MultiSelectionPrompt</h3><p><code>TermBlade.Razor.Components.MultiSelectionPrompt</code></p></article>
+              <article id="t-termblade-razor-components-notification" class="api-type-card api-generated-supplement"><h3>Notification</h3><p><code>TermBlade.Razor.Components.Notification</code></p></article>
+              <article id="t-termblade-razor-components-numericupdown" class="api-type-card api-generated-supplement"><h3>NumericUpDown</h3><p><code>TermBlade.Razor.Components.NumericUpDown</code></p></article>
+              <article id="t-termblade-razor-components-padder" class="api-type-card api-generated-supplement"><h3>Padder</h3><p><code>TermBlade.Razor.Components.Padder</code></p></article>
+              <article id="t-termblade-razor-components-panel" class="api-type-card api-generated-supplement"><h3>Panel</h3><p><code>TermBlade.Razor.Components.Panel</code></p></article>
+              <article id="t-termblade-razor-components-piechart" class="api-type-card api-generated-supplement"><h3>PieChart</h3><p><code>TermBlade.Razor.Components.PieChart</code></p></article>
+              <article id="t-termblade-razor-components-progressbar" class="api-type-card api-generated-supplement"><h3>ProgressBar</h3><p><code>TermBlade.Razor.Components.ProgressBar</code></p></article>
+              <article id="t-termblade-razor-components-progressdisplay" class="api-type-card api-generated-supplement"><h3>ProgressDisplay</h3><p><code>TermBlade.Razor.Components.ProgressDisplay</code></p></article>
+              <article id="t-termblade-razor-components-radiobutton" class="api-type-card api-generated-supplement"><h3>RadioButton</h3><p><code>TermBlade.Razor.Components.RadioButton</code></p></article>
+              <article id="t-termblade-razor-components-relativepanel" class="api-type-card api-generated-supplement"><h3>RelativePanel</h3><p><code>TermBlade.Razor.Components.RelativePanel</code></p></article>
+              <article id="t-termblade-razor-components-renderablecomponentbase-1" class="api-type-card api-generated-supplement"><h3>RenderableComponentBase&lt;TRenderable&gt;</h3><p><code>TermBlade.Razor.Components.RenderableComponentBase`1</code></p></article>
+              <article id="t-termblade-razor-components-containeradaptercomponentbase-1" class="api-type-card api-generated-supplement"><h3>ContainerAdapterComponentBase&lt;TRenderable&gt;</h3><p><code>TermBlade.Razor.Components.ContainerAdapterComponentBase`1</code></p></article>
+              <article id="t-termblade-razor-components-labelrenderablecomponentbase-1" class="api-type-card api-generated-supplement"><h3>LabelRenderableComponentBase&lt;TRenderable&gt;</h3><p><code>TermBlade.Razor.Components.LabelRenderableComponentBase`1</code></p></article>
+              <article id="t-termblade-razor-components-rows" class="api-type-card api-generated-supplement"><h3>Rows</h3><p><code>TermBlade.Razor.Components.Rows</code></p></article>
+              <article id="t-termblade-razor-components-rule" class="api-type-card api-generated-supplement"><h3>Rule</h3><p><code>TermBlade.Razor.Components.Rule</code></p></article>
+              <article id="t-termblade-razor-components-scrollbar" class="api-type-card api-generated-supplement"><h3>ScrollBar</h3><p><code>TermBlade.Razor.Components.ScrollBar</code></p></article>
+              <article id="t-termblade-razor-components-scrollbox" class="api-type-card api-generated-supplement"><h3>ScrollBox</h3><p><code>TermBlade.Razor.Components.ScrollBox</code></p></article>
+              <article id="t-termblade-razor-components-scrollviewer" class="api-type-card api-generated-supplement"><h3>ScrollViewer</h3><p><code>TermBlade.Razor.Components.ScrollViewer</code></p></article>
+              <article id="t-termblade-razor-components-segmentedtext" class="api-type-card api-generated-supplement"><h3>SegmentedText</h3><p><code>TermBlade.Razor.Components.SegmentedText</code></p></article>
+              <article id="t-termblade-razor-components-select" class="api-type-card api-generated-supplement"><h3>Select</h3><p><code>TermBlade.Razor.Components.Select</code></p></article>
+              <article id="t-termblade-razor-components-selectionprompt" class="api-type-card api-generated-supplement"><h3>SelectionPrompt</h3><p><code>TermBlade.Razor.Components.SelectionPrompt</code></p></article>
+              <article id="t-termblade-razor-components-selectionpromptbase-1" class="api-type-card api-generated-supplement"><h3>SelectionPromptBase&lt;TRenderable&gt;</h3><p><code>TermBlade.Razor.Components.SelectionPromptBase`1</code></p></article>
+              <article id="t-termblade-razor-components-slider" class="api-type-card api-generated-supplement"><h3>Slider</h3><p><code>TermBlade.Razor.Components.Slider</code></p></article>
+              <article id="t-termblade-razor-components-spinner" class="api-type-card api-generated-supplement"><h3>Spinner</h3><p><code>TermBlade.Razor.Components.Spinner</code></p></article>
+              <article id="t-termblade-razor-components-srollviewer" class="api-type-card api-generated-supplement"><h3>SrollViewer</h3><p><code>TermBlade.Razor.Components.SrollViewer</code></p></article>
+              <article id="t-termblade-razor-components-statusdisplay" class="api-type-card api-generated-supplement"><h3>StatusDisplay</h3><p><code>TermBlade.Razor.Components.StatusDisplay</code></p></article>
+              <article id="t-termblade-razor-components-tab" class="api-type-card api-generated-supplement"><h3>Tab</h3><p><code>TermBlade.Razor.Components.Tab</code></p></article>
+              <article id="t-termblade-razor-components-tabselect" class="api-type-card api-generated-supplement"><h3>TabSelect</h3><p><code>TermBlade.Razor.Components.TabSelect</code></p></article>
+              <article id="t-termblade-razor-components-table" class="api-type-card api-generated-supplement"><h3>Table</h3><p><code>TermBlade.Razor.Components.Table</code></p></article>
+              <article id="t-termblade-razor-components-text" class="api-type-card api-generated-supplement"><h3>Text</h3><p><code>TermBlade.Razor.Components.Text</code></p></article>
+              <article id="t-termblade-razor-components-textpath" class="api-type-card api-generated-supplement"><h3>TextPath</h3><p><code>TermBlade.Razor.Components.TextPath</code></p></article>
+              <article id="t-termblade-razor-components-textprompt" class="api-type-card api-generated-supplement"><h3>TextPrompt</h3><p><code>TermBlade.Razor.Components.TextPrompt</code></p></article>
+              <article id="t-termblade-razor-components-textarea" class="api-type-card api-generated-supplement"><h3>Textarea</h3><p><code>TermBlade.Razor.Components.Textarea</code></p></article>
+              <article id="t-termblade-razor-components-timeserieslinechart" class="api-type-card api-generated-supplement"><h3>TimeSeriesLineChart</h3><p><code>TermBlade.Razor.Components.TimeSeriesLineChart</code></p></article>
+              <article id="t-termblade-razor-components-toggleswitch" class="api-type-card api-generated-supplement"><h3>ToggleSwitch</h3><p><code>TermBlade.Razor.Components.ToggleSwitch</code></p></article>
+              <article id="t-termblade-razor-components-tree" class="api-type-card api-generated-supplement"><h3>Tree</h3><p><code>TermBlade.Razor.Components.Tree</code></p></article>
+              <article id="t-termblade-razor-components-treeview" class="api-type-card api-generated-supplement"><h3>TreeView</h3><p><code>TermBlade.Razor.Components.TreeView</code></p></article>
+              <article id="t-termblade-razor-hosting-termbladeappcontext" class="api-type-card api-generated-supplement"><h3>TermBladeAppContext</h3><p><code>TermBlade.Razor.Hosting.TermBladeAppContext</code></p></article>
+              <article id="t-termblade-razor-hosting-termbladehostbuilderextensions" class="api-type-card api-generated-supplement"><h3>TermBladeHostBuilderExtensions</h3><p><code>TermBlade.Razor.Hosting.TermBladeHostBuilderExtensions</code></p></article>
+              <article id="t-termblade-razor-hosting-termbladerazoroptions" class="api-type-card api-generated-supplement"><h3>TermBladeRazorOptions</h3><p><code>TermBlade.Razor.Hosting.TermBladeRazorOptions</code></p></article>
+              <article id="t-termblade-razor-hosting-termbladerazorservicecollectionextensions" class="api-type-card api-generated-supplement"><h3>TermBladeRazorServiceCollectionExtensions</h3><p><code>TermBlade.Razor.Hosting.TermBladeRazorServiceCollectionExtensions</code></p></article>
+          </div>
+        </section>
+      </div>
   </main>
 
   <footer class="footer">

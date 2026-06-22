@@ -132,7 +132,7 @@
 .component-preview .terminal-body {
   font-family: "Symbols Nerd Font", "Hack Nerd Font", "FiraCode Nerd Font", "JetBrainsMono Nerd Font", var(--font-mono);
   color: var(--text-secondary);
-  min-height: 60px;
+  min-height: 270px;
   font-size: 14px;
   line-height: normal;
   font-kerning: none;

@@ -1,0 +1,8 @@
+@using TermBlade.Core.Renderables
+
+<BreakdownChart Data="@Values" Labels="@Labels" Width="48" Height="6" />
+
+@code {
+    private static readonly List<double> Values = [42, 28, 18];
+    private static readonly List<string> Labels = ["Core", "Razor", "Docs"];
+}

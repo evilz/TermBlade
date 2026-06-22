@@ -1,0 +1,7 @@
+@using TermBlade.Core.Renderables
+
+<SelectionPrompt Options="@Options" SelectedIndex="1" Width="34" Height="4" />
+
+@code {
+    private static readonly List<SelectOption> Options = [new() { Name = "Core" }, new() { Name = "Razor" }, new() { Name = "Docs" }];
+}

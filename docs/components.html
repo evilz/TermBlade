@@ -98,6 +98,70 @@
             <a href="#scrollbar">ScrollBar</a>
             <a href="#consoleoverlay">ConsoleOverlay</a>
           </div>
+          <div class="sidebar-group">
+            <h3>Widgets</h3>
+            <a href="#markup">Markup</a>
+            <a href="#panel">Panel</a>
+            <a href="#textpath">TextPath</a>
+            <a href="#table">Table</a>
+            <a href="#tree">Tree</a>
+            <a href="#columns">Columns</a>
+            <a href="#rule">Rule</a>
+            <a href="#grid">Grid</a>
+            <a href="#rows">Rows</a>
+            <a href="#layout">Layout</a>
+            <a href="#padder">Padder</a>
+            <a href="#align">Align</a>
+            <a href="#figlettext">FigletText</a>
+            <a href="#breakdownchart">BreakdownChart</a>
+            <a href="#jsontext">JsonText</a>
+            <a href="#canvas">Canvas</a>
+            <a href="#canvasimage">CanvasImage</a>
+          </div>
+          <div class="sidebar-group">
+            <h3>Controls</h3>
+            <a href="#notification">Notification</a>
+            <a href="#button">Button</a>
+            <a href="#calendarpicker">CalendarPicker</a>
+            <a href="#carousel">Carousel</a>
+            <a href="#checkbox">CheckBox</a>
+            <a href="#dialog">Dialog</a>
+            <a href="#datagrid">DataGrid</a>
+            <a href="#expander">Expander</a>
+            <a href="#flyout">Flyout</a>
+            <a href="#icon">Icon</a>
+            <a href="#image">Image</a>
+            <a href="#messagebox">MessageBox</a>
+            <a href="#numericupdown">NumericUpDown</a>
+            <a href="#progressbar">ProgressBar</a>
+            <a href="#radiobutton">RadioButton</a>
+            <a href="#relativepanel">RelativePanel</a>
+            <a href="#scrollviewer">ScrollViewer</a>
+            <a href="#tab">Tab</a>
+            <a href="#toggleswitch">ToggleSwitch</a>
+            <a href="#gradientbrush">GradientBrush</a>
+          </div>
+          <div class="sidebar-group">
+            <h3>Live</h3>
+            <a href="#progressdisplay">ProgressDisplay</a>
+            <a href="#statusdisplay">StatusDisplay</a>
+            <a href="#livedisplay">LiveDisplay</a>
+          </div>
+          <div class="sidebar-group">
+            <h3>Prompts</h3>
+            <a href="#textprompt">TextPrompt</a>
+            <a href="#selectionprompt">SelectionPrompt</a>
+            <a href="#multiselectionprompt">MultiSelectionPrompt</a>
+            <a href="#autocomplete">AutoComplete</a>
+            <a href="#combobox">ComboBox</a>
+          </div>
+          <div class="sidebar-group">
+            <h3>Compatibility Aliases</h3>
+            <a href="#calendarpiker">CalendarPiker</a>
+            <a href="#dislog">Dislog</a>
+            <a href="#massagebox">MassageBox</a>
+            <a href="#srollviewer">SrollViewer</a>
+          </div>
           </div>
         </div>
       </aside>
@@ -188,7 +252,7 @@
           <header class="component-header">
             <p class="hero-tagline">Content Component</p>
             <h2>SegmentedText</h2>
-            <p>Renders a single terminal line from independently styled text segments.</p>
+            <p>Renders terminal text from independently styled segments, including foreground colors, backgrounds, and text attributes.</p>
           </header>
           <div class="component-block">
             <h3>Preview</h3>
@@ -199,30 +263,44 @@
                 <span class="terminal-dot green"></span>
                 <span class="terminal-title">segmentedtext-preview</span>
               </div>
-              <pre class="terminal-body"><code> 󰉋 <b>superfile</b>  C:\Users\evilz
- ❯ 󰉋 AppData  drwxrwxrwx
- ✖ No content in clipboard
- <b> segmented </b> text</code></pre>
+              <pre class="terminal-body"><code> BUILD TermBlade.Core passed  502 tests
+ WARN  preview height increased
+ PATH  docs/components.html
+ ERROR none</code></pre>
             </div>
           </div>
           <div class="component-block">
             <h3>Usage</h3>
-            <pre class="code-block"><code><span class="tag">&lt;SegmentedText</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Segments</span>=<span class="kw">"@segments"</span> <span class="punct">/&gt;</span>
+            <pre class="code-block"><code>&lt;SegmentedText Width=&quot;64&quot; Height=&quot;5&quot; BackgroundColor=&quot;#111827&quot; Segments=&quot;@Segments&quot; /&gt;
 
-<span class="razor">@code</span> {
-    <span class="kw">private static readonly IReadOnlyList&lt;SegmentedTextSegment&gt;</span> segments =
-    [
-        <span class="kw">new</span>(<span class="str">"󰉋 "</span>, <span class="str">"#89dceb"</span>),
-        <span class="kw">new</span>(<span class="str">"superfile"</span>, <span class="str">"#cdd6f4"</span>, Attributes: TextAttributes.Bold)
-    ];
+@code {
+    private static readonly IReadOnlyList&lt;SegmentedTextSegment&gt; Segments = [...];
 }</code></pre>
           </div>
           <div class="component-block">
             <h3>Demo Source <small>(SegmentedTextDemo.razor)</small></h3>
-            <pre class="code-block"><code><span class="tag">&lt;SegmentedText</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Segments</span>=<span class="kw">"@HeaderSegments"</span> <span class="punct">/&gt;</span>
-<span class="tag">&lt;SegmentedText</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Segments</span>=<span class="kw">"@FileSegments"</span> <span class="punct">/&gt;</span>
-<span class="tag">&lt;SegmentedText</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">Segments</span>=<span class="kw">"@StatusSegments"</span> <span class="punct">/&gt;</span>
-<span class="tag">&lt;SegmentedText</span> <span class="attr">Width</span>=<span class="str">"52"</span> <span class="attr">Height</span>=<span class="str">"1"</span> <span class="attr">BackgroundColor</span>=<span class="str">"#1e1e2e"</span> <span class="attr">Segments</span>=<span class="kw">"@HighlightedSegments"</span> <span class="punct">/&gt;</span></code></pre>
+            <pre class="code-block"><code>&lt;SegmentedText Width=&quot;64&quot; Height=&quot;5&quot; BackgroundColor=&quot;#111827&quot; Segments=&quot;@Segments&quot; /&gt;
+
+@code {
+    private static readonly IReadOnlyList&lt;SegmentedTextSegment&gt; Segments =
+    [
+        new(&quot;BUILD &quot;, &quot;#111827&quot;, &quot;#a6e3a1&quot;, TextAttributes.Bold),
+        new(&quot;TermBlade.Core &quot;, &quot;#cdd6f4&quot;),
+        new(&quot;passed&quot;, &quot;#a6e3a1&quot;, Attributes: TextAttributes.Bold),
+        new(&quot;  &quot;),
+        new(&quot;502 tests&quot;, &quot;#89b4fa&quot;),
+        new(&quot;\n&quot;),
+        new(&quot;WARN &quot;, &quot;#111827&quot;, &quot;#f9e2af&quot;, TextAttributes.Bold),
+        new(&quot;preview height increased&quot;, &quot;#f9e2af&quot;),
+        new(&quot;\n&quot;),
+        new(&quot;PATH &quot;, &quot;#111827&quot;, &quot;#89b4fa&quot;, TextAttributes.Bold),
+        new(&quot;docs/components.html&quot;, &quot;#cdd6f4&quot;, Attributes: TextAttributes.Underline),
+        new(&quot;\n&quot;),
+        new(&quot;ERROR &quot;, &quot;#111827&quot;, &quot;#f38ba8&quot;, TextAttributes.Bold),
+        new(&quot;none&quot;, &quot;#a6e3a1&quot;, Attributes: TextAttributes.Bold)
+    ];
+}
+</code></pre>
           </div>
           <div class="component-block">
             <h3>Parameters</h3>
@@ -2441,6 +2519,2020 @@ Console.WriteLine(""Hello"");
                 </tbody>
               </table>
             </div>
+          </details>
+        </section>
+        <section id="markup" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Markup</h2>
+            <p>Renders Spectre-style markup content.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">markup-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Markup
+ Renders Spectre-style markup content.
+ Razor demo: MarkupDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Markup Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(MarkupDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Markup Content=&quot;[green]Status[/]: all systems online&quot; Width=&quot;48&quot; Height=&quot;3&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Markup</code>. Core renderable: <code>TermBlade.Core.Renderables.MarkupRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="panel" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Panel</h2>
+            <p>Renders a bordered panel container.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">panel-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Panel
+ Renders a bordered panel container.
+ Razor demo: PanelDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Panel Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(PanelDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Panel Title=&quot;Panel&quot; Width=&quot;42&quot; Height=&quot;6&quot; BorderColor=&quot;#7dcfff&quot;&gt;&lt;Text Content=&quot;Panel content&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/Panel&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Panel</code>. Core renderable: <code>TermBlade.Core.Renderables.PanelRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="textpath" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>TextPath</h2>
+            <p>Renders a filesystem or URI path.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">textpath-preview</span>
+              </div>
+              <pre class="terminal-body"><code> TextPath
+ Renders a filesystem or URI path.
+ Razor demo: TextPathDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;TextPath Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(TextPathDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;TextPath Path=&quot;src/TermBlade.Core/Renderables&quot; Width=&quot;52&quot; Height=&quot;1&quot; Fg=&quot;#a6e3a1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.TextPath</code>. Core renderable: <code>TermBlade.Core.Renderables.TextPathRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="table" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Table</h2>
+            <p>Renders rows and columns as a compact text table.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">table-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Table
+ Widget     | Area
+ Table      | Widgets
+ Panel      | Widgets
+ Razor demo: TableDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Table Headers=&quot;@Headers&quot; Rows=&quot;@Rows&quot; Width=&quot;52&quot; Height=&quot;6&quot; Title=&quot;Widgets&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(TableDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Table Headers=&quot;@Headers&quot; Rows=&quot;@Rows&quot; Width=&quot;52&quot; Height=&quot;6&quot; Title=&quot;Widgets&quot; /&gt;
+
+@code {
+    private static readonly IReadOnlyList&lt;string&gt; Headers = [&quot;Widget&quot;, &quot;Area&quot;];
+    private static readonly IReadOnlyList&lt;IReadOnlyList&lt;string&gt;&gt; Rows = [[&quot;Table&quot;, &quot;Widgets&quot;], [&quot;Panel&quot;, &quot;Widgets&quot;]];
+}
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Table</code>. Core renderable: <code>TermBlade.Core.Renderables.TableRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="tree" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Tree</h2>
+            <p>Renders a tree using the TermBlade tree view implementation.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">tree-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Tree
+ Renders a tree using the TermBlade tree view implementation.
+ Razor demo: TreeDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Tree Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(TreeDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Tree Root=&quot;@Root&quot; Width=&quot;36&quot; Height=&quot;6&quot; /&gt;
+
+@code {
+    private static readonly TreeNode Root = new()
+    {
+        Label = &quot;workspace&quot;,
+        Children =
+        [
+            new() { Label = &quot;src&quot; },
+            new() { Label = &quot;tests&quot; },
+        ],
+    };
+}
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Tree</code>. Core renderable: <code>TermBlade.Core.Renderables.TreeRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="columns" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Columns</h2>
+            <p>Arranges children horizontally in columns.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">columns-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Columns
+ Arranges children horizontally in columns.
+ Razor demo: ColumnsDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Columns Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ColumnsDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Columns Width=&quot;48&quot; Height=&quot;3&quot;&gt;&lt;Text Content=&quot;Left&quot; Width=&quot;16&quot; Height=&quot;1&quot; /&gt;&lt;Text Content=&quot;Center&quot; Width=&quot;16&quot; Height=&quot;1&quot; /&gt;&lt;Text Content=&quot;Right&quot; Width=&quot;16&quot; Height=&quot;1&quot; /&gt;&lt;/Columns&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Columns</code>. Core renderable: <code>TermBlade.Core.Renderables.ColumnsRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="rule" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Rule</h2>
+            <p>Renders a horizontal rule.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">rule-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Rule
+ Renders a horizontal rule.
+ Razor demo: RuleDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Rule Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(RuleDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Rule Content=&quot;Section&quot; Width=&quot;48&quot; Height=&quot;1&quot; RuleCharacter=&quot;-&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Rule</code>. Core renderable: <code>TermBlade.Core.Renderables.RuleRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="grid" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Grid</h2>
+            <p>Arranges child content in a grid-like container.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">grid-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Grid
+ Arranges child content in a grid-like container.
+ Razor demo: GridDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Grid Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(GridDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Grid Width=&quot;48&quot; Height=&quot;4&quot;&gt;&lt;Text Content=&quot;A1&quot; Width=&quot;12&quot; Height=&quot;1&quot; /&gt;&lt;Text Content=&quot;A2&quot; Width=&quot;12&quot; Height=&quot;1&quot; /&gt;&lt;Text Content=&quot;A3&quot; Width=&quot;12&quot; Height=&quot;1&quot; /&gt;&lt;/Grid&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Grid</code>. Core renderable: <code>TermBlade.Core.Renderables.GridRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="rows" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Rows</h2>
+            <p>Arranges children vertically in rows.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">rows-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Rows
+ Arranges children vertically in rows.
+ Razor demo: RowsDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Rows Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(RowsDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Rows Width=&quot;36&quot; Height=&quot;4&quot;&gt;&lt;Text Content=&quot;Row one&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;Text Content=&quot;Row two&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/Rows&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Rows</code>. Core renderable: <code>TermBlade.Core.Renderables.RowsRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="layout" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Layout</h2>
+            <p>Provides a layout region container.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">layout-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Layout
+ Provides a layout region container.
+ Razor demo: LayoutDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Layout Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(LayoutDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Layout Width=&quot;48&quot; Height=&quot;5&quot;&gt;&lt;Text Content=&quot;Main layout region&quot; Width=&quot;34&quot; Height=&quot;1&quot; /&gt;&lt;/Layout&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Layout</code>. Core renderable: <code>TermBlade.Core.Renderables.LayoutRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="padder" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Padder</h2>
+            <p>Adds padding around child content.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">padder-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Padder
+ Adds padding around child content.
+ Razor demo: PadderDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Padder Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(PadderDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Padder Width=&quot;40&quot; Height=&quot;5&quot;&gt;&lt;Text Content=&quot;Padded content&quot; Width=&quot;24&quot; Height=&quot;1&quot; /&gt;&lt;/Padder&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Padder</code>. Core renderable: <code>TermBlade.Core.Renderables.PadderRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="align" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Align</h2>
+            <p>Aligns child content inside its bounds.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">align-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Align
+ Aligns child content inside its bounds.
+ Razor demo: AlignDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Align Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(AlignDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Align Width=&quot;40&quot; Height=&quot;5&quot;&gt;&lt;Text Content=&quot;Centered&quot; Width=&quot;16&quot; Height=&quot;1&quot; /&gt;&lt;/Align&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Align</code>. Core renderable: <code>TermBlade.Core.Renderables.AlignRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="figlettext" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>FigletText</h2>
+            <p>Renders figlet-style text.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">figlettext-preview</span>
+              </div>
+              <pre class="terminal-body"><code> FigletText
+ Renders figlet-style text.
+ Razor demo: FigletTextDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;FigletText Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(FigletTextDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;FigletText Text=&quot;TB&quot; Width=&quot;32&quot; Height=&quot;3&quot; Fg=&quot;#f9e2af&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.FigletText</code>. Core renderable: <code>TermBlade.Core.Renderables.FigletTextRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="breakdownchart" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>BreakdownChart</h2>
+            <p>Renders proportional category values as a breakdown chart.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">breakdownchart-preview</span>
+              </div>
+              <pre class="terminal-body"><code> BreakdownChart
+ Renders proportional category values as a breakdown chart.
+ Razor demo: BreakdownChartDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;BreakdownChart Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(BreakdownChartDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;BreakdownChart Data=&quot;@Values&quot; Labels=&quot;@Labels&quot; Width=&quot;48&quot; Height=&quot;6&quot; /&gt;
+
+@code {
+    private static readonly List&lt;double&gt; Values = [42, 28, 18];
+    private static readonly List&lt;string&gt; Labels = [&quot;Core&quot;, &quot;Razor&quot;, &quot;Docs&quot;];
+}
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.BreakdownChart</code>. Core renderable: <code>TermBlade.Core.Renderables.BreakdownChartRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="jsontext" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>JsonText</h2>
+            <p>Renders formatted JSON text.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">jsontext-preview</span>
+              </div>
+              <pre class="terminal-body"><code> JsonText
+ Renders formatted JSON text.
+ Razor demo: JsonTextDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;JsonText Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(JsonTextDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;JsonText Json=&quot;@Json&quot; Width=&quot;48&quot; Height=&quot;6&quot; /&gt;
+
+@code {
+    private const string Json = &quot;&quot;&quot;{&quot;&quot;name&quot;&quot;:&quot;&quot;TermBlade&quot;&quot;,&quot;&quot;kind&quot;&quot;:&quot;&quot;TUI&quot;&quot;}&quot;&quot;&quot;;
+}
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.JsonText</code>. Core renderable: <code>TermBlade.Core.Renderables.JsonTextRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="canvas" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>Canvas</h2>
+            <p>Renders a terminal drawing canvas.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">canvas-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Canvas
+ Renders a terminal drawing canvas.
+ Razor demo: CanvasDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Canvas Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(CanvasDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Canvas Width=&quot;32&quot; Height=&quot;6&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Canvas</code>. Core renderable: <code>TermBlade.Core.Renderables.CanvasRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="canvasimage" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Widgets Component</p>
+            <h2>CanvasImage</h2>
+            <p>Renders image-like content on a terminal canvas.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">canvasimage-preview</span>
+              </div>
+              <pre class="terminal-body"><code> CanvasImage
+ Renders image-like content on a terminal canvas.
+ Razor demo: CanvasImageDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;CanvasImage Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(CanvasImageDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;CanvasImage Width=&quot;32&quot; Height=&quot;6&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.CanvasImage</code>. Core renderable: <code>TermBlade.Core.Renderables.CanvasImageRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="notification" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>Notification</h2>
+            <p>Renders a notification message.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">notification-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Notification
+ Renders a notification message.
+ Razor demo: NotificationDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Notification Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(NotificationDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Notification Content=&quot;Build completed&quot; Width=&quot;36&quot; Height=&quot;1&quot; Fg=&quot;#a6e3a1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Notification</code>. Core renderable: <code>TermBlade.Core.Renderables.NotificationRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="button" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>Button</h2>
+            <p>Renders a focusable button.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">button-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Button
+ Renders a focusable button.
+ Razor demo: ButtonDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Button Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ButtonDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Button Content=&quot;Deploy&quot; Width=&quot;18&quot; Height=&quot;1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Button</code>. Core renderable: <code>TermBlade.Core.Renderables.ButtonRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="calendarpicker" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>CalendarPicker</h2>
+            <p>Renders a calendar picker.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">calendarpicker-preview</span>
+              </div>
+              <pre class="terminal-body"><code> CalendarPicker
+ Renders a calendar picker.
+ Razor demo: CalendarPickerDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;CalendarPicker Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(CalendarPickerDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;CalendarPicker DisplayMonth=&quot;@(new DateOnly(2026, 6, 1))&quot; Width=&quot;20&quot; Height=&quot;8&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.CalendarPicker</code>. Core renderable: <code>TermBlade.Core.Renderables.CalendarPickerRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="carousel" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>Carousel</h2>
+            <p>Renders one selected item from a carousel.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">carousel-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Carousel
+ Renders one selected item from a carousel.
+ Razor demo: CarouselDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Carousel Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(CarouselDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Carousel Items=&quot;@Items&quot; SelectedIndex=&quot;1&quot; Width=&quot;32&quot; Height=&quot;1&quot; /&gt;
+
+@code {
+    private static readonly IReadOnlyList&lt;string&gt; Items = [&quot;Alpha&quot;, &quot;Beta&quot;, &quot;Gamma&quot;];
+}
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Carousel</code>. Core renderable: <code>TermBlade.Core.Renderables.CarouselRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="checkbox" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>CheckBox</h2>
+            <p>Renders a checkbox control.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">checkbox-preview</span>
+              </div>
+              <pre class="terminal-body"><code> CheckBox
+ Renders a checkbox control.
+ Razor demo: CheckBoxDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;CheckBox Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(CheckBoxDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;CheckBox Label=&quot;Enable feature&quot; IsChecked=&quot;true&quot; Width=&quot;32&quot; Height=&quot;1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.CheckBox</code>. Core renderable: <code>TermBlade.Core.Renderables.CheckBoxRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="dialog" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>Dialog</h2>
+            <p>Renders a modal dialog container.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">dialog-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Dialog
+ Renders a modal dialog container.
+ Razor demo: DialogDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Dialog Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(DialogDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Dialog Width=&quot;42&quot; Height=&quot;6&quot;&gt;&lt;Text Content=&quot;Dialog content&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/Dialog&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Dialog</code>. Core renderable: <code>TermBlade.Core.Renderables.DialogRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="datagrid" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>DataGrid</h2>
+            <p>Renders tabular data as a data grid.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">datagrid-preview</span>
+              </div>
+              <pre class="terminal-body"><code> DataGrid
+ Renders tabular data as a data grid.
+ Razor demo: DataGridDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;DataGrid Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(DataGridDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;DataGrid Columns=&quot;@Columns&quot; Rows=&quot;@Rows&quot; Width=&quot;52&quot; Height=&quot;5&quot; /&gt;
+
+@code {
+    private static readonly IReadOnlyList&lt;string&gt; Columns = [&quot;Name&quot;, &quot;Area&quot;];
+    private static readonly IReadOnlyList&lt;IReadOnlyList&lt;string&gt;&gt; Rows = [[&quot;Panel&quot;, &quot;Widget&quot;], [&quot;Button&quot;, &quot;Control&quot;]];
+}
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.DataGrid</code>. Core renderable: <code>TermBlade.Core.Renderables.DataGridRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="expander" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>Expander</h2>
+            <p>Renders an expandable panel.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">expander-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Expander
+ Renders an expandable panel.
+ Razor demo: ExpanderDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Expander Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ExpanderDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Expander Width=&quot;42&quot; Height=&quot;6&quot; IsExpanded=&quot;true&quot;&gt;&lt;Text Content=&quot;Expanded content&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/Expander&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Expander</code>. Core renderable: <code>TermBlade.Core.Renderables.ExpanderRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="flyout" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>Flyout</h2>
+            <p>Renders a floating flyout panel.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">flyout-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Flyout
+ Renders a floating flyout panel.
+ Razor demo: FlyoutDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Flyout Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(FlyoutDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Flyout Width=&quot;42&quot; Height=&quot;6&quot;&gt;&lt;Text Content=&quot;Flyout content&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/Flyout&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Flyout</code>. Core renderable: <code>TermBlade.Core.Renderables.FlyoutRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="icon" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>Icon</h2>
+            <p>Renders an icon glyph.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">icon-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Icon
+ Renders an icon glyph.
+ Razor demo: IconDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Icon Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(IconDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Icon Content=&quot;*&quot; Width=&quot;4&quot; Height=&quot;1&quot; Fg=&quot;#f38ba8&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Icon</code>. Core renderable: <code>TermBlade.Core.Renderables.IconRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="image" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>Image</h2>
+            <p>Renders terminal image content.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">image-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Image
+ Renders terminal image content.
+ Razor demo: ImageDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Image Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ImageDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Image Width=&quot;32&quot; Height=&quot;6&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Image</code>. Core renderable: <code>TermBlade.Core.Renderables.ImageRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="messagebox" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>MessageBox</h2>
+            <p>Renders a modal message box.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">messagebox-preview</span>
+              </div>
+              <pre class="terminal-body"><code> MessageBox
+ Renders a modal message box.
+ Razor demo: MessageBoxDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;MessageBox Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(MessageBoxDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;MessageBox Width=&quot;42&quot; Height=&quot;6&quot;&gt;&lt;Text Content=&quot;Message text&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/MessageBox&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.MessageBox</code>. Core renderable: <code>TermBlade.Core.Renderables.MessageBoxRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="numericupdown" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>NumericUpDown</h2>
+            <p>Renders a numeric up/down control.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">numericupdown-preview</span>
+              </div>
+              <pre class="terminal-body"><code> NumericUpDown
+ Renders a numeric up/down control.
+ Razor demo: NumericUpDownDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;NumericUpDown Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(NumericUpDownDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;NumericUpDown Value=&quot;42&quot; Step=&quot;2&quot; Width=&quot;20&quot; Height=&quot;1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.NumericUpDown</code>. Core renderable: <code>TermBlade.Core.Renderables.NumericUpDownRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="progressbar" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>ProgressBar</h2>
+            <p>Renders a progress bar.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">progressbar-preview</span>
+              </div>
+              <pre class="terminal-body"><code> ProgressBar
+ Renders a progress bar.
+ Razor demo: ProgressBarDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;ProgressBar Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ProgressBarDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;ProgressBar Value=&quot;0.65&quot; Width=&quot;42&quot; Height=&quot;1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.ProgressBar</code>. Core renderable: <code>TermBlade.Core.Renderables.ProgressBarRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="radiobutton" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>RadioButton</h2>
+            <p>Renders a radio button control.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">radiobutton-preview</span>
+              </div>
+              <pre class="terminal-body"><code> RadioButton
+ Renders a radio button control.
+ Razor demo: RadioButtonDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;RadioButton Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(RadioButtonDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;RadioButton Label=&quot;Choice A&quot; IsChecked=&quot;true&quot; Width=&quot;24&quot; Height=&quot;1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.RadioButton</code>. Core renderable: <code>TermBlade.Core.Renderables.RadioButtonRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="relativepanel" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>RelativePanel</h2>
+            <p>Renders a relative-positioned panel.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">relativepanel-preview</span>
+              </div>
+              <pre class="terminal-body"><code> RelativePanel
+ Renders a relative-positioned panel.
+ Razor demo: RelativePanelDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;RelativePanel Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(RelativePanelDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;RelativePanel Width=&quot;42&quot; Height=&quot;6&quot;&gt;&lt;Text Content=&quot;Relative content&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/RelativePanel&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.RelativePanel</code>. Core renderable: <code>TermBlade.Core.Renderables.RelativePanelRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="scrollviewer" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>ScrollViewer</h2>
+            <p>Renders a scrollable viewer container.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">scrollviewer-preview</span>
+              </div>
+              <pre class="terminal-body"><code> ScrollViewer
+ Renders a scrollable viewer container.
+ Razor demo: ScrollViewerDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;ScrollViewer Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ScrollViewerDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;ScrollViewer Width=&quot;44&quot; Height=&quot;6&quot;&gt;&lt;Text Content=&quot;Scrollable content line&quot; Width=&quot;36&quot; Height=&quot;1&quot; /&gt;&lt;/ScrollViewer&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.ScrollViewer</code>. Core renderable: <code>TermBlade.Core.Renderables.ScrollViewerRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="tab" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>Tab</h2>
+            <p>Renders a tab item label.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">tab-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Tab
+ Renders a tab item label.
+ Razor demo: TabDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Tab Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(TabDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Tab Content=&quot;Overview&quot; IsSelected=&quot;true&quot; Width=&quot;16&quot; Height=&quot;1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Tab</code>. Core renderable: <code>TermBlade.Core.Renderables.TabRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="toggleswitch" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>ToggleSwitch</h2>
+            <p>Renders an on/off toggle switch.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">toggleswitch-preview</span>
+              </div>
+              <pre class="terminal-body"><code> ToggleSwitch
+ Renders an on/off toggle switch.
+ Razor demo: ToggleSwitchDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;ToggleSwitch Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ToggleSwitchDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;ToggleSwitch Label=&quot;Live updates&quot; IsOn=&quot;true&quot; Width=&quot;28&quot; Height=&quot;1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.ToggleSwitch</code>. Core renderable: <code>TermBlade.Core.Renderables.ToggleSwitchRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="progressdisplay" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Live Component</p>
+            <h2>ProgressDisplay</h2>
+            <p>Renders live progress status with a progress bar.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">progressdisplay-preview</span>
+              </div>
+              <pre class="terminal-body"><code> ProgressDisplay
+ Renders live progress status with a progress bar.
+ Razor demo: ProgressDisplayDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;ProgressDisplay Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ProgressDisplayDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;ProgressDisplay Value=&quot;0.72&quot; Width=&quot;42&quot; Height=&quot;1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.ProgressDisplay</code>. Core renderable: <code>TermBlade.Core.Renderables.ProgressDisplayRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="statusdisplay" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Live Component</p>
+            <h2>StatusDisplay</h2>
+            <p>Renders a live status line.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">statusdisplay-preview</span>
+              </div>
+              <pre class="terminal-body"><code> StatusDisplay
+ Renders a live status line.
+ Razor demo: StatusDisplayDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;StatusDisplay Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(StatusDisplayDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;StatusDisplay Content=&quot;Running&quot; Width=&quot;32&quot; Height=&quot;1&quot; Fg=&quot;#a6e3a1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.StatusDisplay</code>. Core renderable: <code>TermBlade.Core.Renderables.StatusDisplayRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="livedisplay" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Live Component</p>
+            <h2>LiveDisplay</h2>
+            <p>Renders a live-updating display container.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">livedisplay-preview</span>
+              </div>
+              <pre class="terminal-body"><code> LiveDisplay
+ Renders a live-updating display container.
+ Razor demo: LiveDisplayDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;LiveDisplay Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(LiveDisplayDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;LiveDisplay Width=&quot;42&quot; Height=&quot;6&quot;&gt;&lt;Text Content=&quot;Live display content&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/LiveDisplay&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.LiveDisplay</code>. Core renderable: <code>TermBlade.Core.Renderables.LiveDisplayRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="textprompt" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Prompts Component</p>
+            <h2>TextPrompt</h2>
+            <p>Renders a text prompt.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">textprompt-preview</span>
+              </div>
+              <pre class="terminal-body"><code> TextPrompt
+ Renders a text prompt.
+ Razor demo: TextPromptDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;TextPrompt Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(TextPromptDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;TextPrompt Value=&quot;termblade&quot; Placeholder=&quot;Name&quot; Width=&quot;32&quot; Height=&quot;1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.TextPrompt</code>. Core renderable: <code>TermBlade.Core.Renderables.TextPromptRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="selectionprompt" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Prompts Component</p>
+            <h2>SelectionPrompt</h2>
+            <p>Renders a single-selection prompt.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">selectionprompt-preview</span>
+              </div>
+              <pre class="terminal-body"><code> SelectionPrompt
+ Renders a single-selection prompt.
+ Razor demo: SelectionPromptDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;SelectionPrompt Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(SelectionPromptDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;SelectionPrompt Options=&quot;@Options&quot; SelectedIndex=&quot;1&quot; Width=&quot;34&quot; Height=&quot;4&quot; /&gt;
+
+@code {
+    private static readonly List&lt;SelectOption&gt; Options = [new() { Name = &quot;Core&quot; }, new() { Name = &quot;Razor&quot; }, new() { Name = &quot;Docs&quot; }];
+}
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.SelectionPrompt</code>. Core renderable: <code>TermBlade.Core.Renderables.SelectionPromptRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="multiselectionprompt" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Prompts Component</p>
+            <h2>MultiSelectionPrompt</h2>
+            <p>Renders a multi-selection prompt.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">multiselectionprompt-preview</span>
+              </div>
+              <pre class="terminal-body"><code> MultiSelectionPrompt
+ Renders a multi-selection prompt.
+ Razor demo: MultiSelectionPromptDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;MultiSelectionPrompt Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(MultiSelectionPromptDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;MultiSelectionPrompt Options=&quot;@Options&quot; SelectedIndices=&quot;@Selected&quot; Width=&quot;34&quot; Height=&quot;4&quot; /&gt;
+
+@code {
+    private static readonly List&lt;SelectOption&gt; Options = [new() { Name = &quot;Core&quot; }, new() { Name = &quot;Razor&quot; }, new() { Name = &quot;Docs&quot; }];
+    private static readonly HashSet&lt;int&gt; Selected = [0, 2];
+}
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.MultiSelectionPrompt</code>. Core renderable: <code>TermBlade.Core.Renderables.MultiSelectionPromptRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="autocomplete" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Prompts Component</p>
+            <h2>AutoComplete</h2>
+            <p>Renders an autocomplete prompt.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">autocomplete-preview</span>
+              </div>
+              <pre class="terminal-body"><code> AutoComplete
+ Renders an autocomplete prompt.
+ Razor demo: AutoCompleteDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;AutoComplete Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(AutoCompleteDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;AutoComplete Options=&quot;@Options&quot; SelectedIndex=&quot;0&quot; Width=&quot;34&quot; Height=&quot;4&quot; /&gt;
+
+@code {
+    private static readonly List&lt;SelectOption&gt; Options = [new() { Name = &quot;Alpha&quot; }, new() { Name = &quot;Beta&quot; }, new() { Name = &quot;Gamma&quot; }];
+}
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.AutoComplete</code>. Core renderable: <code>TermBlade.Core.Renderables.AutoCompleteRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="combobox" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Prompts Component</p>
+            <h2>ComboBox</h2>
+            <p>Renders a combobox prompt.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">combobox-preview</span>
+              </div>
+              <pre class="terminal-body"><code> ComboBox
+ Renders a combobox prompt.
+ Razor demo: ComboBoxDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;ComboBox Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(ComboBoxDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;ComboBox Options=&quot;@Options&quot; SelectedIndex=&quot;2&quot; Width=&quot;34&quot; Height=&quot;4&quot; /&gt;
+
+@code {
+    private static readonly List&lt;SelectOption&gt; Options = [new() { Name = &quot;Small&quot; }, new() { Name = &quot;Medium&quot; }, new() { Name = &quot;Large&quot; }];
+}
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.ComboBox</code>. Core renderable: <code>TermBlade.Core.Renderables.ComboBoxRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="gradientbrush" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Controls Component</p>
+            <h2>GradientBrush</h2>
+            <p>Renders a gradient brush preview.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">gradientbrush-preview</span>
+              </div>
+              <pre class="terminal-body"><code> GradientBrush
+ Renders a gradient brush preview.
+ Razor demo: GradientBrushDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;GradientBrush Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(GradientBrushDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;GradientBrush StartColor=&quot;#89b4fa&quot; EndColor=&quot;#a6e3a1&quot; Width=&quot;32&quot; Height=&quot;1&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.GradientBrush</code>. Core renderable: <code>TermBlade.Core.Renderables.GradientBrushRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="calendarpiker" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Compatibility Aliases Component</p>
+            <h2>CalendarPiker</h2>
+            <p>Compatibility alias for CalendarPicker.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">calendarpiker-preview</span>
+              </div>
+              <pre class="terminal-body"><code> CalendarPiker
+ Compatibility alias for CalendarPicker.
+ Razor demo: CalendarPikerDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;CalendarPiker Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(CalendarPikerDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;CalendarPiker Width=&quot;20&quot; Height=&quot;8&quot; /&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.CalendarPiker</code>. Core renderable: <code>TermBlade.Core.Renderables.CalendarPikerRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="dislog" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Compatibility Aliases Component</p>
+            <h2>Dislog</h2>
+            <p>Compatibility alias for Dialog.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">dislog-preview</span>
+              </div>
+              <pre class="terminal-body"><code> Dislog
+ Compatibility alias for Dialog.
+ Razor demo: DislogDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;Dislog Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(DislogDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;Dislog Width=&quot;42&quot; Height=&quot;6&quot;&gt;&lt;Text Content=&quot;Dialog alias&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/Dislog&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.Dislog</code>. Core renderable: <code>TermBlade.Core.Renderables.DislogRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="massagebox" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Compatibility Aliases Component</p>
+            <h2>MassageBox</h2>
+            <p>Compatibility alias for MessageBox.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">massagebox-preview</span>
+              </div>
+              <pre class="terminal-body"><code> MassageBox
+ Compatibility alias for MessageBox.
+ Razor demo: MassageBoxDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;MassageBox Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(MassageBoxDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;MassageBox Width=&quot;42&quot; Height=&quot;6&quot;&gt;&lt;Text Content=&quot;Message alias&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/MassageBox&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.MassageBox</code>. Core renderable: <code>TermBlade.Core.Renderables.MassageBoxRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
+          </details>
+        </section>
+        <section id="srollviewer" class="component-section feature-card">
+          <header class="component-header">
+            <p class="hero-tagline">Compatibility Aliases Component</p>
+            <h2>SrollViewer</h2>
+            <p>Compatibility alias for ScrollViewer.</p>
+          </header>
+          <div class="component-block">
+            <h3>Preview</h3>
+            <div class="hero-terminal component-preview">
+              <div class="terminal-bar">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">srollviewer-preview</span>
+              </div>
+              <pre class="terminal-body"><code> SrollViewer
+ Compatibility alias for ScrollViewer.
+ Razor demo: SrollViewerDemo.razor</code></pre>
+            </div>
+          </div>
+          <div class="component-block">
+            <h3>Usage</h3>
+            <pre class="code-block"><code>&lt;SrollViewer Width=&quot;40&quot; Height=&quot;8&quot; /&gt;</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>Demo Source <small>(SrollViewerDemo.razor)</small></h3>
+            <pre class="code-block"><code>@using TermBlade.Core.Renderables
+
+&lt;SrollViewer Width=&quot;44&quot; Height=&quot;6&quot;&gt;&lt;Text Content=&quot;Scroll alias&quot; Width=&quot;30&quot; Height=&quot;1&quot; /&gt;&lt;/SrollViewer&gt;
+</code></pre>
+          </div>
+          <div class="component-block">
+            <h3>API Documentation</h3>
+            <p>Razor component: <code>TermBlade.Razor.Components.SrollViewer</code>. Core renderable: <code>TermBlade.Core.Renderables.SrollViewerRenderable</code>.</p>
+          </div>
+          <details class="common-parameters">
+            <summary>Common Layout Parameters</summary>
+            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
           </details>
         </section>
       </div>

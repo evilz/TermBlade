@@ -1,0 +1,7 @@
+@using TermBlade.Core.Renderables
+
+<AutoComplete Options="@Options" SelectedIndex="0" Width="34" Height="4" />
+
+@code {
+    private static readonly List<SelectOption> Options = [new() { Name = "Alpha" }, new() { Name = "Beta" }, new() { Name = "Gamma" }];
+}

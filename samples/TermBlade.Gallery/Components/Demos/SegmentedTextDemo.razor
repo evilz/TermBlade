@@ -1,34 +1,21 @@
-<SegmentedText Width="52" Height="1" Segments="@HeaderSegments" />
-<SegmentedText Width="52" Height="1" Segments="@FileSegments" />
-<SegmentedText Width="52" Height="1" Segments="@StatusSegments" />
-<SegmentedText Width="52" Height="1" BackgroundColor="#1e1e2e" Segments="@HighlightedSegments" />
+<SegmentedText Width="64" Height="5" BackgroundColor="#111827" Segments="@Segments" />
 
 @code {
-    private static readonly IReadOnlyList<SegmentedTextSegment> HeaderSegments =
+    private static readonly IReadOnlyList<SegmentedTextSegment> Segments =
     [
-        new("󰉋 ", "#89dceb"),
-        new("superfile", "#cdd6f4", Attributes: TextAttributes.Bold),
+        new("BUILD ", "#111827", "#a6e3a1", TextAttributes.Bold),
+        new("TermBlade.Core ", "#cdd6f4"),
+        new("passed", "#a6e3a1", Attributes: TextAttributes.Bold),
         new("  "),
-        new("C:\\Users\\evilz", "#89b4fa")
-    ];
-
-    private static readonly IReadOnlyList<SegmentedTextSegment> FileSegments =
-    [
-        new("❯ ", "#b4befe"),
-        new("󰉋 ", "#a6e3a1"),
-        new("AppData", "#cdd6f4"),
-        new("  drwxrwxrwx", "#a6adc8")
-    ];
-
-    private static readonly IReadOnlyList<SegmentedTextSegment> StatusSegments =
-    [
-        new("✖ ", "#a6adc8"),
-        new("No content in clipboard", "#a6adc8")
-    ];
-
-    private static readonly IReadOnlyList<SegmentedTextSegment> HighlightedSegments =
-    [
-        new(" segmented ", "#1e1e2e", "#a6e3a1", TextAttributes.Bold),
-        new(" text ", "#cdd6f4", "#313244")
+        new("502 tests", "#89b4fa"),
+        new("\n"),
+        new("WARN ", "#111827", "#f9e2af", TextAttributes.Bold),
+        new("preview height increased", "#f9e2af"),
+        new("\n"),
+        new("PATH ", "#111827", "#89b4fa", TextAttributes.Bold),
+        new("docs/components.html", "#cdd6f4", Attributes: TextAttributes.Underline),
+        new("\n"),
+        new("ERROR ", "#111827", "#f38ba8", TextAttributes.Bold),
+        new("none", "#a6e3a1", Attributes: TextAttributes.Bold)
     ];
 }

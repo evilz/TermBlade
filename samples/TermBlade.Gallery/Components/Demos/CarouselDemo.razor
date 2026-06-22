@@ -1,0 +1,7 @@
+@using TermBlade.Core.Renderables
+
+<Carousel Items="@Items" SelectedIndex="1" Width="32" Height="1" />
+
+@code {
+    private static readonly IReadOnlyList<string> Items = ["Alpha", "Beta", "Gamma"];
+}

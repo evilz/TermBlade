@@ -1,0 +1,8 @@
+@using TermBlade.Core.Renderables
+
+<MultiSelectionPrompt Options="@Options" SelectedIndices="@Selected" Width="34" Height="4" />
+
+@code {
+    private static readonly List<SelectOption> Options = [new() { Name = "Core" }, new() { Name = "Razor" }, new() { Name = "Docs" }];
+    private static readonly HashSet<int> Selected = [0, 2];
+}

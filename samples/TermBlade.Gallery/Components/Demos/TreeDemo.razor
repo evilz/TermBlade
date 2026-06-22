@@ -1,0 +1,15 @@
+@using TermBlade.Core.Renderables
+
+<Tree Root="@Root" Width="36" Height="6" />
+
+@code {
+    private static readonly TreeNode Root = new()
+    {
+        Label = "workspace",
+        Children =
+        [
+            new() { Label = "src" },
+            new() { Label = "tests" },
+        ],
+    };
+}
