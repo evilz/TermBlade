@@ -1,7 +1,6 @@
 # Contributing to TermBlade
 
-Bug fixes and feature suggestions are always welcome. For bug fixes, open a PR for review.
-Feature suggestions are subject to discussion via issues.
+Bug fixes and feature suggestions are always welcome. For bug fixes, open a PR for review. Feature suggestions are subject to discussion via issues. Keep pull requests focused so terminal regressions remain easy to review.
 
 ## Prerequisites
 
@@ -10,15 +9,18 @@ Feature suggestions are subject to discussion via issues.
 ## Build
 
 ```bash
-dotnet restore
-dotnet build
+dotnet restore TermBlade.slnx
+dotnet build TermBlade.slnx --no-restore
+dotnet format TermBlade.slnx --verify-no-changes --verbosity minimal
 ```
 
 ## Test
 
 ```bash
-dotnet test
+dotnet test TermBlade.slnx --no-restore
 ```
+
+The suite includes rendering, input, buffer, Razor hosting, and documentation-inventory tests. A public behavior change must include a focused xUnit test. A change to the interactive docs also requires `npm ci && npm run build` from `docs/TermBlade.Docs.Wasm`.
 
 ## Run Samples
 
@@ -34,6 +36,7 @@ dotnet run --project samples/TermBlade.Samples -- editor
 | `src/TermBlade.Core/` | Core library — all public API |
 | `tests/TermBlade.Tests/` | xUnit tests — cover every public API |
 | `samples/TermBlade.Samples/` | Console app samples demonstrating features |
+| `docs/` | Static and interactive documentation |
 
 ## Code Style
 
@@ -42,6 +45,12 @@ dotnet run --project samples/TermBlade.Samples -- editor
 - Use `IDisposable` for types that own resources
 - XML doc comments (`/// <summary>`) for public APIs where the intent is non-obvious
 - No JSDoc-style block comments
+- Avoid per-cell allocations in renderer hot paths; see [`docs/performance.md`](docs/performance.md)
+- Keep architecture and lifecycle changes reflected in [`docs/architecture.md`](docs/architecture.md)
+
+## Pull requests
+
+Describe the user-visible behavior, the tests run, and any terminal/platform limitation. For rendering changes, explain the ANSI diff behavior and mention whether a sample was run. Do not include generated `bin/`, `obj/`, or npm dependency output.
 
 ## Code of Conduct
 

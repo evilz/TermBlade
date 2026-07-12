@@ -80,4 +80,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     sections.forEach(s => observer.observe(s));
   }
+
+  document.querySelectorAll('[data-copy]').forEach(button => {
+    button.addEventListener('click', async () => {
+      const target = document.querySelector(button.dataset.copy);
+      if (!target) return;
+
+      try {
+        await navigator.clipboard.writeText(target.textContent.trim());
+        const label = button.textContent;
+        button.textContent = 'Copied';
+        window.setTimeout(() => { button.textContent = label; }, 1600);
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents(target);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        button.textContent = 'Selected';
+      }
+    });
+  });
 });

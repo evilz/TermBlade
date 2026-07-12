@@ -158,7 +158,7 @@ public static class GalleryCatalog
             "A selection list allowing multiple items to be toggled on or off.",
             "Components/Demos/MultiSelectDemo.razor",
             ReadDemo("MultiSelectDemo.razor")),
-        
+
         new("Markup",
             "Renders Spectre-style markup content.",
             "Components/Demos/MarkupDemo.razor",

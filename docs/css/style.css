@@ -41,6 +41,58 @@ code { font-family: var(--font-mono); font-size: 0.9em; }
 
 .container { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
 
+/* ---- Learning pages ---- */
+.section-heading { max-width: 720px; margin: 0 auto 2rem; text-align: center; }
+.section-heading > p:last-child { color: var(--text-secondary); }
+.eyebrow { color: var(--accent); font-family: var(--font-mono); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.learning-hub { padding-top: 4.5rem; }
+.learning-grid, .guide-grid, .example-grid { display: grid; gap: 1rem; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.learning-card, .guide-card, .example-card {
+  background: linear-gradient(145deg, rgba(28, 33, 40, .98), rgba(22, 27, 34, .98));
+  border: 1px solid var(--border); border-radius: 14px; color: var(--text-primary); display: flex; flex-direction: column;
+  min-height: 210px; padding: 1.4rem; transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.learning-card:hover, .guide-card:hover, .example-card:hover { border-color: var(--accent); box-shadow: 0 14px 32px rgba(0, 0, 0, .24); color: var(--text-primary); transform: translateY(-3px); }
+.learning-icon { color: var(--accent); font-family: var(--font-mono); font-size: .85rem; font-weight: 800; }
+.learning-card h3, .guide-card h3, .example-card h3 { margin: .8rem 0 .35rem; }
+.learning-card p, .guide-card p, .example-card p { color: var(--text-secondary); flex: 1; font-size: .92rem; }
+.learning-card > span:last-child, .guide-card > span:last-child { color: var(--accent); font-size: .9rem; font-weight: 700; margin-top: 1rem; }
+.learning-hero { padding: 8rem 0 3.5rem; background: radial-gradient(ellipse at 20% 0%, rgba(63, 185, 80, .12), transparent 56%); }
+.learning-hero .hero-content { max-width: 900px; text-align: left; }
+.learning-hero h1 { font-size: clamp(2.25rem, 6vw, 4.25rem); letter-spacing: -.04em; line-height: 1.04; max-width: 780px; }
+.learning-hero p { color: var(--text-secondary); font-size: 1.1rem; margin-top: 1rem; max-width: 720px; }
+.path-nav { display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 1.5rem; }
+.path-nav a { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 999px; color: var(--text-secondary); font-size: .86rem; padding: .4rem .75rem; }
+.path-nav a:hover { border-color: var(--accent); color: var(--accent); }
+.tutorial-layout { display: grid; gap: 2rem; grid-template-columns: 210px minmax(0, 1fr); }
+.tutorial-toc { align-self: start; position: sticky; top: 84px; }
+.tutorial-toc a { color: var(--text-secondary); display: block; font-size: .88rem; padding: .35rem 0; }
+.tutorial-toc a:hover { color: var(--accent); }
+.tutorial-content { max-width: 800px; }
+.tutorial-step { border-top: 1px solid var(--border); padding: 2.25rem 0; scroll-margin-top: 84px; }
+.tutorial-step:first-child { border-top: 0; padding-top: 0; }
+.tutorial-step h2 { font-size: 1.7rem; margin-bottom: .65rem; }
+.tutorial-step p, .tutorial-step li { color: var(--text-secondary); }
+.tutorial-step ul { margin: .75rem 0 0 1.2rem; }
+.callout { background: rgba(63, 185, 80, .08); border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; color: var(--text-secondary); margin: 1.25rem 0; padding: .9rem 1rem; }
+.code-heading { align-items: center; color: var(--text-muted); display: flex; font-family: var(--font-mono); font-size: .78rem; justify-content: space-between; margin-top: 1rem; }
+.copy-button { background: transparent; border: 1px solid var(--border); border-radius: 5px; color: var(--text-secondary); cursor: pointer; font: inherit; padding: .25rem .5rem; }
+.copy-button:hover { border-color: var(--accent); color: var(--accent); }
+.example-meta { color: var(--text-muted); font-family: var(--font-mono); font-size: .76rem; margin-bottom: .7rem; }
+.example-card code { background: var(--bg-code); border: 1px solid var(--border); border-radius: 5px; color: #a5d6ff; display: block; font-size: .76rem; margin-top: 1rem; overflow-wrap: anywhere; padding: .55rem; white-space: pre-wrap; }
+.page-footer-space { min-height: 2rem; }
+
+@media (max-width: 850px) {
+  .learning-grid, .guide-grid, .example-grid { grid-template-columns: 1fr 1fr; }
+  .tutorial-layout { grid-template-columns: 1fr; }
+  .tutorial-toc { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem 1rem; position: static; }
+}
+
+@media (max-width: 560px) {
+  .learning-grid, .guide-grid, .example-grid { grid-template-columns: 1fr; }
+  .learning-hero { padding-top: 6.5rem; }
+}
+
 /* ---- Buttons ---- */
 .btn {
   display: inline-flex;
@@ -93,11 +145,12 @@ code { font-family: var(--font-mono); font-size: 0.9em; }
   font-weight: 700;
   font-size: 1.1rem;
 }
-.nav-logo { height: 160px; width: auto; }
-.nav-title { display: none; }
+.nav-logo { height: 32px; width: 32px; }
+.nav-title { display: inline; }
 .nav-links { display: flex; align-items: center; gap: 1.5rem; }
 .nav-links a { color: var(--text-secondary); font-size: 0.9rem; font-weight: 500; }
 .nav-links a:hover { color: var(--text-primary); }
+.nav-links a.active { color: var(--accent); }
 .nav-toggle { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
 .nav-toggle span {
   display: block;
@@ -117,8 +170,8 @@ code { font-family: var(--font-mono); font-size: 0.9em; }
   background: radial-gradient(ellipse at 50% 0%, rgba(63,185,80,0.08) 0%, transparent 60%);
 }
 .hero-content { max-width: 780px; margin: 0 auto; }
-.hero-logo { width: 100%; margin-bottom: -16rem; }
-.hero-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 0.25rem; display: none; }
+.hero-mark { filter: drop-shadow(0 14px 38px rgba(63, 185, 80, .18)); height: 92px; margin-bottom: 1.25rem; width: 92px; }
+.hero-title { display: block; font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 800; letter-spacing: -.06em; line-height: 1; margin-bottom: .75rem; }
 .accent { color: var(--accent); }
 .hero-tagline {
   font-size: 1.2rem;
@@ -294,7 +347,6 @@ code { font-family: var(--font-mono); font-size: 0.9em; }
 /* ---- Responsive ---- */
 @media (max-width: 768px) {
   .hero { padding: 6rem 0 3rem; }
-  .hero-logo { margin-bottom: -8rem; }
   .hero-title { font-size: 2.5rem; }
   .hero-tagline { font-size: 1.05rem; }
   .hero-description { font-size: 0.95rem; }
@@ -329,7 +381,6 @@ code { font-family: var(--font-mono); font-size: 0.9em; }
 @media (max-width: 480px) {
   .container { padding: 0 1rem; }
   .hero { padding: 5rem 0 2rem; }
-  .hero-logo { margin-bottom: -5rem; }
   .section { padding: 2rem 0; }
   .section-title { font-size: 1.35rem; }
   .feature-card { padding: 1.25rem; }

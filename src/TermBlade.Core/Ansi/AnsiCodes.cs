@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace TermBlade.Core.Ansi
 {
   /// <summary>ANSI escape sequence constants and TextWriter helpers.</summary>
@@ -105,6 +107,26 @@ namespace TermBlade.Core.Ansi
       }
     }
 
+    /// <summary>Appends a foreground color sequence without allocating a <see cref="TextWriter"/>.</summary>
+    /// <param name="builder">The destination builder.</param>
+    /// <param name="color">The color to append.</param>
+    public static void AppendFgColor(StringBuilder builder, Rgba color)
+    {
+      switch (color.Intent)
+      {
+        case ColorIntent.Indexed:
+          builder.Append("\x1b[38;5;").Append(color.Slot).Append('m');
+          break;
+        case ColorIntent.Default:
+          builder.Append(FgDefault);
+          break;
+        default:
+          builder.Append("\x1b[38;2;").Append(color.RedByte).Append(';')
+            .Append(color.GreenByte).Append(';').Append(color.BlueByte).Append('m');
+          break;
+      }
+    }
+
     /// <summary>
     /// Write bg color.
     /// </summary>
@@ -117,6 +139,26 @@ namespace TermBlade.Core.Ansi
         case ColorIntent.Indexed: w.Write(BgIndexed(color.Slot)); break;
         case ColorIntent.Default: w.Write(BgDefault); break;
         default: w.Write(BgColor(color.RedByte, color.GreenByte, color.BlueByte)); break;
+      }
+    }
+
+    /// <summary>Appends a background color sequence without allocating a <see cref="TextWriter"/>.</summary>
+    /// <param name="builder">The destination builder.</param>
+    /// <param name="color">The color to append.</param>
+    public static void AppendBgColor(StringBuilder builder, Rgba color)
+    {
+      switch (color.Intent)
+      {
+        case ColorIntent.Indexed:
+          builder.Append("\x1b[48;5;").Append(color.Slot).Append('m');
+          break;
+        case ColorIntent.Default:
+          builder.Append(BgDefault);
+          break;
+        default:
+          builder.Append("\x1b[48;2;").Append(color.RedByte).Append(';')
+            .Append(color.GreenByte).Append(';').Append(color.BlueByte).Append('m');
+          break;
       }
     }
 
@@ -137,5 +179,28 @@ namespace TermBlade.Core.Ansi
       if ((attrs & TextAttributes.Hidden) != 0) w.Write(Hidden);
       if ((attrs & TextAttributes.Strikethrough) != 0) w.Write(Strikethrough);
     }
+
+    /// <summary>Appends text attribute sequences without allocating a <see cref="TextWriter"/>.</summary>
+    /// <param name="builder">The destination builder.</param>
+    /// <param name="attrs">The attributes to append.</param>
+    public static void AppendAttributes(StringBuilder builder, TextAttributes attrs)
+    {
+      if (attrs == TextAttributes.None) return;
+      if ((attrs & TextAttributes.Bold) != 0) builder.Append(Bold);
+      if ((attrs & TextAttributes.Dim) != 0) builder.Append(Dim);
+      if ((attrs & TextAttributes.Italic) != 0) builder.Append(Italic);
+      if ((attrs & TextAttributes.Underline) != 0) builder.Append(Underline);
+      if ((attrs & TextAttributes.Blink) != 0) builder.Append(Blink);
+      if ((attrs & TextAttributes.Inverse) != 0) builder.Append(Inverse);
+      if ((attrs & TextAttributes.Hidden) != 0) builder.Append(Hidden);
+      if ((attrs & TextAttributes.Strikethrough) != 0) builder.Append(Strikethrough);
+    }
+
+    /// <summary>Appends a cursor position sequence to a reusable builder.</summary>
+    /// <param name="builder">The destination builder.</param>
+    /// <param name="col">The one-based column.</param>
+    /// <param name="row">The one-based row.</param>
+    public static void AppendMoveTo(StringBuilder builder, int col, int row)
+      => builder.Append("\x1b[").Append(row).Append(';').Append(col).Append('H');
   }
 }

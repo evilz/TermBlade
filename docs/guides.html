@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TermBlade guides — practical terminal UI recipes</title>
+  <meta name="description" content="Task-focused TermBlade guides for layouts, input, editors, data views, tools, and lifecycle management." />
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml" /><link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="navbar"><div class="container nav-content"><a href="index.html" class="nav-brand"><img src="img/favicon.svg" alt="" class="nav-logo" /><span class="nav-title">TermBlade</span></a><div class="nav-links"><a href="learn.html">Learn</a><a href="guides.html" class="active" aria-current="page">Guides</a><a href="examples.html">Examples</a><a href="components.html">Components</a><a href="api.html">API</a></div><button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button></div></nav>
+  <header class="learning-hero"><div class="container hero-content"><p class="eyebrow">How-to guides</p><h1>Find a focused recipe, then open the exact runnable example.</h1><p>These guides answer common implementation questions. Each one points to the relevant component documentation and an example that already exists in this repository.</p></div></header>
+  <main class="section"><div class="container"><div class="guide-grid">
+    <a class="guide-card" href="components.html#box"><span class="learning-icon">Layout</span><h3>Compose responsive layouts</h3><p>Use Box, Rows, Columns, Grid, Align, Padder, and flex properties to adapt to terminal resizing.</p><span>Open layout components →</span></a>
+    <a class="guide-card" href="components.html#input"><span class="learning-icon">Input</span><h3>Collect keyboard input</h3><p>Build fields, prompts, selectors, comboboxes, sliders, and confirmation flows with focus-aware components.</p><span>Open input components →</span></a>
+    <a class="guide-card" href="components.html#textarea"><span class="learning-icon">Editor</span><h3>Build an editor</h3><p>Start with Textarea, LineNumbers, Code, and the rope-backed EditBuffer for editing workflows.</p><span>Open editor components →</span></a>
+    <a class="guide-card" href="components.html#table"><span class="learning-icon">Data</span><h3>Display structured data</h3><p>Render tables, grids, trees, charts, diffs, JSON, markdown, and scrollable views.</p><span>Open data components →</span></a>
+    <a class="guide-card" href="examples.html#tools"><span class="learning-icon">Tools</span><h3>Ship a dotnet tool</h3><p>Use the File Manager and CSV Viewer projects as complete examples of packable terminal tools.</p><span>Open tool examples →</span></a>
+    <a class="guide-card" href="api.html"><span class="learning-icon">Core</span><h3>Render at cell level</h3><p>Use CellBuffer, Renderer, Rgba, and ANSI helpers when you need precise drawing and performance control.</p><span>Open the API reference →</span></a>
+  </div>
+
+  <section class="tutorial-step" id="lifecycle"><p class="eyebrow">Terminal lifecycle</p><h2>Host, focus, dispose</h2><p>Use <code>UseTermBladeRazor&lt;TComponent&gt;()</code> to own terminal setup and teardown. Components already remove their renderables when disposed. If you subscribe to renderer or key events yourself, unsubscribe in <code>Dispose</code>; the executable Razor samples provide a reusable base class that demonstrates this.</p><div class="callout">Do not block async Razor/WebAssembly code with <code>.Result</code>, <code>.Wait()</code>, or <code>GetAwaiter().GetResult()</code>. Keep UI work asynchronous.</div></section>
+  <section class="tutorial-step" id="performance"><p class="eyebrow">Performance</p><h2>Keep the frame path small</h2><p>TermBlade performs diff-based output, so only changed terminal cells are emitted. In per-frame code, avoid converting buffers to strings repeatedly, allocating temporary writers, or doing broad LINQ queries. The renderer and architecture rationale are documented in the repository.</p><p><a class="btn btn-outline btn-sm" href="https://github.com/evilz/TermBlade/blob/main/docs/performance.md" target="_blank" rel="noopener">Read performance guidance</a> <a class="btn btn-outline btn-sm" href="https://github.com/evilz/TermBlade/blob/main/docs/architecture.md" target="_blank" rel="noopener">Read architecture</a></p></section>
+  </div></main>
+  <footer class="footer"><div class="container footer-content"><div class="footer-brand"><img src="img/favicon.svg" alt="" class="footer-logo" /><span>TermBlade</span></div><div class="footer-links"><a href="learn.html">Tutorial</a><a href="examples.html">Examples</a><a href="components.html">Components</a></div><p class="footer-copy">MIT License</p></div></footer><script src="js/main.js?v=docs-2"></script>
+</body></html>
