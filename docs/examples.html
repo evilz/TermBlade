@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TermBlade examples — runnable Core, Razor, and tools</title>
+  <meta name="description" content="Run every TermBlade sample: Core API, Razor host, component gallery, chess, CSV viewer, and file manager." />
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml" /><link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <nav class="navbar"><div class="container nav-content"><a href="index.html" class="nav-brand"><img src="img/favicon.svg" alt="" class="nav-logo" /><span class="nav-title">TermBlade</span></a><div class="nav-links"><a href="learn.html">Learn</a><a href="guides.html">Guides</a><a href="examples.html" class="active" aria-current="page">Examples</a><a href="components.html">Components</a><a href="api.html">API</a></div><button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button></div></nav>
+  <header class="learning-hero"><div class="container hero-content"><p class="eyebrow">Repository examples</p><h1>Start from working code, not a blank terminal.</h1><p>Every command below maps to an existing project or sample. Use the Core samples to explore low-level rendering, Razor samples to build component UIs, and complete applications to study real structure.</p><div class="path-nav"><a href="#core">Core</a><a href="#razor">Razor</a><a href="#apps">Applications</a><a href="#tools">Tools</a><a href="components.html">All components</a></div></div></header>
+  <main class="section"><div class="container">
+    <section id="core" class="tutorial-step"><p class="eyebrow">TermBlade.Core samples</p><h2>Imperative rendering examples</h2><div class="example-grid">
+      <div class="example-card"><p class="example-meta">Layout · colors · borders</p><h3>Layout and styled text</h3><p>Draw boxes, text, and terminal styling directly through the core rendering API.</p><code>dotnet run --project samples/TermBlade.Samples -- layout</code></div>
+      <div class="example-card"><p class="example-meta">Editing · undo/redo</p><h3>Editor</h3><p>Explore the rope-backed edit buffer and interactive editor behavior.</p><code>dotnet run --project samples/TermBlade.Samples -- editor</code></div>
+      <div class="example-card"><p class="example-meta">Input · focus</p><h3>Input and keypress</h3><p>Inspect text input handling and normalized key events.</p><code>dotnet run --project samples/TermBlade.Samples -- input
+dotnet run --project samples/TermBlade.Samples -- keypress</code></div>
+      <div class="example-card"><p class="example-meta">Rendering</p><h3>Frame buffer, Markdown, Diff</h3><p>See pixel-style drawing, rich text rendering, and a side-by-side diff.</p><code>dotnet run --project samples/TermBlade.Samples -- framebuffer
+dotnet run --project samples/TermBlade.Samples -- markdown
+dotnet run --project samples/TermBlade.Samples -- diff</code></div>
+      <div class="example-card"><p class="example-meta">Controls</p><h3>Select, slider, tabs, tree</h3><p>Run interactive selection and navigation controls.</p><code>dotnet run --project samples/TermBlade.Samples -- select
+dotnet run --project samples/TermBlade.Samples -- slider
+dotnet run --project samples/TermBlade.Samples -- tabs
+dotnet run --project samples/TermBlade.Samples -- treeview</code></div>
+      <div class="example-card"><p class="example-meta">Visuals</p><h3>ASCII, code, console, showcase</h3><p>Try art rendering, syntax formatting, console overlay, and the larger showcase.</p><code>dotnet run --project samples/TermBlade.Samples -- ascii
+dotnet run --project samples/TermBlade.Samples -- code
+dotnet run --project samples/TermBlade.Samples -- console
+dotnet run --project samples/TermBlade.Samples -- nova</code></div>
+    </div></section>
+    <section id="razor" class="tutorial-step"><p class="eyebrow">TermBlade.Razor samples</p><h2>Component-hosted examples</h2><p>All Core sample themes also have Razor-hosted equivalents, plus calendar and chess. Pass one of the following names to the Razor sample project: <code>layout</code>, <code>styled</code>, <code>editor</code>, <code>scroll</code>, <code>input</code>, <code>keypress</code>, <code>ascii</code>, <code>framebuffer</code>, <code>code</code>, <code>markdown</code>, <code>diff</code>, <code>select</code>, <code>slider</code>, <code>tabs</code>, <code>console</code>, <code>treeview</code>, <code>calendar</code>, or <code>chess</code>.</p><div class="code-heading"><span>Example</span><button class="copy-button" data-copy="#razor-command">Copy</button></div><pre id="razor-command" class="code-block"><code>dotnet run --project samples/TermBlade.Razor.Samples -- calendar</code></pre></section>
+    <section id="apps" class="tutorial-step"><p class="eyebrow">Complete applications</p><h2>Explore a full terminal UI</h2><div class="example-grid"><div class="example-card"><p class="example-meta">All components · source viewer</p><h3>Interactive gallery</h3><p>Browse every Razor component in a terminal UI with its embedded source code.</p><code>dotnet run --project samples/TermBlade.Gallery</code></div><div class="example-card"><p class="example-meta">Board game · mouse · bot</p><h3>Chess</h3><p>A complete Razor terminal application with a board, move history, and controls.</p><code>dotnet run --project src/TermBlade.Chess</code></div></div></section>
+    <section id="tools" class="tutorial-step"><p class="eyebrow">Packable dotnet tools</p><h2>Install the real applications</h2><div class="example-grid"><div class="example-card"><p class="example-meta">Files · preview · commands</p><h3>File Manager</h3><p>Multi-panel file navigation with previews, clipboard operations, and confirmations.</p><code>dotnet tool install --global TermBlade.FileManager
+tbfm ./src</code></div><div class="example-card"><p class="example-meta">CSV · table · scrolling</p><h3>CSV Viewer</h3><p>A less-like viewer for delimited data, powered by the Razor Table component.</p><code>dotnet tool install --global TermBlade.CsvViewer
+tbcsv ./data.csv</code></div></div></section>
+    <section class="tutorial-step"><p class="eyebrow">Visual reference</p><h2>Need a specific component?</h2><p>The <a href="components.html">component gallery</a> contains every public Razor component, a source sample, parameters, and a live terminal preview. It is the best place to choose a component once you know the behavior you need.</p></section>
+  </div></main>
+  <footer class="footer"><div class="container footer-content"><div class="footer-brand"><img src="img/favicon.svg" alt="" class="footer-logo" /><span>TermBlade</span></div><div class="footer-links"><a href="learn.html">Tutorial</a><a href="guides.html">Guides</a><a href="components.html">Components</a></div><p class="footer-copy">MIT License</p></div></footer><script src="js/main.js?v=docs-2"></script>
+</body></html>

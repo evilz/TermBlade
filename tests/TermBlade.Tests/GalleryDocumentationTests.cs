@@ -91,6 +91,17 @@ public partial class GalleryDocumentationTests
   }
 
   [Fact]
+  public void GalleryCatalog_ResolvesEveryPreviewFromItsEntry()
+  {
+    foreach (var entry in GalleryCatalog.Entries)
+    {
+      Assert.Equal($"{entry.Name}Demo", entry.ComponentType.Name);
+      Assert.Contains("Demos", entry.ComponentType.Namespace ?? string.Empty);
+      Assert.True(typeof(Microsoft.AspNetCore.Components.IComponent).IsAssignableFrom(entry.ComponentType));
+    }
+  }
+
+  [Fact]
   public void ComponentPreviewService_RendersTallPreviewFrames()
   {
     var ansi = ComponentPreviewService.RenderPreview("Button");
@@ -143,6 +154,25 @@ public partial class GalleryDocumentationTests
     Assert.Contains("href=\"api.html\"", indexHtml);
     Assert.Contains("href=\"api.html\"", componentsHtml);
     Assert.Contains("href=\"components.html#text\"", apiHtml);
+  }
+
+  [Fact]
+  public void DocumentationSite_ProvidesLearningGuidesAndRunnableExamples()
+  {
+    var root = FindRepositoryRoot();
+    var indexHtml = File.ReadAllText(Path.Combine(root, "docs", "index.html"));
+    var learnHtml = File.ReadAllText(Path.Combine(root, "docs", "learn.html"));
+    var guidesHtml = File.ReadAllText(Path.Combine(root, "docs", "guides.html"));
+    var examplesHtml = File.ReadAllText(Path.Combine(root, "docs", "examples.html"));
+
+    Assert.Contains("learn.html", indexHtml);
+    Assert.Contains("guides.html", indexHtml);
+    Assert.Contains("examples.html", indexHtml);
+    Assert.Contains("UseTermBladeRazor&lt;Dashboard&gt;", learnHtml);
+    Assert.Contains("samples/TermBlade.Razor.Samples", examplesHtml);
+    Assert.Contains("TermBlade.FileManager", examplesHtml);
+    Assert.Contains("TermBlade.CsvViewer", examplesHtml);
+    Assert.Contains("components.html#textarea", guidesHtml);
   }
 
   [Fact]

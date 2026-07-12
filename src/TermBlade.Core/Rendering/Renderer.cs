@@ -147,26 +147,25 @@ namespace TermBlade.Core.Rendering
               next.Attributes == curr.Attributes)
             continue;
 
-          sb.Append(AnsiCodes.MoveTo(x + 1, y + 1));
+          AnsiCodes.AppendMoveTo(sb, x + 1, y + 1);
 
           if (lastAttrs == null || next.Attributes != lastAttrs.Value)
           {
             sb.Append(AnsiCodes.Reset);
-            var sw = new StringWriter(sb);
-            AnsiCodes.WriteAttributes(sw, next.Attributes);
+            AnsiCodes.AppendAttributes(sb, next.Attributes);
             lastFg = null; lastBg = null;
             lastAttrs = next.Attributes;
           }
 
           if (lastFg == null || next.Fg != lastFg.Value)
           {
-            AnsiCodes.WriteFgColor(new StringWriter(sb), next.Fg);
+            AnsiCodes.AppendFgColor(sb, next.Fg);
             lastFg = next.Fg;
           }
 
           if (lastBg == null || next.Bg != lastBg.Value)
           {
-            AnsiCodes.WriteBgColor(new StringWriter(sb), next.Bg);
+            AnsiCodes.AppendBgColor(sb, next.Bg);
             lastBg = next.Bg;
           }
 
@@ -180,7 +179,7 @@ namespace TermBlade.Core.Rendering
 
       // Position the cursor
       if (_cursor.Visible)
-        sb.Append(AnsiCodes.MoveTo(_cursor.X + 1, _cursor.Y + 1));
+        AnsiCodes.AppendMoveTo(sb, _cursor.X + 1, _cursor.Y + 1);
       else
         sb.Append(AnsiCodes.HideCursor);
 

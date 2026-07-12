@@ -515,26 +515,25 @@ public class CliRenderer : IDisposable
           }
         }
 
-        sb.Append(AnsiCodes.MoveTo(x + 1, y + 1));
+        AnsiCodes.AppendMoveTo(sb, x + 1, y + 1);
 
         if (lastAttrs == null || nc.Attributes != lastAttrs.Value)
         {
           sb.Append(AnsiCodes.Reset);
-          var sw = new StringWriter(sb);
-          AnsiCodes.WriteAttributes(sw, nc.Attributes);
+          AnsiCodes.AppendAttributes(sb, nc.Attributes);
           lastFg = null; lastBg = null;
           lastAttrs = nc.Attributes;
         }
 
         if (lastFg == null || nc.Fg != lastFg.Value)
         {
-          AnsiCodes.WriteFgColor(new StringWriter(sb), nc.Fg);
+          AnsiCodes.AppendFgColor(sb, nc.Fg);
           lastFg = nc.Fg;
         }
 
         if (lastBg == null || nc.Bg != lastBg.Value)
         {
-          AnsiCodes.WriteBgColor(new StringWriter(sb), nc.Bg);
+          AnsiCodes.AppendBgColor(sb, nc.Bg);
           lastBg = nc.Bg;
         }
 

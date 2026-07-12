@@ -96,6 +96,38 @@ jobs:
           -p:ContinuousIntegrationBuild=true
           --output ./nupkgs
 
+      - name: Pack TermBlade.CsvViewer
+        run: >
+          dotnet pack src/TermBlade.CsvViewer/TermBlade.CsvViewer.csproj
+          --no-build
+          --configuration ${{ env.CONFIGURATION }}
+          -p:Version=${{ steps.version.outputs.VERSION }}
+          -p:ContinuousIntegrationBuild=true
+          --output ./nupkgs
+
+      - name: Pack TermBlade.Chess
+        run: >
+          dotnet pack src/TermBlade.Chess/TermBlade.Chess.csproj
+          --no-build
+          --configuration ${{ env.CONFIGURATION }}
+          -p:Version=${{ steps.version.outputs.VERSION }}
+          -p:ContinuousIntegrationBuild=true
+          --output ./nupkgs
+
+      - name: Verify release packages
+        shell: bash
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          for package in TermBlade.Core TermBlade.Razor TermBlade.FileManager TermBlade.CsvViewer TermBlade.Chess; do
+            file="./nupkgs/${package}.${VERSION}.nupkg"
+            if [ ! -s "$file" ]; then
+              echo "Missing or empty package: $file"
+              exit 1
+            fi
+          done
+
+          echo "All five release packages were created successfully."
+
       - name: NuGet login
         uses: NuGet/login@v1
         id: login

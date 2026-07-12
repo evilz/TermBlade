@@ -13,15 +13,16 @@
   <nav class="navbar">
     <div class="container nav-content">
       <a href="index.html" class="nav-brand">
-        <img src="img/logo.png" alt="TermBlade" class="nav-logo" />
+        <img src="img/favicon.svg" alt="" class="nav-logo" />
         <span class="nav-title">TermBlade</span>
       </a>
       <div class="nav-links">
-        <a href="index.html#features">Features</a>
-        <a href="index.html#quickstart">Quick Start</a>
+        <a href="learn.html">Learn</a>
+        <a href="guides.html">Guides</a>
+        <a href="examples.html">Examples</a>
         <a href="components.html" class="active" aria-current="page">Components</a>
         <a href="api.html">API</a>
-        <a href="index.html#samples">Samples</a>
+        <a href="index.html#samples">Apps</a>
         <a href="https://github.com/evilz/TermBlade" class="btn btn-outline btn-sm" target="_blank" rel="noopener">
           <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
           GitHub
@@ -2641,53 +2642,6 @@ Console.WriteLine(""Hello"");
             <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
           </details>
         </section>
-        <section id="table" class="component-section feature-card">
-          <header class="component-header">
-            <p class="hero-tagline">Widgets Component</p>
-            <h2>Table</h2>
-            <p>Renders rows and columns as a compact text table.</p>
-          </header>
-          <div class="component-block">
-            <h3>Preview</h3>
-            <div class="hero-terminal component-preview">
-              <div class="terminal-bar">
-                <span class="terminal-dot red"></span>
-                <span class="terminal-dot yellow"></span>
-                <span class="terminal-dot green"></span>
-                <span class="terminal-title">table-preview</span>
-              </div>
-              <pre class="terminal-body"><code> Table
- Widget     | Area
- Table      | Widgets
- Panel      | Widgets
- Razor demo: TableDemo.razor</code></pre>
-            </div>
-          </div>
-          <div class="component-block">
-            <h3>Usage</h3>
-            <pre class="code-block"><code>&lt;Table Headers=&quot;@Headers&quot; Rows=&quot;@Rows&quot; Width=&quot;52&quot; Height=&quot;6&quot; Title=&quot;Widgets&quot; /&gt;</code></pre>
-          </div>
-          <div class="component-block">
-            <h3>Demo Source <small>(TableDemo.razor)</small></h3>
-            <pre class="code-block"><code>@using TermBlade.Core.Renderables
-
-&lt;Table Headers=&quot;@Headers&quot; Rows=&quot;@Rows&quot; Width=&quot;52&quot; Height=&quot;6&quot; Title=&quot;Widgets&quot; /&gt;
-
-@code {
-    private static readonly IReadOnlyList&lt;string&gt; Headers = [&quot;Widget&quot;, &quot;Area&quot;];
-    private static readonly IReadOnlyList&lt;IReadOnlyList&lt;string&gt;&gt; Rows = [[&quot;Table&quot;, &quot;Widgets&quot;], [&quot;Panel&quot;, &quot;Widgets&quot;]];
-}
-</code></pre>
-          </div>
-          <div class="component-block">
-            <h3>API Documentation</h3>
-            <p>Razor component: <code>TermBlade.Razor.Components.Table</code>. Core renderable: <code>TermBlade.Core.Renderables.TableRenderable</code>.</p>
-          </div>
-          <details class="common-parameters">
-            <summary>Common Layout Parameters</summary>
-            <p>Supports the shared TermBlade Razor layout parameters inherited from <code>RenderableComponentBase</code>, including size, flex settings, position offsets, margin, padding, visibility, opacity, focus, and autofocus.</p>
-          </details>
-        </section>
         <section id="tree" class="component-section feature-card">
           <header class="component-header">
             <p class="hero-tagline">Widgets Component</p>
@@ -4542,7 +4496,7 @@ Console.WriteLine(""Hello"");
   <footer class="footer">
     <div class="container footer-content">
       <div class="footer-brand">
-        <img src="img/logo.png" alt="TermBlade" class="footer-logo" />
+        <img src="img/favicon.svg" alt="" class="footer-logo" />
         <span>TermBlade</span>
       </div>
       <div class="footer-links">
@@ -4550,11 +4504,11 @@ Console.WriteLine(""Hello"");
         <a href="https://www.nuget.org/packages/TermBlade.Core" target="_blank" rel="noopener">NuGet</a>
         <a href="https://github.com/evilz/TermBlade/blob/main/LICENSE" target="_blank" rel="noopener">License</a>
       </div>
-      <p class="footer-copy">&copy; 2025 TermBlade contributors. MIT License.</p>
+      <p class="footer-copy">&copy; 2026 TermBlade contributors. MIT License.</p>
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js?v=docs-2"></script>
   <script src="js/component-previews.js?v=api-docs-1"></script>
 </body>
 </html>

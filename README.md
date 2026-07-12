@@ -145,6 +145,8 @@ The interactive docs are automatically deployed to GitHub Pages. To enable deplo
 
 See [`docs/TermBlade.Docs.Wasm/README.md`](docs/TermBlade.Docs.Wasm/README.md) for details.
 
+For maintainers, [`docs/architecture.md`](docs/architecture.md) describes the rendering pipeline and [`docs/performance.md`](docs/performance.md) records the ANSI and text-buffer hot-path invariants.
+
 ## Key Types
 
 | Type | Description |

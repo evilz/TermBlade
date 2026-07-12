@@ -65,38 +65,7 @@
         return prefix + Entries[index].Name;
     }
 
-    private RenderFragment PreviewFragment => SelectedIndex switch
-    {
-        0 => RenderComponent<BoxDemo>(),
-        1 => RenderComponent<TextDemo>(),
-        2 => RenderComponent<CodeDemo>(),
-        3 => RenderComponent<AsciiFontDemo>(),
-        4 => RenderComponent<LineNumbersDemo>(),
-        5 => RenderComponent<FrameBufferDemo>(),
-        6 => RenderComponent<SelectDemo>(),
-        7 => RenderComponent<InputDemo>(),
-        8 => RenderComponent<SliderDemo>(),
-        9 => RenderComponent<TabSelectDemo>(),
-        10 => RenderComponent<MarkdownDemo>(),
-        11 => RenderComponent<DiffDemo>(),
-        12 => RenderComponent<ScrollBoxDemo>(),
-        13 => RenderComponent<ScrollBarDemo>(),
-        14 => RenderComponent<ConsoleOverlayDemo>(),
-        15 => RenderComponent<BarChartDemo>(),
-        16 => RenderComponent<LineChartDemo>(),
-        17 => RenderComponent<TimeSeriesLineChartDemo>(),
-        18 => RenderComponent<HeatMapDemo>(),
-        19 => RenderComponent<CandlestickChartDemo>(),
-        20 => RenderComponent<PieChartDemo>(),
-        21 => RenderComponent<DoughnutChartDemo>(),
-        22 => RenderComponent<TreeViewDemo>(),
-        23 => RenderComponent<CalendarDemo>(),
-        24 => RenderComponent<TextareaDemo>(),
-        25 => RenderComponent<ConfirmDemo>(),
-        26 => RenderComponent<SpinnerDemo>(),
-        27 => RenderComponent<MultiSelectDemo>(),
-        _ => RenderComponent<BoxDemo>(),
-    };
+    private RenderFragment PreviewFragment => RenderComponent(CurrentEntry.ComponentType);
 
     protected override void OnInitialized()
     {
@@ -136,10 +105,10 @@
         SelectedTab = (GalleryContentTab)index;
     }
 
-    private static RenderFragment RenderComponent<TComponent>() where TComponent : Microsoft.AspNetCore.Components.IComponent
+    private static RenderFragment RenderComponent(Type componentType)
         => builder =>
         {
-            builder.OpenComponent<TComponent>(0);
+            builder.OpenComponent(0, componentType);
             builder.CloseComponent();
         };
 }

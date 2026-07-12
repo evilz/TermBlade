@@ -1,59 +1,66 @@
-# TermBlade - AI Agent Instructions
+# TermBlade agent guide
 
-Welcome to the TermBlade repository. This document provides essential context, architectural principles, and coding standards to guide AI agents working on this project.
+## Purpose
 
-## Project Overview
+TermBlade is a .NET 10 terminal UI library. The performance-sensitive path is:
 
-TermBlade is a terminal UI core library for modern .NET. It provides a cell-based rendering engine with ANSI escape sequence support, styled text, a rope-backed edit buffer with full undo/redo, a plugin architecture, and sample console applications.
+`Renderable -> Layout -> RenderBuffer/CellBuffer -> ANSI diff -> terminal`.
 
-## Solution Layout
+The repository also contains a Razor host, sample applications, two command-line tools, an interactive documentation site, and xUnit tests.
 
-The repository is structured as follows:
+## Repository map
 
-- `src/TermBlade.Core/`: Core library containing all public APIs (e.g., Ansi, Buffer, Text, Rendering).
-- `src/TermBlade.Razor/`: Razor host + component wrappers for renderables.
-- `tests/TermBlade.Tests/`: xUnit tests that must cover every public API.
-- `samples/TermBlade.Samples/`: Console application samples demonstrating features.
-- `samples/TermBlade.Razor.Samples/`: Razor-hosted sample console applications.
+- `src/TermBlade.Core`: public rendering, ANSI, buffer, text, layout, input, plugin, and renderable APIs.
+- `src/TermBlade.Razor`: Razor component wrappers and terminal hosting integration.
+- `src/TermBlade.FileManager`, `src/TermBlade.CsvViewer`, `src/TermBlade.Chess`: products/tools built on the library.
+- `tests/TermBlade.Tests`: unit, rendering, integration, and documentation consistency tests.
+- `samples`: runnable console and Razor examples.
+- `docs`: static documentation and the Blazor WebAssembly interactive site.
 
-## Agent Guidelines & Workflow
+## Required workflow
 
-When tasked with implementing features, fixing bugs, or refactoring:
+Inspect the relevant implementation, tests, project file, and public API documentation before changing code. Preserve unrelated user changes in a dirty worktree.
 
-1. **Understand the Goal**: Review the relevant issues, files, and project layout. Ensure your changes align with the core rendering engine or text buffer architecture.
-2. **Build and Test First**: Always verify that the project builds and existing tests pass before making changes. Run the tests from the repository root using:
-   - `dotnet restore`
-   - `dotnet build`
-   - `dotnet test`
-3. **Run Samples**: To manually verify visual or behavioral changes, run the sample apps.
-   - Example: `dotnet run --project samples/TermBlade.Samples -- layout`
-4. **Test-Driven Changes**: Write or update xUnit tests in `tests/TermBlade.Tests/` for any new functionality or bug fix. Test coverage is critical.
-5. **Blazor WebAssembly Rendering**: Do not block on asynchronous work in docs or WASM code with `.Result`, `.Wait()`, or `.GetAwaiter().GetResult()`. Expose async APIs and `await` renderer/component work to avoid single-threaded WebAssembly deadlocks.
-6. **Trim-Safe Component Resolution**: Avoid string-based component type resolution for linked Razor pages in publishable WASM code. Prefer static `typeof(...)` registries or explicit dynamic dependency annotations so trimming keeps component types.
+Run the checks from the repository root:
 
-## Code Style & Conventions
+```powershell
+dotnet restore TermBlade.slnx
+dotnet build TermBlade.slnx --no-restore
+dotnet test TermBlade.slnx --no-restore
+dotnet format TermBlade.slnx --verify-no-changes --verbosity minimal
+```
 
-- **Language**: Modern C# (targeting .NET 9 / 10).
-- **Naming Conventions**: 
-  - `PascalCase` for classes, structs, records, methods, and properties.
-  - `camelCase` for local variables and method parameters.
-  - `_camelCase` for private fields (standard C# conventions).
-- **Value Types**: Use `readonly struct` for value types where appropriate to ensure immutability and performance.
-- **Resource Management**: Implement `IDisposable` (and use `using` statements/declarations) for types that own unmanaged resources or event subscriptions.
-- **Documentation**: Provide XML doc comments (`/// <summary>`) for public APIs where the intent is non-obvious. Do not use JSDoc-style block comments.
-- **File Structure**: Keep one primary type per file. Ensure namespaces map cleanly to the folder structure.
+For the interactive site, also run `npm ci` and `npm run build` in `docs/TermBlade.Docs.Wasm`. Add or update xUnit tests for every behavior change. Run a sample when terminal layout, keyboard input, ANSI output, or Razor hosting changes.
 
-## Key Architectural Concepts
+## Design rules
 
-- **Rgba / ColorIntent**: Used for packed color representations (RGB, ANSI-256 indexed, or terminal-default).
-- **CellBuffer**: A 2D terminal cell grid handling text, borders, blitting, and alpha blending.
-- **TextBuffer / EditBuffer**: Text content management. `EditBuffer` uses a rope-backed data structure supporting cursors, insertions, deletions, and undo/redo operations.
-- **Renderer**: Diff-based ANSI terminal renderer with alternate-screen support. Optimize for minimal terminal updates.
-- **SyntaxStyle**: Named style definitions with priority-aware merging.
+- Target `net10.0`, nullable reference types, implicit usings, and the repository's two-space indentation.
+- Keep one primary type per file and namespaces aligned with folders.
+- Public APIs require useful XML documentation, including parameters, return values, exceptions, and lifecycle behavior where applicable.
+- Prefer immutable `readonly struct` value types for small value objects and validate public arguments at the boundary.
+- Use `IDisposable` for terminal modes, event subscriptions, buffers, and other owned resources. Disposal must be idempotent.
+- Keep renderables deterministic: layout computes geometry, rendering writes cells, and input handlers update state/request a render.
+- Do not block asynchronous work in Razor or WebAssembly with `.Result`, `.Wait()`, or `GetAwaiter().GetResult()`.
+- Avoid string-based component resolution in publishable WASM code; use static type references or trimming annotations.
+- Preserve cross-platform behavior for terminal input, dimensions, paths, and ANSI capabilities.
 
-## Working with AI
+## Performance rules
 
-When interacting with a user:
-- Be concise and provide code changes that strictly adhere to the project's design paradigms.
-- Preserve existing comments and docstrings unless they are directly rendered obsolete by your code changes.
-- Prioritize performance when modifying the renderer or cell buffers, as efficiency is crucial for a TUI library.
+Optimize measured hot paths, especially frame rendering and text editing. Avoid per-cell `TextWriter`, LINQ, regex, or intermediate string allocations. Prefer reusable `StringBuilder`, spans in synchronous code, and `Memory<T>` across asynchronous boundaries. Do not introduce `unsafe`, pooling, or `ValueTask` without evidence and a correctness test.
+
+When changing rendering, test unchanged-frame diffing and full-frame output. ANSI sequence changes must retain exact ordering and reset semantics. Benchmark before claiming an improvement when a change is more than a local allocation reduction.
+
+## Documentation rules
+
+Documentation follows Diátaxis: tutorials teach a first successful application; how-to guides solve one concrete task; reference documents describe APIs and invariants; explanations describe architecture and trade-offs.
+
+Keep README examples copy/pasteable and consistent with the current public API. Update `docs/architecture.md` or `docs/performance.md` when architecture or hot-path rules change. Do not claim support for a framework, command, or sample that has not been built or tested.
+
+## Review checklist
+
+- [ ] The change is scoped and unrelated work is preserved.
+- [ ] Public API and XML documentation are complete.
+- [ ] Tests cover success, boundary, failure, disposal, and cross-platform cases as relevant.
+- [ ] Build, tests, format verification, and relevant samples/docs build pass.
+- [ ] No blocking async code, terminal state leaks, or avoidable hot-path allocations were introduced.
+- [ ] README and Diátaxis documents match the implementation.

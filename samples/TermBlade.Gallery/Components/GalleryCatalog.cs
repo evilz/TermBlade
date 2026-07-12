@@ -158,7 +158,7 @@ public static class GalleryCatalog
             "A selection list allowing multiple items to be toggled on or off.",
             "Components/Demos/MultiSelectDemo.razor",
             ReadDemo("MultiSelectDemo.razor")),
-        
+
         new("Markup",
             "Renders Spectre-style markup content.",
             "Components/Demos/MarkupDemo.razor",
@@ -171,10 +171,6 @@ public static class GalleryCatalog
             "Renders a filesystem or URI path.",
             "Components/Demos/TextPathDemo.razor",
             ReadDemo("TextPathDemo.razor")),
-        new("Table",
-            "Renders rows and columns as a compact text table.",
-            "Components/Demos/TableDemo.razor",
-            ReadDemo("TableDemo.razor")),
         new("Tree",
             "Renders a tree using the TermBlade tree view implementation.",
             "Components/Demos/TreeDemo.razor",
