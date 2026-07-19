@@ -142,6 +142,7 @@ namespace TermBlade.Core.Rendering
           var curr = _current.GetCell(x, y) ?? Cell.Empty(BackgroundColor);
 
           if (next.Codepoint == curr.Codepoint &&
+              next.Grapheme == curr.Grapheme &&
               next.Fg == curr.Fg &&
               next.Bg == curr.Bg &&
               next.Attributes == curr.Attributes)
@@ -170,7 +171,7 @@ namespace TermBlade.Core.Rendering
           }
 
           if (next.Codepoint != 0)
-            sb.Append(char.ConvertFromUtf32(next.Codepoint));
+            sb.Append(next.Grapheme ?? char.ConvertFromUtf32(next.Codepoint));
         }
       }
 

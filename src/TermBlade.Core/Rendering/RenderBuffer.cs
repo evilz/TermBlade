@@ -1,5 +1,6 @@
 using TermBlade.Core.Ansi;
 using TermBlade.Core.Buffer;
+using System.Globalization;
 
 namespace TermBlade.Core.Rendering;
 
@@ -81,6 +82,21 @@ public class RenderBuffer
     _cells[y * Width + x] = new Cell { Codepoint = codepoint, Fg = fg, Bg = bg, Attributes = attrs };
   }
 
+  private void SetGrapheme(int x, int y, string grapheme, Rgba fg, Rgba bg, TextAttributes attrs)
+  {
+    if (!InBounds(x, y) || !InClip(x, y)) return;
+    var firstRune = grapheme.EnumerateRunes().GetEnumerator();
+    if (!firstRune.MoveNext()) return;
+    _cells[y * Width + x] = new Cell
+    {
+      Codepoint = firstRune.Current.Value,
+      Grapheme = grapheme,
+      Fg = fg,
+      Bg = bg,
+      Attributes = attrs,
+    };
+  }
+
   /// <summary>
   /// Draw text.
   /// </summary>
@@ -92,11 +108,15 @@ public class RenderBuffer
   public void DrawText(int x, int y, string text, Rgba fg, Rgba bg, TextAttributes attrs = 0)
   {
     int col = x;
-    foreach (var rune in text.EnumerateRunes())
+    var elements = StringInfo.GetTextElementEnumerator(text);
+    while (elements.MoveNext())
     {
       if (col >= Width) break;
-      int w = CellBuffer.RuneWidth(rune);
-      SetCell(col, y, rune.Value, fg, bg, attrs);
+      var grapheme = elements.GetTextElement();
+      int w = CellBuffer.GraphemeWidth(grapheme);
+      if (w == 0) continue;
+      if (w == 2 && col + 1 >= Width) break;
+      SetGrapheme(col, y, grapheme, fg, bg, attrs);
       if (w == 2 && col + 1 < Width)
         SetCell(col + 1, y, 0, fg, bg, attrs);
       col += w;
