@@ -62,6 +62,61 @@ public class ResizeEventArgs : EventArgs
   public ResizeEventArgs(int w, int h) { Width = w; Height = h; }
 }
 
+internal sealed class TerminalSession : IDisposable
+{
+  internal const string EnterSequence = AnsiCodes.SwitchToAlternate + AnsiCodes.HideCursor +
+      AnsiCodes.ClearAndHome + "\x1b[?7l\x1b[?1000h\x1b[?1002h\x1b[?1006h";
+  internal const string ExitSequence = "\x1b[?1000l\x1b[?1002l\x1b[?1006l\x1b[?7h" +
+      AnsiCodes.ShowCursor + AnsiCodes.SwitchToMain + AnsiCodes.Reset;
+
+  private readonly TextWriter _output;
+  private readonly Action<bool> _setRawMode;
+  private bool _started;
+  private bool _disposed;
+
+  internal TerminalSession(TextWriter output, Action<bool> setRawMode)
+  {
+    _output = output;
+    _setRawMode = setRawMode;
+  }
+
+  internal void Start()
+  {
+    ObjectDisposedException.ThrowIf(_disposed, this);
+    if (_started) return;
+
+    _setRawMode(true);
+    try
+    {
+      _output.Write(EnterSequence);
+      _output.Flush();
+      _started = true;
+    }
+    catch
+    {
+      _setRawMode(false);
+      throw;
+    }
+  }
+
+  public void Dispose()
+  {
+    if (_disposed) return;
+    _disposed = true;
+    if (!_started) return;
+
+    try
+    {
+      _output.Write(ExitSequence);
+      _output.Flush();
+    }
+    finally
+    {
+      _setRawMode(false);
+    }
+  }
+}
+
 /// <summary>
 /// Represents cli renderer.
 /// </summary>
@@ -104,6 +159,7 @@ public class CliRenderer : IDisposable
   private readonly object _renderLock = new();
   private DateTime _lastFrame = DateTime.UtcNow;
   private IDisposable? _sigwinchReg;
+  private TerminalSession? _terminalSession;
 
   /// <summary>
   /// Cli renderer.
@@ -293,15 +349,8 @@ public class CliRenderer : IDisposable
     if (!_config.Testing)
     {
       SysConsole.OutputEncoding = Encoding.UTF8;
-      SetRawMode(true);
-      SysConsole.Write(AnsiCodes.SwitchToAlternate);
-      SysConsole.Write(AnsiCodes.HideCursor);
-      SysConsole.Write(AnsiCodes.ClearAndHome);
-      // Disable autowrap so writing to the last terminal cell doesn't cause a scroll
-      SysConsole.Write("\x1b[?7l");
-      // Enable mouse
-      SysConsole.Write("\x1b[?1000h\x1b[?1002h\x1b[?1006h");
-      SysConsole.Out.Flush();
+      _terminalSession = new TerminalSession(SysConsole.Out, SetRawMode);
+      _terminalSession.Start();
       RefreshConsoleSize(queryTerminal: true);
 
       // SIGWINCH
@@ -421,15 +470,7 @@ public class CliRenderer : IDisposable
 
     if (!_config.Testing)
     {
-      // Disable mouse
-      SysConsole.Write("\x1b[?1000l\x1b[?1002l\x1b[?1006l");
-      // Re-enable autowrap
-      SysConsole.Write("\x1b[?7h");
-      SysConsole.Write(AnsiCodes.ShowCursor);
-      SysConsole.Write(AnsiCodes.SwitchToMain);
-      SysConsole.Write(AnsiCodes.Reset);
-      SysConsole.Out.Flush();
-      SetRawMode(false);
+      _terminalSession?.Dispose();
     }
   }
 

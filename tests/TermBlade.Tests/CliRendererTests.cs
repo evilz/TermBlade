@@ -124,4 +124,49 @@ public class CliRendererTests
     Assert.Equal("left", key.Name);
     Assert.Null(key.Char);
   }
+
+  [Fact]
+  public void TerminalSession_StartAndDispose_UsesSymmetricControlSequences()
+  {
+    var output = new StringWriter();
+    var rawModeTransitions = new List<bool>();
+    using (var session = new TerminalSession(output, rawModeTransitions.Add))
+      session.Start();
+
+    Assert.Equal([true, false], rawModeTransitions);
+    Assert.Equal(TerminalSession.EnterSequence + TerminalSession.ExitSequence, output.ToString());
+  }
+
+  [Fact]
+  public void TerminalSession_Dispose_IsIdempotent()
+  {
+    var output = new StringWriter();
+    var rawModeTransitions = new List<bool>();
+    var session = new TerminalSession(output, rawModeTransitions.Add);
+    session.Start();
+
+    session.Dispose();
+    session.Dispose();
+
+    Assert.Equal([true, false], rawModeTransitions);
+    Assert.Equal(1, CountOccurrences(output.ToString(), TerminalSession.ExitSequence));
+  }
+
+  [Fact]
+  public void TerminalSession_StartFailure_RestoresRawMode()
+  {
+    var rawModeTransitions = new List<bool>();
+    using var session = new TerminalSession(new ThrowingWriter(), rawModeTransitions.Add);
+
+    Assert.Throws<IOException>(session.Start);
+    Assert.Equal([true, false], rawModeTransitions);
+  }
+
+  private static int CountOccurrences(string value, string part)
+    => (value.Length - value.Replace(part, string.Empty).Length) / part.Length;
+
+  private sealed class ThrowingWriter : StringWriter
+  {
+    public override void Write(string? value) => throw new IOException("simulated terminal disconnect");
+  }
 }
