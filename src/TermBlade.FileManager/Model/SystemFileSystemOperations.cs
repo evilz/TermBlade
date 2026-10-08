@@ -138,13 +138,42 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     if (PathsEqual(sourcePath, destinationPath))
       return;
 
-    if (overwrite)
-      Delete(destinationPath, recursive: true);
+    var sourceIsDirectory = Directory.Exists(sourcePath);
+    var sourceIsFile = File.Exists(sourcePath);
+    if (!sourceIsDirectory && !sourceIsFile)
+      throw new FileNotFoundException($"Source path not found: {sourcePath}", sourcePath);
 
-    if (Directory.Exists(sourcePath))
-      Directory.Move(sourcePath, destinationPath);
-    else
-      File.Move(sourcePath, destinationPath);
+    if (sourceIsDirectory)
+      ValidateDirectoryMoveRelationship(sourcePath, destinationPath);
+
+    if (!overwrite)
+    {
+      MoveWithoutOverwrite(sourcePath, destinationPath, sourceIsDirectory);
+      return;
+    }
+
+    var destinationExists = Directory.Exists(destinationPath) || File.Exists(destinationPath);
+    if (!destinationExists)
+    {
+      MoveWithoutOverwrite(sourcePath, destinationPath, sourceIsDirectory);
+      return;
+    }
+
+    var backupPath = BuildOverwriteBackupPath(destinationPath);
+    var destinationIsDirectory = Directory.Exists(destinationPath);
+    MoveExistingPath(destinationPath, backupPath, destinationIsDirectory);
+
+    try
+    {
+      MoveWithoutOverwrite(sourcePath, destinationPath, sourceIsDirectory);
+      Delete(backupPath, recursive: true);
+    }
+    catch
+    {
+      Delete(destinationPath, recursive: true);
+      MoveExistingPath(backupPath, destinationPath, destinationIsDirectory);
+      throw;
+    }
   }
 
   /// <summary>
@@ -221,6 +250,70 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
 
   private static string NormalizeDirectoryPath(string path)
       => Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+
+  private static void ValidateDirectoryMoveRelationship(string sourcePath, string destinationPath)
+  {
+    var sourceReal = NormalizeDirectoryPath(sourcePath);
+    var destinationReal = NormalizeDirectoryPath(destinationPath);
+    if (sourceReal.StartsWith(destinationReal, StringComparison.OrdinalIgnoreCase)
+        || destinationReal.StartsWith(sourceReal, StringComparison.OrdinalIgnoreCase))
+      throw new IOException("Cannot move a directory to itself, a parent directory, or a subdirectory.");
+  }
+
+  private static string BuildOverwriteBackupPath(string destinationPath)
+  {
+    var parent = Directory.GetParent(destinationPath)?.FullName ?? Path.GetPathRoot(Path.GetFullPath(destinationPath))!;
+    var name = Path.GetFileName(destinationPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+    return Path.Combine(parent, $"{name}.termblade-overwrite-backup-{Guid.NewGuid():N}");
+  }
+
+  private static void MoveExistingPath(string sourcePath, string destinationPath, bool sourceIsDirectory)
+  {
+    if (sourceIsDirectory)
+      Directory.Move(sourcePath, destinationPath);
+    else
+      File.Move(sourcePath, destinationPath);
+  }
+
+  private static void MoveWithoutOverwrite(string sourcePath, string destinationPath, bool sourceIsDirectory)
+  {
+    if (sourceIsDirectory)
+    {
+      try
+      {
+        Directory.Move(sourcePath, destinationPath);
+      }
+      catch (IOException ex) when (!Directory.Exists(destinationPath) && IsCrossVolumeMove(ex, sourcePath, destinationPath))
+      {
+        CopyDirectory(sourcePath, destinationPath, overwrite: false);
+        Directory.Delete(sourcePath, recursive: true);
+      }
+
+      return;
+    }
+
+    try
+    {
+      File.Move(sourcePath, destinationPath);
+    }
+    catch (IOException ex) when (!File.Exists(destinationPath) && IsCrossVolumeMove(ex, sourcePath, destinationPath))
+    {
+      File.Copy(sourcePath, destinationPath, overwrite: false);
+      File.Delete(sourcePath);
+    }
+  }
+
+  private static bool IsCrossVolumeMove(IOException error, string sourcePath, string destinationPath)
+  {
+    var sourceRoot = Path.GetPathRoot(Path.GetFullPath(sourcePath));
+    var destinationRoot = Path.GetPathRoot(Path.GetFullPath(destinationPath));
+    if (!string.Equals(sourceRoot, destinationRoot, StringComparison.OrdinalIgnoreCase))
+      return true;
+
+    return error.Message.Contains("cross-device", StringComparison.OrdinalIgnoreCase)
+           || error.Message.Contains("different volume", StringComparison.OrdinalIgnoreCase)
+           || error.Message.Contains("same root", StringComparison.OrdinalIgnoreCase);
+  }
 
   private static bool PathsEqual(string path1, string path2)
   {
