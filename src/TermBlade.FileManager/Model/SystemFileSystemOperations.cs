@@ -113,14 +113,20 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
   /// <param name="overwrite">The overwrite value.</param>
   public void Copy(string sourcePath, string destinationPath, bool overwrite)
   {
-    if (Directory.Exists(sourcePath))
+    if (Directory.Exists(sourcePath) && !IsReparsePoint(sourcePath))
     {
       var sourceReal = NormalizeDirectoryPath(sourcePath);
       var destinationReal = NormalizeDirectoryPath(destinationPath);
-      if (destinationReal.StartsWith(sourceReal, StringComparison.OrdinalIgnoreCase))
+      if (destinationReal.StartsWith(sourceReal, GetPathComparison()))
         throw new IOException("Cannot copy a directory into itself or its subdirectory.");
 
       CopyDirectory(sourcePath, destinationPath, overwrite);
+      return;
+    }
+
+    if (IsSymbolicLink(sourcePath))
+    {
+      CopyLink(sourcePath, destinationPath, overwrite);
       return;
     }
 
@@ -138,8 +144,8 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     if (PathsEqual(sourcePath, destinationPath))
       return;
 
-    var sourceIsDirectory = Directory.Exists(sourcePath);
-    var sourceIsFile = File.Exists(sourcePath);
+    var sourceIsDirectory = Directory.Exists(sourcePath) && !IsReparsePoint(sourcePath);
+    var sourceIsFile = File.Exists(sourcePath) || IsSymbolicLink(sourcePath);
     if (!sourceIsDirectory && !sourceIsFile)
       throw new FileNotFoundException($"Source path not found: {sourcePath}", sourcePath);
 
@@ -152,7 +158,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
       return;
     }
 
-    var destinationExists = Directory.Exists(destinationPath) || File.Exists(destinationPath);
+    var destinationExists = Directory.Exists(destinationPath) || File.Exists(destinationPath) || IsSymbolicLink(destinationPath);
     if (!destinationExists)
     {
       MoveWithoutOverwrite(sourcePath, destinationPath, sourceIsDirectory);
@@ -160,13 +166,12 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     }
 
     var backupPath = BuildOverwriteBackupPath(destinationPath);
-    var destinationIsDirectory = Directory.Exists(destinationPath);
+    var destinationIsDirectory = Directory.Exists(destinationPath) && !IsReparsePoint(destinationPath);
     MoveExistingPath(destinationPath, backupPath, destinationIsDirectory);
 
     try
     {
       MoveWithoutOverwrite(sourcePath, destinationPath, sourceIsDirectory);
-      Delete(backupPath, recursive: true);
     }
     catch
     {
@@ -174,6 +179,8 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
       MoveExistingPath(backupPath, destinationPath, destinationIsDirectory);
       throw;
     }
+
+    Delete(backupPath, recursive: true);
   }
 
   /// <summary>
@@ -183,9 +190,9 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
   /// <param name="recursive">The recursive value.</param>
   public void Delete(string path, bool recursive)
   {
-    if (Directory.Exists(path))
+    if (Directory.Exists(path) && !IsReparsePoint(path))
       Directory.Delete(path, recursive);
-    else if (File.Exists(path))
+    else if (File.Exists(path) || IsSymbolicLink(path))
       File.Delete(path);
   }
 
