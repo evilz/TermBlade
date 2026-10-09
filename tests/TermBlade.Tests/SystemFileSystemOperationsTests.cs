@@ -86,6 +86,45 @@ public sealed class SystemFileSystemOperationsTests
     }
   }
 
+  [Fact]
+  public void Move_DirectoryWithDistinctCase_IsAllowedOnCaseSensitiveFilesystems()
+  {
+    if (OperatingSystem.IsWindows())
+      return;
+
+    using var workspace = new TemporaryWorkspace();
+    var sourcePath = workspace.CreateDirectory("Project");
+    var destinationRoot = workspace.CreateDirectory("project");
+    var sourceFile = workspace.CreateFile("Project/marker.txt", "data");
+    var destinationPath = Path.Combine(destinationRoot, "moved");
+    var operations = new SystemFileSystemOperations();
+
+    operations.Move(sourcePath, destinationPath, overwrite: false);
+
+    Assert.False(Directory.Exists(sourcePath));
+    Assert.True(File.Exists(Path.Combine(destinationPath, "marker.txt")));
+    Assert.Equal("data", File.ReadAllText(Path.Combine(destinationPath, "marker.txt")));
+  }
+
+  [Fact]
+  public void Move_DanglingSymbolicLink_UsesLinkEntryAsSource()
+  {
+    if (!OperatingSystem.IsLinux() && !OperatingSystem.IsMacOS())
+      return;
+
+    using var workspace = new TemporaryWorkspace();
+    var sourcePath = workspace.GetPath("missing-target-link");
+    var destinationPath = workspace.GetPath("moved-link");
+    File.CreateSymbolicLink(sourcePath, workspace.GetPath("missing-target"));
+
+    var operations = new SystemFileSystemOperations();
+    operations.Move(sourcePath, destinationPath, overwrite: false);
+
+    Assert.False(File.Exists(sourcePath));
+    Assert.True(File.Exists(destinationPath));
+    Assert.True((File.GetAttributes(destinationPath) & FileAttributes.ReparsePoint) != 0);
+  }
+
   private static string? FindAlternateVolumeRoot(string path)
   {
     var currentRoot = Path.GetPathRoot(Path.GetFullPath(path));
@@ -98,8 +137,20 @@ public sealed class SystemFileSystemOperationsTests
         continue;
 
       var candidateRoot = drive.RootDirectory.FullName;
-      if (!string.Equals(candidateRoot, currentRoot, StringComparison.OrdinalIgnoreCase))
+      if (string.Equals(candidateRoot, currentRoot, StringComparison.OrdinalIgnoreCase))
+        continue;
+
+      var probe = Path.Combine(candidateRoot, "termblade-tests", Guid.NewGuid().ToString("N"));
+      try
+      {
+        Directory.CreateDirectory(probe);
+        Directory.Delete(probe);
         return candidateRoot;
+      }
+      catch
+      {
+        // Skip unwritable alternate roots.
+      }
     }
 
     return null;
