@@ -6,6 +6,11 @@ namespace TermBlade.Core.Buffer
   public struct Cell
   {
     /// <summary>
+    /// Gets or sets the complete grapheme rendered in this cell. When null, <see cref="Codepoint"/>
+    /// contains the character for backwards compatibility.
+    /// </summary>
+    public string? Grapheme { get; set; }
+    /// <summary>
     /// Gets or sets the codepoint.
     /// </summary>
     public int Codepoint { get; set; }
@@ -29,6 +34,7 @@ namespace TermBlade.Core.Buffer
     public static Cell Empty(Rgba bg) => new Cell
     {
       Codepoint = ' ',
+      Grapheme = null,
       Fg = Rgba.FromInts(255, 255, 255),
       Bg = bg,
       Attributes = TextAttributes.None,

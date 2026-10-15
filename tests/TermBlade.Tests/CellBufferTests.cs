@@ -92,6 +92,32 @@ namespace TermBlade.Tests
       Assert.Contains("世界", text);
     }
 
+    [Theory]
+    [InlineData("e\u0301", 1)]
+    [InlineData("👩‍💻", 2)]
+    [InlineData("❤️", 2)]
+    public void DrawText_GraphemeCluster_RoundtripsInExpectedCells(string value, int width)
+    {
+      using var buf = CellBuffer.Create(4, 1);
+      buf.DrawText(value, 0, 0, White, Black);
+      buf.DrawText("X", width, 0, White, Black);
+
+      var text = Encoding.UTF8.GetString(buf.GetRealCharBytes(false));
+
+      Assert.StartsWith(value + "X", text);
+      Assert.Equal(value, buf.GetCell(0, 0)!.Value.Grapheme);
+    }
+
+    [Fact]
+    public void DrawText_DoesNotSplitWideGraphemeAtRightEdge()
+    {
+      using var buf = CellBuffer.Create(2, 1);
+      buf.DrawText("A👩‍💻", 0, 0, White, Black);
+
+      Assert.Equal('A', buf.GetCell(0, 0)!.Value.Codepoint);
+      Assert.Equal(' ', buf.GetCell(1, 0)!.Value.Codepoint);
+    }
+
     // ── SetCell / GetCell ─────────────────────────────────────────────────────
 
     [Fact]
@@ -284,6 +310,15 @@ namespace TermBlade.Tests
     public void RuneWidth_KnownValues(char ch, int expected)
     {
       Assert.Equal(expected, CellBuffer.RuneWidth(new System.Text.Rune(ch)));
+    }
+
+    [Theory]
+    [InlineData("e\u0301", 1)]
+    [InlineData("👩‍💻", 2)]
+    [InlineData("❤️", 2)]
+    public void GraphemeWidth_KnownValues(string value, int expected)
+    {
+      Assert.Equal(expected, CellBuffer.GraphemeWidth(value));
     }
   }
 }

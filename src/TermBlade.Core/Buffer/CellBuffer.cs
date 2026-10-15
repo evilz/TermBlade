@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using TermBlade.Core.Ansi;
 
@@ -115,6 +116,22 @@ namespace TermBlade.Core.Buffer
       _cells[y * Width + x] = new Cell { Codepoint = codepoint, Fg = fg, Bg = bg, Attributes = attrs };
     }
 
+    private void SetGrapheme(int x, int y, string grapheme, Rgba fg, Rgba bg,
+                             TextAttributes attrs)
+    {
+      if (!InBounds(x, y)) return;
+      var firstRune = grapheme.EnumerateRunes().GetEnumerator();
+      if (!firstRune.MoveNext()) return;
+      _cells[y * Width + x] = new Cell
+      {
+        Codepoint = firstRune.Current.Value,
+        Grapheme = grapheme,
+        Fg = fg,
+        Bg = bg,
+        Attributes = attrs,
+      };
+    }
+
     // ── draw text ─────────────────────────────────────────────────────────────
 
     /// <summary>
@@ -126,11 +143,15 @@ namespace TermBlade.Core.Buffer
       Guard();
       var bgColor = bg ?? Rgba.FromInts(0, 0, 0, 0);
       int col = x;
-      foreach (var rune in text.EnumerateRunes())
+      var elements = StringInfo.GetTextElementEnumerator(text);
+      while (elements.MoveNext())
       {
         if (col >= Width) break;
-        int w = RuneWidth(rune);
-        SetCell(col, y, rune.Value, fg, bgColor, attrs);
+        var grapheme = elements.GetTextElement();
+        int w = GraphemeWidth(grapheme);
+        if (w == 0) continue;
+        if (w == 2 && col + 1 >= Width) break;
+        SetGrapheme(col, y, grapheme, fg, bgColor, attrs);
         if (w == 2 && col + 1 < Width)
           SetCell(col + 1, y, 0, fg, bgColor, attrs); // continuation cell
         col += w;
@@ -303,7 +324,7 @@ namespace TermBlade.Core.Buffer
         {
           var cell = _cells[fy * Width + fx];
           if (cell.Codepoint == 0) continue; // continuation cell
-          sb.Append(char.ConvertFromUtf32(cell.Codepoint));
+          sb.Append(cell.Grapheme ?? char.ConvertFromUtf32(cell.Codepoint));
         }
         if (addLineBreaks && fy < Height - 1) sb.Append('\n');
       }
@@ -319,6 +340,10 @@ namespace TermBlade.Core.Buffer
     public static int RuneWidth(System.Text.Rune rune)
     {
       int v = rune.Value;
+      var category = Rune.GetUnicodeCategory(rune);
+      if (category is UnicodeCategory.NonSpacingMark or UnicodeCategory.EnclosingMark or
+          UnicodeCategory.Format or UnicodeCategory.Control)
+        return 0;
       if (v < 0x1100) return 1;
       if (v <= 0x115F ||    // Hangul Jamo
           v == 0x2329 || v == 0x232A ||
@@ -336,6 +361,20 @@ namespace TermBlade.Core.Buffer
           (v >= 0x30000 && v <= 0x3FFFD))
         return 2;
       return 1;
+    }
+
+    /// <summary>Returns the terminal column width of one Unicode grapheme cluster.</summary>
+    public static int GraphemeWidth(string grapheme)
+    {
+      ArgumentException.ThrowIfNullOrEmpty(grapheme);
+      int width = 0;
+      bool joinedEmoji = false;
+      foreach (var rune in grapheme.EnumerateRunes())
+      {
+        joinedEmoji |= rune.Value == 0x200D || rune.Value == 0xFE0F;
+        width = Math.Max(width, RuneWidth(rune));
+      }
+      return joinedEmoji ? 2 : width;
     }
 
     // ── IDisposable ───────────────────────────────────────────────────────────
