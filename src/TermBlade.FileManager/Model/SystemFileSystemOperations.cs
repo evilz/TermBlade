@@ -99,6 +99,12 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
   {
     var parent = Directory.GetParent(path)?.FullName ?? Environment.CurrentDirectory;
     var destination = Path.Combine(parent, newName);
+    if (PathsEqual(path, destination))
+    {
+      TryMoveCaseOnly(path, destination);
+      return;
+    }
+
     if (Directory.Exists(path))
       Directory.Move(path, destination);
     else
@@ -121,9 +127,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
 
     if (Directory.Exists(sourcePath))
     {
-      var sourceReal = NormalizeDirectoryPath(sourcePath);
-      var destinationReal = NormalizeDirectoryPath(destinationPath);
-      if (destinationReal.StartsWith(sourceReal, GetPathComparison()))
+      if (FileSystemPathComparison.IsSameOrDescendant(sourcePath, destinationPath))
         throw new IOException("Cannot copy a directory into itself or its subdirectory.");
 
       CopyDirectory(sourcePath, destinationPath, overwrite);
@@ -142,7 +146,10 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
   public void Move(string sourcePath, string destinationPath, bool overwrite)
   {
     if (PathsEqual(sourcePath, destinationPath))
+    {
+      TryMoveCaseOnly(sourcePath, destinationPath);
       return;
+    }
 
     var sourceIsDirectory = IsDirectoryPath(sourcePath);
     var sourceIsFile = IsFilePath(sourcePath);
@@ -319,15 +326,10 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
       File.CreateSymbolicLink(destinationPath, targetPath);
   }
 
-  private static string NormalizeDirectoryPath(string path)
-      => Path.GetFullPath(path).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
-
   private static void ValidateDirectoryMoveRelationship(string sourcePath, string destinationPath)
   {
-    var sourceReal = NormalizeDirectoryPath(sourcePath);
-    var destinationReal = NormalizeDirectoryPath(destinationPath);
-    if (sourceReal.StartsWith(destinationReal, GetPathComparison())
-        || destinationReal.StartsWith(sourceReal, GetPathComparison()))
+    if (FileSystemPathComparison.IsSameOrDescendant(sourcePath, destinationPath)
+        || FileSystemPathComparison.IsSameOrDescendant(destinationPath, sourcePath))
       throw new IOException("Cannot move a directory to itself, a parent directory, or a subdirectory.");
   }
 
@@ -336,6 +338,68 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     var parent = Directory.GetParent(destinationPath)?.FullName ?? Path.GetPathRoot(Path.GetFullPath(destinationPath))!;
     var name = Path.GetFileName(destinationPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
     return Path.Combine(parent, $"{name}.termblade-overwrite-backup-{Guid.NewGuid():N}");
+  }
+
+  private static string BuildCaseOnlyRenameTemporaryPath(string sourcePath)
+  {
+    var parent = Path.GetDirectoryName(sourcePath) ?? Path.GetPathRoot(Path.GetFullPath(sourcePath))!;
+    string temporaryPath;
+    do
+    {
+      temporaryPath = Path.Combine(parent, $".termblade-rename-{Guid.NewGuid():N}");
+    }
+    while (IsExistingPath(temporaryPath));
+
+    return temporaryPath;
+  }
+
+  private static bool TryMoveCaseOnly(string sourcePath, string destinationPath)
+  {
+    var sourceFullPath = Path.GetFullPath(sourcePath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    var destinationFullPath = Path.GetFullPath(destinationPath).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+    if (string.Equals(sourceFullPath, destinationFullPath, StringComparison.Ordinal))
+      return false;
+
+    var sourceParent = Path.GetDirectoryName(sourceFullPath);
+    var destinationParent = Path.GetDirectoryName(destinationFullPath);
+    if (sourceParent is null
+        || destinationParent is null
+        || !PathsEqual(sourceParent, destinationParent))
+      return false;
+
+    var sourceName = Path.GetFileName(sourceFullPath);
+    var destinationName = Path.GetFileName(destinationFullPath);
+    if (string.Equals(sourceName, destinationName, StringComparison.Ordinal)
+        || !string.Equals(sourceName, destinationName, StringComparison.OrdinalIgnoreCase))
+      return false;
+
+    var sourceIsDirectory = IsDirectoryPath(sourceFullPath);
+    if (!sourceIsDirectory && !IsFilePath(sourceFullPath))
+      return false;
+
+    var temporaryPath = BuildCaseOnlyRenameTemporaryPath(sourceFullPath);
+    MoveExistingPath(sourceFullPath, temporaryPath, sourceIsDirectory);
+    try
+    {
+      MoveExistingPath(temporaryPath, destinationFullPath, sourceIsDirectory);
+    }
+    catch (Exception moveError)
+    {
+      try
+      {
+        MoveExistingPath(temporaryPath, sourceFullPath, sourceIsDirectory);
+      }
+      catch (Exception restoreError)
+      {
+        throw new IOException(
+            $"Case-only rename failed and the original path could not be restored. Temporary path: {temporaryPath}",
+            new AggregateException(moveError, restoreError));
+      }
+
+      throw;
+    }
+
+    return true;
   }
 
   private static void MoveExistingPath(string sourcePath, string destinationPath, bool sourceIsDirectory)
@@ -400,7 +464,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
 
     var sourceRoot = Path.GetPathRoot(Path.GetFullPath(sourcePath));
     var destinationRoot = Path.GetPathRoot(Path.GetFullPath(destinationPath));
-    if (!string.Equals(sourceRoot, destinationRoot, GetPathComparison()))
+    if (!string.Equals(sourceRoot, destinationRoot, GetRootPathComparison()))
       return true;
 
     // ERROR_NOT_SAME_DEVICE (0x80070011) and ERROR_LOCK_VIOLATION (0x80070021) are
@@ -461,13 +525,9 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     throw new IOException($"The path is not a valid symbolic link: {path}");
   }
 
-  private static StringComparison GetPathComparison()
+  private static StringComparison GetRootPathComparison()
     => OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
   private static bool PathsEqual(string path1, string path2)
-  {
-    var normalizedPath1 = Path.GetFullPath(path1).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-    var normalizedPath2 = Path.GetFullPath(path2).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-    return string.Equals(normalizedPath1, normalizedPath2, GetPathComparison());
-  }
+      => FileSystemPathComparison.PathsEqual(path1, path2);
 }
