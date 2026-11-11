@@ -173,6 +173,7 @@ public abstract class Renderable : EventEmitter
   /// <param name="child">The child value.</param>
   /// <exception cref="ArgumentNullException">The child is null.</exception>
   /// <exception cref="ArgumentException">Adding the child would create a cycle.</exception>
+  /// <exception cref="InvalidOperationException">A detach callback reparented the child elsewhere.</exception>
   /// <exception cref="ObjectDisposedException">This renderable or the child was destroyed.</exception>
   public void Add(Renderable child)
   {
@@ -199,6 +200,10 @@ public abstract class Renderable : EventEmitter
       throw new ObjectDisposedException(GetType().Name);
     if (child._destroyed)
       throw new ObjectDisposedException(child.GetType().Name);
+    if (ReferenceEquals(child.Parent, this))
+      return;
+    if (child.Parent != null)
+      throw new InvalidOperationException("A detach callback reparented the child elsewhere.");
 
     child.Parent = this;
     child.SetRenderer(Renderer);
@@ -233,7 +238,7 @@ public abstract class Renderable : EventEmitter
   public List<Renderable> GetChildren() => new(_children);
 
   internal bool CanBeFocusedBy(CliRenderer renderer)
-    => !_destroyed && ReferenceEquals(Renderer, renderer);
+    => !_destroyed && Focused && ReferenceEquals(Renderer, renderer);
 
   /// <summary>
   /// Focus.

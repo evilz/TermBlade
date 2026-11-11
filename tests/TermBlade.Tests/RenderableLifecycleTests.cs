@@ -138,6 +138,24 @@ public class RenderableLifecycleTests
   }
 
   [Fact]
+  public void FocusChangeStopsWhenBlurHandlerBlursPendingTarget()
+  {
+    using var renderer = CreateTestingRenderer();
+    var previous = new ProbeRenderable(renderer) { Focusable = true };
+    var next = new ProbeRenderable(renderer) { Focusable = true };
+    renderer.Root.Add(previous);
+    renderer.Root.Add(next);
+    previous.Focus();
+    previous.On("blurred", _ => next.Blur());
+
+    next.Focus();
+
+    Assert.False(previous.Focused);
+    Assert.False(next.Focused);
+    Assert.Null(renderer.CurrentFocus);
+  }
+
+  [Fact]
   public void FocusChangeStopsWhenBlurHandlerDisposesRenderer()
   {
     using var renderer = CreateTestingRenderer();
@@ -153,6 +171,30 @@ public class RenderableLifecycleTests
     Assert.Null(renderer.CurrentFocus);
     Assert.False(previous.Focused);
     Assert.False(next.Focused);
+  }
+
+  [Fact]
+  public void ReparentingPreservesParentChosenByDetachCallback()
+  {
+    using var renderer = CreateTestingRenderer();
+    var oldParent = new ProbeRenderable(renderer);
+    var destination = new ProbeRenderable(renderer);
+    var thirdParent = new ProbeRenderable(renderer);
+    var child = new ProbeRenderable(renderer) { Focusable = true };
+    renderer.Root.Add(oldParent);
+    renderer.Root.Add(destination);
+    renderer.Root.Add(thirdParent);
+    oldParent.Add(child);
+    child.Focus();
+    child.On("blurred", _ => thirdParent.Add(child));
+
+    Assert.Throws<InvalidOperationException>(() => destination.Add(child));
+
+    Assert.Same(thirdParent, child.Parent);
+    Assert.DoesNotContain(child, oldParent.GetChildren());
+    Assert.DoesNotContain(child, destination.GetChildren());
+    Assert.Contains(child, thirdParent.GetChildren());
+    Assert.Null(renderer.CurrentFocus);
   }
 
   [Fact]
