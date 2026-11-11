@@ -258,6 +258,15 @@ public class CliRenderer : IDisposable
     return true;
   }
 
+  internal void DispatchKey(KeyEvent key)
+  {
+    if (_disposed) return;
+    if (_config.ExitOnCtrlC && key.Name == "ctrl+c")
+      Destroy();
+    if (!key.DefaultPrevented)
+      CurrentFocus?.HandleKey(key);
+  }
+
   internal void OnRenderableBlurred(Renderable r)
   {
     if (CurrentFocus == r)
@@ -341,13 +350,8 @@ public class CliRenderer : IDisposable
 
     KeyInput.On("keypress", (object? data) =>
     {
-      if (_config.ExitOnCtrlC && data is KeyEvent k && k.Name == "ctrl+c")
-        Destroy();
       if (data is KeyEvent key)
-      {
-        if (!key.DefaultPrevented)
-          CurrentFocus?.HandleKey(key);
-      }
+        DispatchKey(key);
     });
 
     KeyInput.On("mouse", (object? data) =>
