@@ -132,7 +132,9 @@ public class LayoutDimensionTests
       Assert.Equal(LayoutDimension.DimType.Percent, renderable.LayoutNode.Width.Type);
       Assert.Equal(12.5f, renderable.LayoutNode.Width.Value);
 
+#pragma warning disable BL0006 // The regression directly disposes the component renderer before its app context.
       await componentRenderer.DisposeAsync();
+#pragma warning restore BL0006
     }
     finally
     {
@@ -150,7 +152,7 @@ public class LayoutDimensionTests
     }
 
     protected override WidthProbeRenderable CreateRenderable(TermBlade.Core.Rendering.CliRenderer renderer)
-        => new(renderer);
+      => new(renderer);
 
     protected override void ApplyParameters(WidthProbeRenderable renderable) { }
   }
