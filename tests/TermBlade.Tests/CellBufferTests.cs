@@ -108,7 +108,7 @@ namespace TermBlade.Tests
       var text = Encoding.UTF8.GetString(buf.GetRealCharBytes(false));
 
       Assert.StartsWith(value + "X", text);
-      Assert.Equal(value, buf.GetCell(0, 0)!.Value.Grapheme);
+      Assert.Equal('X', buf.GetCell(width, 0)!.Value.Codepoint);
     }
 
     [Fact]
