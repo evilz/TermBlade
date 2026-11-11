@@ -25,7 +25,7 @@ public class RenderableLifecycleTests
   }
 
   [Fact]
-  public void DestroyingNestedRenderablesRepeatedlyEmitsOnceAndReleasesOwnedBuffers()
+  public void DestroyingNestedRenderablesCleansUpWhenBlurHandlerThrows()
   {
     using var renderer = CreateTestingRenderer();
     var parent = new ProbeRenderable(renderer);
@@ -40,10 +40,11 @@ public class RenderableLifecycleTests
     int framebufferDestroyed = 0;
     parent.On("destroyed", _ => parentDestroyed++);
     textarea.On("destroyed", _ => textareaDestroyed++);
+    textarea.On("blurred", _ => throw new InvalidOperationException("blur handler failed"));
     framebuffer.On("destroyed", _ => framebufferDestroyed++);
     textarea.Focus();
 
-    parent.Destroy();
+    Assert.Throws<InvalidOperationException>(() => parent.Destroy());
     parent.Destroy();
 
     Assert.Null(renderer.CurrentFocus);

@@ -286,19 +286,25 @@ public abstract class Renderable : EventEmitter
     if (_destroyed) return;
     _destroyed = true;
 
-    if (Parent is { } parent)
-      parent.Remove(this);
-    else
-      DetachRenderer();
-
     Exception? failure = null;
+    try
+    {
+      if (Parent is { } parent)
+        parent.Remove(this);
+      else
+        DetachRenderer();
+    }
+    catch (Exception exception)
+    {
+      failure = exception;
+    }
     try
     {
       Emit("destroyed");
     }
     catch (Exception exception)
     {
-      failure = exception;
+      failure ??= exception;
     }
 
     foreach (var child in _children.ToArray())
