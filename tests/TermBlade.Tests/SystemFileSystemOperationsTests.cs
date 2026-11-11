@@ -94,6 +94,9 @@ public sealed class SystemFileSystemOperationsTests
 
     using var workspace = new TemporaryWorkspace();
     var sourcePath = workspace.CreateDirectory("Project");
+    if (Directory.Exists(workspace.GetPath("project")))
+      return;
+
     var destinationRoot = workspace.CreateDirectory("project");
     var sourceFile = workspace.CreateFile("Project/marker.txt", "data");
     var destinationPath = Path.Combine(destinationRoot, "moved");
