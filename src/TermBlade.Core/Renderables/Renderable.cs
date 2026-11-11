@@ -238,10 +238,18 @@ public abstract class Renderable : EventEmitter
     var renderer = Renderer;
     if (_destroyed || Focused || renderer == null) return;
     Focused = true;
-    if (!renderer.OnRenderableFocused(this))
+    try
+    {
+      if (!renderer.OnRenderableFocused(this))
+      {
+        Focused = false;
+        return;
+      }
+    }
+    catch
     {
       Focused = false;
-      return;
+      throw;
     }
     Emit("focused");
   }

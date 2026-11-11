@@ -84,6 +84,36 @@ public class RenderableLifecycleTests
   }
 
   [Fact]
+  public void FocusChangeRollsBackWhenPreviousBlurHandlerThrows()
+  {
+    using var renderer = CreateTestingRenderer();
+    var previous = new ProbeRenderable(renderer) { Focusable = true };
+    var next = new ProbeRenderable(renderer) { Focusable = true };
+    renderer.Root.Add(previous);
+    renderer.Root.Add(next);
+    previous.Focus();
+
+    bool throwOnBlur = true;
+    previous.On("blurred", _ =>
+    {
+      if (throwOnBlur)
+        throw new InvalidOperationException("blur handler failed");
+    });
+
+    Assert.Throws<InvalidOperationException>(() => next.Focus());
+
+    Assert.False(previous.Focused);
+    Assert.False(next.Focused);
+    Assert.Null(renderer.CurrentFocus);
+
+    throwOnBlur = false;
+    next.Focus();
+
+    Assert.True(next.Focused);
+    Assert.Same(next, renderer.CurrentFocus);
+  }
+
+  [Fact]
   public void FocusChangeStopsWhenBlurHandlerDisposesRenderer()
   {
     using var renderer = CreateTestingRenderer();
