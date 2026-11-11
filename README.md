@@ -13,7 +13,7 @@ TermBlade is a terminal UI core library for **.NET 10**. It provides a cell-base
 
 ## Requirements
 
-- [.NET 10](https://dotnet.microsoft.com/download/dotnet/10.0) or later
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0). The root `global.json` selects a stable .NET 10 SDK and rolls forward to the latest installed .NET 10 feature band.
 
 ## Quick Start
 
