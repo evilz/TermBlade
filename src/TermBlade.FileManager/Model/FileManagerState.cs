@@ -938,11 +938,7 @@ internal sealed class FileManagerState
   }
 
   private static bool PathsEqual(string path1, string path2)
-  {
-    var normalizedPath1 = Path.GetFullPath(path1).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-    var normalizedPath2 = Path.GetFullPath(path2).TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-    return string.Equals(normalizedPath1, normalizedPath2, StringComparison.OrdinalIgnoreCase);
-  }
+      => FileSystemPathComparison.PathsEqual(path1, path2);
 
   private static string FormatSize(long size)
   {
