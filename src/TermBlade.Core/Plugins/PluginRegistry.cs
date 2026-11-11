@@ -111,7 +111,7 @@ namespace TermBlade.Core.Plugins
     private static string ValidateName(string? name, string paramName)
     {
       if (string.IsNullOrWhiteSpace(name))
-        throw new ArgumentException("Plugin name must not be null or whitespace.", paramName);
+        throw new ArgumentException("Plugin name must not be null, empty, or whitespace.", paramName);
       return name;
     }
   }
