@@ -1,4 +1,5 @@
 using System.IO;
+using TermBlade.Core.Ansi;
 using TermBlade.Core.Rendering;
 using Xunit;
 
@@ -26,6 +27,33 @@ public class RendererCursorVisibilityTests
     output.GetStringBuilder().Clear();
     renderer.Render();
     Assert.Empty(output.ToString());
+  }
+
+  [Fact]
+  public void Render_WithContentAndVisibleCursorTransition_EmitsFullFrameThenOnlyCursorOnUnchangedFrame()
+  {
+    using var output = new StringWriter();
+    using var renderer = new Renderer(5, 3, output);
+    renderer.Initialize();
+    output.GetStringBuilder().Clear();
+
+    var foreground = Rgba.FromInts(255, 255, 255);
+    var background = Rgba.FromInts(0, 0, 0);
+    var frame = renderer.GetFrameBuffer();
+    frame.SetCell(0, 0, 'A', foreground, background);
+    frame.SetCell(1, 0, 'B', foreground, background);
+    renderer.SetCursorPosition(2, 1, visible: true);
+
+    renderer.Render();
+
+    Assert.Equal(
+        "\u001b[1;1H\u001b[0m\u001b[38;2;255;255;255m\u001b[48;2;0;0;0mA\u001b[1;2HB\u001b[?25h\u001b[2;3H",
+        output.ToString());
+
+    output.GetStringBuilder().Clear();
+    renderer.Render();
+
+    Assert.Equal("\u001b[2;3H", output.ToString());
   }
 
   [Fact]
