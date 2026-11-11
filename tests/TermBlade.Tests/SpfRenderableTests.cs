@@ -52,6 +52,64 @@ public class SpfRenderableTests
   }
 
   [Fact]
+  public void SegmentedText_PreservesGraphemesSplitAcrossStyledSegments()
+  {
+    var renderable = new SegmentedTextRenderable(null)
+    {
+      Segments =
+      [
+        new SegmentedTextSegment("e", "#ff0000"),
+        new SegmentedTextSegment("\u0301X", "#00ff00"),
+        new SegmentedTextSegment("👩\u200D", "#0000ff"),
+        new SegmentedTextSegment("💻Y", "#ffff00")
+      ]
+    };
+    Layout(renderable, width: 6, height: 1);
+
+    var buffer = new RenderBuffer(6, 1);
+    renderable.Render(buffer, 0);
+
+    Assert.Equal("e\u0301", buffer.GetCell(0, 0)!.Value.Grapheme);
+    Assert.Equal(Rgba.FromCss("#ff0000"), buffer.GetCell(0, 0)!.Value.Fg);
+    Assert.Equal('X', buffer.GetCell(1, 0)!.Value.Codepoint);
+    Assert.Equal("👩\u200D💻", buffer.GetCell(2, 0)!.Value.Grapheme);
+    Assert.Equal(0, buffer.GetCell(3, 0)!.Value.Codepoint);
+    Assert.Equal('Y', buffer.GetCell(4, 0)!.Value.Codepoint);
+  }
+
+  [Fact]
+  public void Markdown_RendersCombiningAndJoinedEmojiGraphemes()
+  {
+    var renderable = new MarkdownRenderable(null) { Content = "e\u0301👩\u200D💻" };
+    Layout(renderable, width: 4, height: 1);
+
+    var buffer = new RenderBuffer(4, 1);
+    renderable.Render(buffer, 0);
+
+    Assert.Equal("e\u0301", buffer.GetCell(0, 0)!.Value.Grapheme);
+    Assert.Equal("👩\u200D💻", buffer.GetCell(1, 0)!.Value.Grapheme);
+    Assert.Equal(0, buffer.GetCell(2, 0)!.Value.Codepoint);
+  }
+
+  [Fact]
+  public void Code_RendersCombiningAndJoinedEmojiGraphemes()
+  {
+    var renderable = new CodeRenderable(null)
+    {
+      Content = "e\u0301👩\u200D💻",
+      ShowLineNumbers = false
+    };
+    Layout(renderable, width: 4, height: 1);
+
+    var buffer = new RenderBuffer(4, 1);
+    renderable.Render(buffer, 0);
+
+    Assert.Equal("e\u0301", buffer.GetCell(0, 0)!.Value.Grapheme);
+    Assert.Equal("👩\u200D💻", buffer.GetCell(1, 0)!.Value.Grapheme);
+    Assert.Equal(0, buffer.GetCell(2, 0)!.Value.Codepoint);
+  }
+
+  [Fact]
   public void DrawBorderWithTitles_SpfStyleUsesRoundedCornersAndBottomTitle()
   {
     var buffer = new RenderBuffer(16, 4);

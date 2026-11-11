@@ -82,19 +82,28 @@ public class RenderBuffer
     _cells[y * Width + x] = new Cell { Codepoint = codepoint, Fg = fg, Bg = bg, Attributes = attrs };
   }
 
-  private void SetGrapheme(int x, int y, string grapheme, Rgba fg, Rgba bg, TextAttributes attrs)
+  internal void DrawGrapheme(int x, int y, ReadOnlySpan<char> grapheme, int width,
+      Rgba fg, Rgba bg, TextAttributes attrs)
   {
-    if (!InBounds(x, y) || !InClip(x, y)) return;
-    var firstRune = grapheme.EnumerateRunes().GetEnumerator();
-    if (!firstRune.MoveNext()) return;
+    if (width <= 0 || !InBounds(x, y) || !InClip(x, y)) return;
+    for (int continuation = 1; continuation < width; continuation++)
+      if (!InBounds(x + continuation, y) || !InClip(x + continuation, y))
+        return;
+
+    var runes = grapheme.EnumerateRunes();
+    if (!runes.MoveNext()) return;
+    var firstRune = runes.Current;
+    var hasMultipleRunes = runes.MoveNext();
     _cells[y * Width + x] = new Cell
     {
-      Codepoint = firstRune.Current.Value,
-      Grapheme = grapheme,
+      Codepoint = firstRune.Value,
+      Grapheme = hasMultipleRunes ? grapheme.ToString() : null,
       Fg = fg,
       Bg = bg,
       Attributes = attrs,
     };
+    for (int continuation = 1; continuation < width; continuation++)
+      SetCell(x + continuation, y, 0, fg, bg, attrs);
   }
 
   /// <summary>
@@ -108,18 +117,22 @@ public class RenderBuffer
   public void DrawText(int x, int y, string text, Rgba fg, Rgba bg, TextAttributes attrs = 0)
   {
     int col = x;
-    var elements = StringInfo.GetTextElementEnumerator(text);
-    while (elements.MoveNext())
+    var remaining = text.AsSpan();
+    while (!remaining.IsEmpty)
     {
       if (col >= Width) break;
-      var grapheme = elements.GetTextElement();
+      int graphemeLength = StringInfo.GetNextTextElementLength(remaining);
+      var grapheme = remaining[..graphemeLength];
       int w = CellBuffer.GraphemeWidth(grapheme);
-      if (w == 0) continue;
-      if (w == 2 && col + 1 >= Width) break;
-      SetGrapheme(col, y, grapheme, fg, bg, attrs);
-      if (w == 2 && col + 1 < Width)
-        SetCell(col + 1, y, 0, fg, bg, attrs);
+      if (w == 0)
+      {
+        remaining = remaining[graphemeLength..];
+        continue;
+      }
+      if (w > 1 && col + w > Width) break;
+      DrawGrapheme(col, y, grapheme, w, fg, bg, attrs);
       col += w;
+      remaining = remaining[graphemeLength..];
     }
   }
 
@@ -185,11 +198,12 @@ public class RenderBuffer
 
     if (title != null && width > 4)
     {
-      var t = title.Length > width - 4 ? title[..(width - 4)] : title;
+      var t = CellBuffer.TruncateToCellWidth(title, width - 4);
+      int titleWidth = CellBuffer.GetTextWidth(t.AsSpan());
       int tx = titleAlign switch
       {
-        "center" => x + (width - t.Length) / 2,
-        "right" => x + width - t.Length - 2,
+        "center" => x + (width - titleWidth) / 2,
+        "right" => x + width - titleWidth - 2,
         _ => x + 2
       };
       DrawText(tx, y, t, color, bg);
@@ -197,11 +211,12 @@ public class RenderBuffer
 
     if (bottomTitle != null && width > 4 && height > 1)
     {
-      var t = bottomTitle.Length > width - 4 ? bottomTitle[..(width - 4)] : bottomTitle;
+      var t = CellBuffer.TruncateToCellWidth(bottomTitle, width - 4);
+      int titleWidth = CellBuffer.GetTextWidth(t.AsSpan());
       int tx = bottomTitleAlign switch
       {
-        "center" => x + (width - t.Length) / 2,
-        "right" => x + width - t.Length - 2,
+        "center" => x + (width - titleWidth) / 2,
+        "right" => x + width - titleWidth - 2,
         _ => x + 2
       };
       DrawText(tx, y + height - 1, t, color, bg);

@@ -109,6 +109,27 @@ namespace TermBlade.Tests
     }
 
     [Fact]
+    public void DrawText_CombiningClusterKeepsFollowingTextInNextCell()
+    {
+      using var buf = CellBuffer.Create(3, 1);
+      buf.DrawText("e\u0301X", 0, 0, White, Black);
+
+      Assert.Equal("e\u0301", buf.GetCell(0, 0)!.Value.Grapheme);
+      Assert.Equal('X', buf.GetCell(1, 0)!.Value.Codepoint);
+    }
+
+    [Fact]
+    public void DrawBox_CenteredWideTitleUsesDisplayColumns()
+    {
+      using var buf = CellBuffer.Create(12, 3);
+      buf.DrawBox(0, 0, 12, 3, White, Black, title: "👩‍💻",
+          titleAlign: TextAlignment.Center);
+
+      Assert.Equal("👩‍💻", buf.GetCell(5, 0)!.Value.Grapheme);
+      Assert.Equal(0, buf.GetCell(6, 0)!.Value.Codepoint);
+    }
+
+    [Fact]
     public void DrawText_DoesNotSplitWideGraphemeAtRightEdge()
     {
       using var buf = CellBuffer.Create(2, 1);
@@ -160,6 +181,18 @@ namespace TermBlade.Tests
     }
 
     [Fact]
+    public void DrawFrameBuffer_DoesNotCopyOnlyLeadingCellOfWideGrapheme()
+    {
+      using var source = CellBuffer.Create(2, 1);
+      using var destination = CellBuffer.Create(1, 1);
+      source.DrawText("界", 0, 0, White, Black);
+
+      destination.DrawFrameBuffer(0, 0, source);
+
+      Assert.Equal(0, destination.GetCell(0, 0)!.Value.Codepoint);
+    }
+
+    [Fact]
     public void DrawFrameBuffer_AlphaBlend_WhenRespectAlpha()
     {
       using var parent = CellBuffer.Create(5, 5);
@@ -194,6 +227,17 @@ namespace TermBlade.Tests
       buf.SetCell(2, 1, 'X', White, Black);
       buf.Resize(20, 10);
       Assert.Equal('X', buf.GetCell(2, 1)!.Value.Codepoint);
+    }
+
+    [Fact]
+    public void Resize_DoesNotKeepLeadingCellWhenWideGraphemeIsClipped()
+    {
+      using var buf = CellBuffer.Create(3, 1);
+      buf.DrawText("界", 1, 0, White, Black);
+
+      buf.Resize(2, 1);
+
+      Assert.Equal(0, buf.GetCell(1, 0)!.Value.Codepoint);
     }
 
     // ── GetRealCharBytes ──────────────────────────────────────────────────────
@@ -316,9 +360,27 @@ namespace TermBlade.Tests
     [InlineData("e\u0301", 1)]
     [InlineData("👩‍💻", 2)]
     [InlineData("❤️", 2)]
+    [InlineData("☀\uFE0F", 2)]
+    [InlineData("☀\uFE0E", 1)]
+    [InlineData("©\uFE0F", 2)]
+    [InlineData("©\uFE0E", 1)]
+    [InlineData("世", 2)]
+    [InlineData("🇫🇷", 2)]
+    [InlineData("👍🏽", 2)]
+    [InlineData("1️⃣", 2)]
+    [InlineData("\u0915\u093F", 1)]
+    [InlineData("\u0915\u094D\u0937", 2)]
+    [InlineData("a\u200D", 1)]
+    [InlineData("\u200D", 0)]
     public void GraphemeWidth_KnownValues(string value, int expected)
     {
       Assert.Equal(expected, CellBuffer.GraphemeWidth(value));
+    }
+
+    [Fact]
+    public void GraphemeWidth_RejectsMultipleTextElements()
+    {
+      Assert.Throws<System.ArgumentException>(() => CellBuffer.GraphemeWidth("ab"));
     }
   }
 }

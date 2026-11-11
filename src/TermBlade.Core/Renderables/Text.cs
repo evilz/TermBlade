@@ -1,4 +1,6 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
+using System.Globalization;
 using TermBlade.Core.Layout;
 using TermBlade.Core.Rendering;
 
@@ -109,11 +111,12 @@ public class TextRenderable : Renderable
     for (int i = 0; i < lines.Count && i < h; i++)
     {
       var line = lines[i];
+      int lineWidth = CellBuffer.GetTextWidth(line.AsSpan());
       int drawX = x;
       if (TextAlign == "center")
-        drawX = x + Math.Max(0, (w - line.Length) / 2);
+        drawX = x + Math.Max(0, (w - lineWidth) / 2);
       else if (TextAlign == "right")
-        drawX = x + Math.Max(0, w - line.Length);
+        drawX = x + Math.Max(0, w - lineWidth);
 
       buffer.DrawText(drawX, y + i, line, fg, bg, Attributes);
     }
@@ -124,37 +127,64 @@ public class TextRenderable : Renderable
     var result = new List<string>();
     if (maxWidth <= 0) return result;
 
-    var paragraphs = text.Split('\n');
-    foreach (var para in paragraphs)
+    foreach (var paragraph in text.Split('\n'))
     {
-      if (para.Length <= maxWidth)
+      if (CellBuffer.GetTextWidth(paragraph.AsSpan()) <= maxWidth)
       {
-        result.Add(para);
+        result.Add(paragraph);
         continue;
       }
 
-      var words = para.Split(' ');
       var current = new System.Text.StringBuilder();
-      foreach (var word in words)
+      int currentWidth = 0;
+
+      void AppendWord(string word)
       {
+        var remaining = word.AsSpan();
+        while (!remaining.IsEmpty)
+        {
+          int graphemeLength = StringInfo.GetNextTextElementLength(remaining);
+          var grapheme = remaining[..graphemeLength];
+          int graphemeWidth = CellBuffer.GraphemeWidth(grapheme);
+          if (currentWidth + graphemeWidth > maxWidth && current.Length > 0)
+          {
+            result.Add(current.ToString());
+            current.Clear();
+            currentWidth = 0;
+          }
+
+          current.Append(grapheme);
+          currentWidth += graphemeWidth;
+          remaining = remaining[graphemeLength..];
+        }
+      }
+
+      foreach (var word in paragraph.Split(' '))
+      {
+        int wordWidth = CellBuffer.GetTextWidth(word.AsSpan());
         if (current.Length == 0)
         {
-          current.Append(word);
+          AppendWord(word);
         }
-        else if (current.Length + 1 + word.Length <= maxWidth)
+        else if (currentWidth + 1 + wordWidth <= maxWidth)
         {
           current.Append(' ');
-          current.Append(word);
+          currentWidth++;
+          AppendWord(word);
         }
         else
         {
           result.Add(current.ToString());
           current.Clear();
-          current.Append(word);
+          currentWidth = 0;
+          AppendWord(word);
         }
       }
-      if (current.Length > 0) result.Add(current.ToString());
+
+      if (current.Length > 0)
+        result.Add(current.ToString());
     }
+
     return result;
   }
 }

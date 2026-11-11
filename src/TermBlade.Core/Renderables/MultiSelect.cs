@@ -130,7 +130,7 @@ public class MultiSelectRenderable : Renderable
       var text = check + opt.Name;
       if (ShowDescription && !string.IsNullOrEmpty(opt.Description))
         text += $" - {opt.Description}";
-      text = TruncateToCellWidth(text, w);
+      text = CellBuffer.TruncateToCellWidth(text, w);
       buffer.DrawText(x, y + row, text, fg, rowBg);
     }
 
@@ -164,20 +164,5 @@ public class MultiSelectRenderable : Renderable
     SelectedIndices.RemoveWhere(i => i < 0 || i >= Options.Count);
   }
 
-  private static string TruncateToCellWidth(string text, int maxWidth)
-  {
-    if (maxWidth <= 0 || string.IsNullOrEmpty(text)) return string.Empty;
 
-    int width = 0;
-    int length = 0;
-    foreach (var rune in text.EnumerateRunes())
-    {
-      int runeWidth = CellBuffer.RuneWidth(rune);
-      if (width + runeWidth > maxWidth) break;
-      width += runeWidth;
-      length += rune.Utf16SequenceLength;
-    }
-
-    return text.Length == length ? text : text[..length];
-  }
 }

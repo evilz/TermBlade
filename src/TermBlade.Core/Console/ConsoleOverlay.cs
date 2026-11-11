@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Console;
@@ -76,7 +77,7 @@ public class ConsoleOverlay : TermBlade.Core.Renderables.Renderable
     if (_lines.Count == 0) return;
 
     int h = _lines.Count;
-    int w = Math.Min(MaxWidth, _lines.Max(l => l.Length) + 2);
+    int w = Math.Min(MaxWidth, _lines.Select(l => CellBuffer.GetTextWidth(l.AsSpan())).DefaultIfEmpty(0).Max() + 2);
     int termW = buffer.Width;
     int termH = buffer.Height;
 
@@ -98,7 +99,7 @@ public class ConsoleOverlay : TermBlade.Core.Renderables.Renderable
     for (int i = 0; i < h; i++)
     {
       var line = _lines[i];
-      if (line.Length > w - 1) line = line[..(w - 1)];
+      line = CellBuffer.TruncateToCellWidth(line, w - 1);
       buffer.DrawText(bx + 1, by + i, line, fg, bg);
     }
   }

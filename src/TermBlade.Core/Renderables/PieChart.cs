@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
@@ -203,8 +204,7 @@ public class PieChartRenderable : Renderable
         string label = GetLegendLabel(i);
         string line = ShowPercentages ? $"■ {label} {pct:F1}%" : $"■ {label}";
 
-        if (legendX + line.Length > x + w)
-          line = line[..Math.Max(0, x + w - legendX)];
+        line = CellBuffer.TruncateToCellWidth(line, x + w - legendX);
 
         if (line.Length > 0)
         {
@@ -230,7 +230,7 @@ public class PieChartRenderable : Renderable
     int legendWidth = 0;
     for (int i = 0; i < Data.Count; i++)
     {
-      int len = GetLegendLabel(i).Length + (ShowPercentages ? 8 : 2); // "■ Label 12.3%"
+      int len = CellBuffer.GetTextWidth(GetLegendLabel(i).AsSpan()) + (ShowPercentages ? 8 : 2); // "■ Label 12.3%"
       if (len > legendWidth) legendWidth = len;
     }
     return legendWidth > 0 ? legendWidth + 2 : 0; // gap

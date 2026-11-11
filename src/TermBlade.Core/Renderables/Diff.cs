@@ -78,7 +78,7 @@ public class DiffRenderable : Renderable
 
       var prefix = type switch { '+' => "+ ", '-' => "- ", _ => "  " };
       var line = (prefix + text);
-      if (line.Length > contentW) line = line[..contentW];
+      line = CellBuffer.TruncateToCellWidth(line, contentW);
       buffer.DrawText(contentX, y + row, line, fg, bg);
 
       if (type != '+') oldLine++;

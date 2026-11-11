@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
@@ -45,16 +46,14 @@ public class DoughnutChartRenderable : PieChartRenderable
 
     int centerX = x + chartW / 2;
     int centerY = y + h / 2;
-    int labelStart = centerX - CenterLabel.Length / 2;
+    int labelWidth = CellBuffer.GetTextWidth(CenterLabel.AsSpan());
+    int labelStart = centerX - labelWidth / 2;
     labelStart = Math.Max(x, labelStart);
 
     var fg = Rgba.FromCss(CenterLabelColor);
     var bg = BackgroundColor != null ? Rgba.FromCss(BackgroundColor) : Rgba.FromInts(0, 0, 0, 0);
 
-    string text = CenterLabel;
-    if (labelStart + text.Length > x + chartW)
-      text = text[..Math.Max(0, x + chartW - labelStart)];
-
+    string text = CellBuffer.TruncateToCellWidth(CenterLabel, x + chartW - labelStart);
     if (text.Length > 0)
       buffer.DrawText(labelStart, centerY, text, fg, bg);
   }

@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
@@ -202,7 +203,7 @@ public class CandlestickChartRenderable : Renderable
         var candle = Data[dataIdx];
         string label = candle.Label ?? (dataIdx + 1).ToString();
         int lx = chartX + (int)(ratio * (visibleCandles - 1)) * totalCandleWidth;
-        lx = Math.Min(lx, x + w - label.Length);
+        lx = Math.Min(lx, x + w - CellBuffer.GetTextWidth(label.AsSpan()));
         buffer.DrawText(lx, labelY, label, labelFg, bg);
       }
     }

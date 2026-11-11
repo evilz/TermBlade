@@ -1,3 +1,4 @@
+using System.Globalization;
 using TermBlade.Core.Ansi;
 using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
@@ -82,22 +83,26 @@ public class CalendarRenderable : Renderable
     {
       int maxX = x + contentWidth;
       int col = drawX;
-      foreach (var rune in text.EnumerateRunes())
+      var remaining = text.AsSpan();
+      while (!remaining.IsEmpty)
       {
         if (col >= maxX) break;
+        int graphemeLength = StringInfo.GetNextTextElementLength(remaining);
+        var grapheme = remaining[..graphemeLength];
+        int cellWidth = CellBuffer.GraphemeWidth(grapheme);
+        if (cellWidth > 0 && col + cellWidth > maxX) break;
 
-        int runeWidth = CellBuffer.RuneWidth(rune);
-        if (col + runeWidth > maxX) break;
+        if (cellWidth > 0)
+        {
+          var cellBg = preferredBg.AlphaByte > 0
+              ? preferredBg
+              : buffer.GetCell(col, drawY)?.Bg ?? Rgba.FromInts(0, 0, 0);
 
-        var cellBg = preferredBg.AlphaByte > 0
-            ? preferredBg
-            : buffer.GetCell(col, drawY)?.Bg ?? Rgba.FromInts(0, 0, 0);
+          buffer.DrawGrapheme(col, drawY, grapheme, cellWidth, fg, cellBg, attrs);
+          col += cellWidth;
+        }
 
-        buffer.SetCell(col, drawY, rune.Value, fg, cellBg, attrs);
-        if (runeWidth == 2 && col + 1 < maxX)
-          buffer.SetCell(col + 1, drawY, 0, fg, cellBg, attrs);
-
-        col += runeWidth;
+        remaining = remaining[graphemeLength..];
       }
     }
 
@@ -108,14 +113,13 @@ public class CalendarRenderable : Renderable
     // ── Row 0: Month/Year title ──────────────────────────────────────────────
     if (h > 0)
     {
-      var title = DisplayMonth.ToString("MMMM yyyy");
-      if (title.Length > contentWidth)
-        title = title[..contentWidth];
+      var title = CellBuffer.TruncateToCellWidth(DisplayMonth.ToString("MMMM yyyy"), contentWidth);
+      int titleWidth = CellBuffer.GetTextWidth(title.AsSpan());
       int titleX = TitleAlignment switch
       {
-        "right" => x + Math.Max(0, contentWidth - title.Length),
+        "right" => x + Math.Max(0, contentWidth - titleWidth),
         "left" => x,
-        _ => x + Math.Max(0, (contentWidth - title.Length) / 2), // "center"
+        _ => x + Math.Max(0, (contentWidth - titleWidth) / 2), // "center"
       };
       DrawBoundedText(titleX, y, title, titleFg, bg, TextAttributes.Bold);
     }

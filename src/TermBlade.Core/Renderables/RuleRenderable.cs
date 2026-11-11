@@ -1,5 +1,6 @@
 using System.Text.Json;
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Input;
 using TermBlade.Core.Layout;
 using TermBlade.Core.Rendering;
@@ -20,11 +21,13 @@ public class RuleRenderable : LabelRenderable
     if (ComputedWidth <= 0 || ComputedHeight <= 0) return;
     var originalContent = Content;
     var line = new string(RuleCharacter, ComputedWidth);
-    if (!string.IsNullOrEmpty(originalContent) && originalContent.Length + 2 < ComputedWidth)
+    var title = CellBuffer.TruncateToCellWidth($" {originalContent} ", Math.Max(0, ComputedWidth - 2));
+    int titleWidth = CellBuffer.GetTextWidth(title.AsSpan());
+    if (!string.IsNullOrEmpty(originalContent) && titleWidth + 2 < ComputedWidth)
     {
-      var title = $" {originalContent} ";
-      var start = (ComputedWidth - title.Length) / 2;
-      line = line.Remove(start, title.Length).Insert(start, title);
+      int leftWidth = (ComputedWidth - titleWidth) / 2;
+      int rightWidth = ComputedWidth - leftWidth - titleWidth;
+      line = new string(RuleCharacter, leftWidth) + title + new string(RuleCharacter, rightWidth);
     }
     Content = line;
     base.RenderSelf(buffer, deltaTime);

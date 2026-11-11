@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using TermBlade.Core.Ansi;
@@ -133,18 +134,9 @@ public class MarkdownRenderable : Renderable
   {
     if (w <= 0 || string.IsNullOrEmpty(text)) return 0;
 
-    int col = 0;
-    foreach (var rune in text.EnumerateRunes())
-    {
-      int runeWidth = CellBuffer.RuneWidth(rune);
-      if (col + runeWidth > w)
-        break;
-
-      buffer.DrawText(x + col, y, rune.ToString(), fg, bg, attrs);
-      col += runeWidth;
-    }
-
-    return col;
+    var visible = CellBuffer.TruncateToCellWidth(text, w);
+    buffer.DrawText(x, y, visible, fg, bg, attrs);
+    return CellBuffer.GetTextWidth(visible.AsSpan());
   }
 
   private static void RenderInline(RenderBuffer buffer, int x, int y, int w, string text)
@@ -208,16 +200,11 @@ public class MarkdownRenderable : Renderable
         }
       }
 
-      // Regular Unicode scalar
-      if (Rune.TryGetRuneAt(text, i, out var rune))
-      {
-        col += DrawTextClipped(buffer, x + col, y, w - col, rune.ToString(), DefaultFg, DefaultBg);
-        i += rune.Utf16SequenceLength;
-      }
-      else
-      {
-        i++;
-      }
+      // Keep combining marks, variation selectors and joined emoji with their base rune.
+      int graphemeLength = StringInfo.GetNextTextElementLength(text.AsSpan(i));
+      col += DrawTextClipped(buffer, x + col, y, w - col,
+          text.Substring(i, graphemeLength), DefaultFg, DefaultBg);
+      i += graphemeLength;
     }
   }
 }

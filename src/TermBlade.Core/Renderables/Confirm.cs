@@ -93,7 +93,7 @@ public class ConfirmRenderable : Renderable
     buffer.FillRect(x, y, w, h, bg);
 
     // Draw message
-    var msg = Message.Length > w ? Message[..w] : Message;
+    var msg = CellBuffer.TruncateToCellWidth(Message, w);
     buffer.DrawText(x, y, msg, fg, bg);
 
     // Draw Yes/No buttons on the next row
@@ -104,8 +104,8 @@ public class ConfirmRenderable : Renderable
 
       var yesText = $" {YesLabel} ";
       var noText = $" {NoLabel} ";
-      var yesClipped = TruncateToCellWidth(yesText, w);
-      var yesWidth = GetCellWidth(yesClipped);
+      var yesClipped = CellBuffer.TruncateToCellWidth(yesText, w);
+      var yesWidth = CellBuffer.GetTextWidth(yesClipped.AsSpan());
 
       if (!string.IsNullOrEmpty(yesClipped))
         buffer.DrawText(x, y + 1, yesClipped, fg, yesBg);
@@ -120,34 +120,12 @@ public class ConfirmRenderable : Renderable
 
       if (noMaxWidth > 0)
       {
-        var noClipped = TruncateToCellWidth(noText, noMaxWidth);
+        var noClipped = CellBuffer.TruncateToCellWidth(noText, noMaxWidth);
         if (!string.IsNullOrEmpty(noClipped))
           buffer.DrawText(noX, y + 1, noClipped, fg, noBg);
       }
     }
   }
 
-  private static int GetCellWidth(string text)
-  {
-    int width = 0;
-    foreach (var rune in text.EnumerateRunes())
-      width += CellBuffer.RuneWidth(rune);
-    return width;
-  }
 
-  private static string TruncateToCellWidth(string text, int maxWidth)
-  {
-    if (maxWidth <= 0 || string.IsNullOrEmpty(text)) return string.Empty;
-    int width = 0;
-    int length = 0;
-    foreach (var rune in text.EnumerateRunes())
-    {
-      int runeWidth = CellBuffer.RuneWidth(rune);
-      if (width + runeWidth > maxWidth) break;
-      width += runeWidth;
-      length += rune.Utf16SequenceLength;
-    }
-
-    return text.Length == length ? text : text[..length];
-  }
 }

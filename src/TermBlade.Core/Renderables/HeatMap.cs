@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
@@ -94,7 +95,7 @@ public class HeatMapRenderable : Renderable
     int rowLabelWidth = 0;
     if (RowLabels != null)
     {
-      rowLabelWidth = RowLabels.Select(l => l.Length).DefaultIfEmpty(0).Max();
+      rowLabelWidth = RowLabels.Select(label => CellBuffer.GetTextWidth(label.AsSpan())).DefaultIfEmpty(0).Max();
       rowLabelWidth += 1;
     }
 
@@ -111,9 +112,8 @@ public class HeatMapRenderable : Renderable
       for (int c = 0; c < cols && c < ColumnLabels.Count; c++)
       {
         int cx = gridX + c * CellWidth;
-        var label = ColumnLabels[c];
-        if (label.Length > CellWidth) label = label[..CellWidth];
-        if (cx + label.Length <= x + w)
+        var label = CellBuffer.TruncateToCellWidth(ColumnLabels[c], CellWidth);
+        if (cx + CellBuffer.GetTextWidth(label.AsSpan()) <= x + w)
           buffer.DrawText(cx, y, label, labelFg, bg);
       }
     }
@@ -143,7 +143,9 @@ public class HeatMapRenderable : Renderable
       // Row label
       if (RowLabels != null && r < RowLabels.Count)
       {
-        var label = RowLabels[r].PadLeft(rowLabelWidth - 1);
+        var labelText = RowLabels[r];
+        int labelTextWidth = CellBuffer.GetTextWidth(labelText.AsSpan());
+        var label = new string(' ', Math.Max(0, rowLabelWidth - 1 - labelTextWidth)) + labelText;
         buffer.DrawText(x, ry, label, labelFg, bg);
       }
 
@@ -170,7 +172,7 @@ public class HeatMapRenderable : Renderable
         if (ShowValues && CellWidth >= 3)
         {
           string val = Data[r][c].ToString("F1");
-          if (val.Length > CellWidth) val = val[..CellWidth];
+          val = CellBuffer.TruncateToCellWidth(val, CellWidth);
           // Use contrasting text color
           var textFg = GetContrastColor(cellColor);
           buffer.DrawText(cx, ry, val, textFg, cellColor);

@@ -116,16 +116,18 @@ namespace TermBlade.Core.Buffer
       _cells[y * Width + x] = new Cell { Codepoint = codepoint, Fg = fg, Bg = bg, Attributes = attrs };
     }
 
-    private void SetGrapheme(int x, int y, string grapheme, Rgba fg, Rgba bg,
+    private void SetGrapheme(int x, int y, ReadOnlySpan<char> grapheme, Rgba fg, Rgba bg,
                              TextAttributes attrs)
     {
       if (!InBounds(x, y)) return;
-      var firstRune = grapheme.EnumerateRunes().GetEnumerator();
-      if (!firstRune.MoveNext()) return;
+      var runes = grapheme.EnumerateRunes();
+      if (!runes.MoveNext()) return;
+      var firstRune = runes.Current;
+      var hasMultipleRunes = runes.MoveNext();
       _cells[y * Width + x] = new Cell
       {
-        Codepoint = firstRune.Current.Value,
-        Grapheme = grapheme,
+        Codepoint = firstRune.Value,
+        Grapheme = hasMultipleRunes ? grapheme.ToString() : null,
         Fg = fg,
         Bg = bg,
         Attributes = attrs,
@@ -143,18 +145,30 @@ namespace TermBlade.Core.Buffer
       Guard();
       var bgColor = bg ?? Rgba.FromInts(0, 0, 0, 0);
       int col = x;
-      var elements = StringInfo.GetTextElementEnumerator(text);
-      while (elements.MoveNext())
+      var remaining = text.AsSpan();
+      while (!remaining.IsEmpty)
       {
         if (col >= Width) break;
-        var grapheme = elements.GetTextElement();
+        int graphemeLength = StringInfo.GetNextTextElementLength(remaining);
+        var grapheme = remaining[..graphemeLength];
         int w = GraphemeWidth(grapheme);
-        if (w == 0) continue;
-        if (w == 2 && col + 1 >= Width) break;
+        if (w == 0)
+        {
+          remaining = remaining[graphemeLength..];
+          continue;
+        }
+        if (col < 0)
+        {
+          col += w;
+          remaining = remaining[graphemeLength..];
+          continue;
+        }
+        if (w > 1 && col + w > Width) break;
         SetGrapheme(col, y, grapheme, fg, bgColor, attrs);
-        if (w == 2 && col + 1 < Width)
-          SetCell(col + 1, y, 0, fg, bgColor, attrs); // continuation cell
+        for (int continuation = 1; continuation < w; continuation++)
+          SetCell(col + continuation, y, 0, fg, bgColor, attrs);
         col += w;
+        remaining = remaining[graphemeLength..];
       }
     }
 
@@ -205,11 +219,12 @@ namespace TermBlade.Core.Buffer
 
       if (title != null && top && width > 4)
       {
-        var t = title.Length > width - 4 ? title[..(width - 4)] : title;
+        var t = TruncateToCellWidth(title, width - 4);
+        int titleWidth = GetTextWidth(t.AsSpan());
         int tx = titleAlign switch
         {
-          TextAlignment.Center => x + (width - t.Length) / 2,
-          TextAlignment.Right => x + width - t.Length - 2,
+          TextAlignment.Center => x + (width - titleWidth) / 2,
+          TextAlignment.Right => x + width - titleWidth - 2,
           _ => x + 2,
         };
         DrawText(t, tx, y, borderColor, bg);
@@ -217,11 +232,12 @@ namespace TermBlade.Core.Buffer
 
       if (bottomTitle != null && bot && width > 4)
       {
-        var t = bottomTitle.Length > width - 4 ? bottomTitle[..(width - 4)] : bottomTitle;
+        var t = TruncateToCellWidth(bottomTitle, width - 4);
+        int titleWidth = GetTextWidth(t.AsSpan());
         int tx = bottomTitleAlign switch
         {
-          TextAlignment.Center => x + (width - t.Length) / 2,
-          TextAlignment.Right => x + width - t.Length - 2,
+          TextAlignment.Center => x + (width - titleWidth) / 2,
+          TextAlignment.Right => x + width - titleWidth - 2,
           _ => x + 2,
         };
         DrawText(t, tx, y + height - 1, borderColor, bg);
@@ -265,12 +281,51 @@ namespace TermBlade.Core.Buffer
           var cell = src.GetCell(srcX + fx, srcY + fy);
           if (cell == null) continue;
           var c = cell.Value;
+
+          // Copy a wide cluster as one unit so a source crop or destination edge
+          // cannot leave only its leading cell visible.
+          if (c.Codepoint == 0)
+          {
+            if (RespectAlpha && c.Bg.AlphaByte < 255)
+            {
+              var existing = _cells[dy * Width + dx];
+              c.Bg = c.Bg.BlendOver(existing.Bg);
+            }
+            _cells[dy * Width + dx] = c;
+            continue;
+          }
+
+          int cellWidth = GetCellWidth(c);
+          if (cellWidth > 1)
+          {
+            if (fx + cellWidth > sw || srcX + fx + cellWidth > src.Width ||
+                dx + cellWidth > Width || !InBounds(dx + cellWidth - 1, dy))
+            {
+              fx += cellWidth - 1;
+              continue;
+            }
+          }
+
           if (RespectAlpha && c.Bg.AlphaByte < 255)
           {
             var existing = _cells[dy * Width + dx];
             c.Bg = c.Bg.BlendOver(existing.Bg);
           }
           _cells[dy * Width + dx] = c;
+
+          for (int continuation = 1; continuation < cellWidth; continuation++)
+          {
+            var continuationCell = src.GetCell(srcX + fx + continuation, srcY + fy);
+            if (continuationCell == null) break;
+            var continuationValue = continuationCell.Value;
+            if (RespectAlpha && continuationValue.Bg.AlphaByte < 255)
+            {
+              var existing = _cells[dy * Width + dx + continuation];
+              continuationValue.Bg = continuationValue.Bg.BlendOver(existing.Bg);
+            }
+            _cells[dy * Width + dx + continuation] = continuationValue;
+          }
+          fx += Math.Max(0, cellWidth - 1);
         }
     }
 
@@ -290,7 +345,13 @@ namespace TermBlade.Core.Buffer
       for (int i = 0; i < newCells.Length; i++) newCells[i] = empty;
       for (int fy = 0; fy < Math.Min(Height, height); fy++)
         for (int fx = 0; fx < Math.Min(Width, width); fx++)
-          newCells[fy * width + fx] = _cells[fy * Width + fx];
+        {
+          var cell = _cells[fy * Width + fx];
+          if (cell.Codepoint != 0 && fx + GetCellWidth(cell) > width)
+            continue;
+
+          newCells[fy * width + fx] = cell;
+        }
       _cells = newCells;
       Width = width;
       Height = height;
@@ -334,14 +395,16 @@ namespace TermBlade.Core.Buffer
     // ── grapheme width detection ──────────────────────────────────────────────
 
     /// <summary>
-    /// Approximate East Asian / emoji display width (1 or 2 columns).
-    /// Mirrors the wcwidth / unicode width modes in the Zig implementation.
+    /// Returns the approximate terminal width of one Unicode scalar: zero, one, or two columns.
     /// </summary>
+    /// <param name="rune">The Unicode scalar to measure.</param>
+    /// <returns>The approximate number of terminal columns occupied by the scalar.</returns>
     public static int RuneWidth(System.Text.Rune rune)
     {
       int v = rune.Value;
       var category = Rune.GetUnicodeCategory(rune);
       if (category is UnicodeCategory.NonSpacingMark or UnicodeCategory.EnclosingMark or
+          UnicodeCategory.SpacingCombiningMark or
           UnicodeCategory.Format or UnicodeCategory.Control)
         return 0;
       if (v < 0x1100) return 1;
@@ -363,19 +426,142 @@ namespace TermBlade.Core.Buffer
       return 1;
     }
 
-    /// <summary>Returns the terminal column width of one Unicode grapheme cluster.</summary>
+    /// <summary>Returns the approximate terminal width of exactly one Unicode grapheme cluster.</summary>
+    /// <param name="grapheme">A string containing exactly one grapheme cluster.</param>
+    /// <returns>The approximate number of terminal columns occupied by the cluster.</returns>
+    /// <exception cref="ArgumentException">The value is empty or contains more than one grapheme cluster.</exception>
     public static int GraphemeWidth(string grapheme)
     {
       ArgumentException.ThrowIfNullOrEmpty(grapheme);
+      var text = grapheme.AsSpan();
+      if (StringInfo.GetNextTextElementLength(text) != text.Length)
+        throw new ArgumentException("The value must contain exactly one grapheme cluster.", nameof(grapheme));
+
+      return GraphemeWidth(text);
+    }
+
+    internal static int GraphemeWidth(ReadOnlySpan<char> grapheme)
+    {
       int width = 0;
-      bool joinedEmoji = false;
+      int regionalIndicators = 0;
+      int spacingCharacters = 0;
+      bool onlyRegionalIndicators = true;
+      bool onlyHangulJamo = true;
+      int emojiBaseCount = 0;
+      bool hasKeycapBase = false;
+      bool hasJoiner = false;
+      bool hasEmojiVariationSelector = false;
+      bool hasTextVariationSelector = false;
+      bool hasEmojiModifier = false;
+      bool hasKeycap = false;
+
       foreach (var rune in grapheme.EnumerateRunes())
       {
-        joinedEmoji |= rune.Value == 0x200D || rune.Value == 0xFE0F;
-        width = Math.Max(width, RuneWidth(rune));
+        int value = rune.Value;
+        hasJoiner |= value == 0x200D;
+        hasEmojiVariationSelector |= value == 0xFE0F;
+        hasTextVariationSelector |= value == 0xFE0E;
+        hasEmojiModifier |= value >= 0x1F3FB && value <= 0x1F3FF;
+        hasKeycap |= value == 0x20E3;
+        if (IsEmojiBase(value) && (value < 0x1F3FB || value > 0x1F3FF))
+          emojiBaseCount++;
+        hasKeycapBase |= value == 0x23 || value == 0x2A || (value >= 0x30 && value <= 0x39);
+
+        if (value >= 0x1F1E6 && value <= 0x1F1FF)
+          regionalIndicators++;
+        else
+          onlyRegionalIndicators = false;
+
+        var category = Rune.GetUnicodeCategory(rune);
+        if (!IsHangulJamo(value) && category is not
+            (UnicodeCategory.NonSpacingMark or UnicodeCategory.EnclosingMark or
+             UnicodeCategory.SpacingCombiningMark or UnicodeCategory.Format))
+          onlyHangulJamo = false;
+
+        int runeWidth = RuneWidth(rune);
+        if (runeWidth > 0)
+        {
+          spacingCharacters++;
+          width += runeWidth;
+        }
       }
-      return joinedEmoji ? 2 : width;
+
+      if (onlyRegionalIndicators && regionalIndicators > 1)
+        return 2;
+      if (hasTextVariationSelector && emojiBaseCount > 0 && !hasKeycap)
+        return 1;
+      if ((hasEmojiVariationSelector || hasEmojiModifier) && emojiBaseCount > 0)
+        return 2;
+      if (hasJoiner && emojiBaseCount > 1)
+        return 2;
+      if (hasKeycapBase && (hasEmojiVariationSelector || hasKeycap))
+        return 2;
+      if (onlyHangulJamo && spacingCharacters > 1)
+        return 2;
+
+      return width;
     }
+
+    private static int GetCellWidth(Cell cell)
+    {
+      if (cell.Codepoint == 0)
+        return 0;
+      if (cell.Grapheme != null)
+        return GraphemeWidth(cell.Grapheme);
+      return Rune.TryCreate(cell.Codepoint, out var rune) ? RuneWidth(rune) : 1;
+    }
+
+    internal static int GetTextWidth(ReadOnlySpan<char> text)
+    {
+      int width = 0;
+      while (!text.IsEmpty)
+      {
+        int graphemeLength = StringInfo.GetNextTextElementLength(text);
+        width += GraphemeWidth(text[..graphemeLength]);
+        text = text[graphemeLength..];
+      }
+
+      return width;
+    }
+
+    internal static string TruncateToCellWidth(string text, int maxWidth)
+    {
+      if (maxWidth <= 0 || string.IsNullOrEmpty(text))
+        return string.Empty;
+
+      int width = 0;
+      int length = 0;
+      var remaining = text.AsSpan();
+      while (!remaining.IsEmpty)
+      {
+        int graphemeLength = StringInfo.GetNextTextElementLength(remaining);
+        int graphemeWidth = GraphemeWidth(remaining[..graphemeLength]);
+        if (width + graphemeWidth > maxWidth)
+          break;
+
+        width += graphemeWidth;
+        length += graphemeLength;
+        remaining = remaining[graphemeLength..];
+      }
+
+      return length == text.Length ? text : text[..length];
+    }
+
+    private static bool IsEmojiBase(int value)
+        => (value >= 0x1F000 && value <= 0x1FAFF)
+            || (value >= 0x2600 && value <= 0x27BF)
+            || value is 0x00A9 or 0x00AE or 0x203C or 0x2049 or 0x2122 or 0x2139
+                or 0x2194 or 0x2195 or 0x2196 or 0x2197 or 0x2198 or 0x2199 or 0x21A9 or 0x21AA
+                or 0x231A or 0x231B or 0x2328 or 0x23CF
+                or 0x23E9 or 0x23EA or 0x23EB or 0x23EC or 0x23ED or 0x23EE or 0x23EF
+                or 0x23F0 or 0x23F1 or 0x23F2 or 0x23F3 or 0x23F8 or 0x23F9 or 0x23FA
+                or 0x24C2 or 0x25AA or 0x25AB or 0x25B6 or 0x25C0
+                or 0x2934 or 0x2935 or 0x3030 or 0x303D or 0x3297 or 0x3299;
+
+    private static bool IsHangulJamo(int value)
+        => (value >= 0x1100 && value <= 0x11FF)
+            || (value >= 0xA960 && value <= 0xA97F)
+            || (value >= 0xD7B0 && value <= 0xD7FF);
 
     // ── IDisposable ───────────────────────────────────────────────────────────
 

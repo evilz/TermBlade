@@ -1,5 +1,6 @@
 using System.Text.Json;
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Input;
 using TermBlade.Core.Layout;
 using TermBlade.Core.Rendering;
@@ -50,10 +51,11 @@ public class LabelRenderable : Renderable
     for (var row = 0; row < Math.Min(h, lines.Length); row++)
     {
       var line = TrimToWidth(lines[row], w);
+      int lineWidth = CellBuffer.GetTextWidth(line.AsSpan());
       var x = TextAlign switch
       {
-        "center" => ScreenX + Math.Max(0, (w - line.Length) / 2),
-        "right" => ScreenX + Math.Max(0, w - line.Length),
+        "center" => ScreenX + Math.Max(0, (w - lineWidth) / 2),
+        "right" => ScreenX + Math.Max(0, w - lineWidth),
         _ => ScreenX,
       };
       buffer.DrawText(x, ScreenY + row, line, fg, bg, Attributes);
@@ -64,5 +66,5 @@ public class LabelRenderable : Renderable
     => string.IsNullOrWhiteSpace(color) || color == "transparent" ? fallback : Rgba.FromCss(color);
 
   public static string TrimToWidth(string text, int width)
-    => text.Length <= width ? text : text[..Math.Max(0, width)];
+    => CellBuffer.TruncateToCellWidth(text, width);
 }
