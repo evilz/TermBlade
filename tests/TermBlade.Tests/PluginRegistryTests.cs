@@ -192,6 +192,8 @@ namespace TermBlade.Tests
 
       Assert.Throws<ArgumentNullException>(() => reg.Register(null!));
       Assert.Throws<ArgumentException>(() => reg.Register(new DemoPlugin(" ")));
+      var emptyNameException = Assert.Throws<ArgumentException>(() => reg.Get(""));
+      Assert.Contains("empty", emptyNameException.Message.ToLowerInvariant());
       Assert.Throws<ArgumentException>(() => reg.Get(" "));
       Assert.Throws<ArgumentException>(() => reg.Has(" "));
       Assert.Throws<ArgumentException>(() => reg.Unregister(" "));
