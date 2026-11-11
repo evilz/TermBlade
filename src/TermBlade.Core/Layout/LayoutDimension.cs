@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace TermBlade.Core.Layout;
 
 /// <summary>
@@ -29,30 +31,67 @@ public readonly struct LayoutDimension
   /// Gets the fixed.
   /// </summary>
   /// <param name="v">The v value.</param>
-  public static LayoutDimension Fixed(float v) => new(DimType.Fixed, v);
+  /// <exception cref="ArgumentOutOfRangeException">The value is negative or not finite.</exception>
+  public static LayoutDimension Fixed(float v)
+  {
+    ValidateValue(v, nameof(v));
+    return new(DimType.Fixed, v);
+  }
   /// <summary>
   /// Gets the percent.
   /// </summary>
   /// <param name="v">The v value.</param>
-  public static LayoutDimension Percent(float v) => new(DimType.Percent, v);
+  /// <exception cref="ArgumentOutOfRangeException">The value is negative or not finite.</exception>
+  public static LayoutDimension Percent(float v)
+  {
+    ValidateValue(v, nameof(v));
+    return new(DimType.Percent, v);
+  }
 
   /// <summary>
-  /// Parse.
+  /// Parses a fixed or percentage dimension using invariant numeric syntax.
   /// </summary>
   /// <param name="value">The value value.</param>
+  /// <exception cref="FormatException">A string is not <c>auto</c> or a valid invariant number.</exception>
+  /// <exception cref="ArgumentOutOfRangeException">A numeric value is negative or not finite.</exception>
   public static LayoutDimension Parse(object? value)
   {
     return value switch
     {
       null => Auto,
-      int i => Fixed(i),
-      float f => Fixed(f),
-      double d => Fixed((float)d),
+      int i => CreateParsedValue(i, DimType.Fixed),
+      float f => CreateParsedValue(f, DimType.Fixed),
+      double d => CreateParsedValue((float)d, DimType.Fixed),
       string s when s.Equals("auto", StringComparison.OrdinalIgnoreCase) => Auto,
-      string s when s.EndsWith('%') && float.TryParse(s[..^1], out var pct) => Percent(pct),
-      string s when float.TryParse(s, out var n) => Fixed(n),
+      string s => ParseString(s),
       _ => Auto,
     };
+  }
+
+  private static LayoutDimension ParseString(string value)
+  {
+    var text = value.Trim();
+    if (text.Equals("auto", StringComparison.OrdinalIgnoreCase))
+      return Auto;
+
+    bool isPercent = text.EndsWith('%');
+    var number = isPercent ? text[..^1].Trim() : text;
+    if (!float.TryParse(number, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed))
+      throw new FormatException($"'{value}' is not a valid layout dimension.");
+
+    return CreateParsedValue(parsed, isPercent ? DimType.Percent : DimType.Fixed);
+  }
+
+  private static LayoutDimension CreateParsedValue(float value, DimType type)
+  {
+    ValidateValue(value, nameof(value));
+    return new(type, value);
+  }
+
+  private static void ValidateValue(float value, string paramName)
+  {
+    if (!float.IsFinite(value) || value < 0)
+      throw new ArgumentOutOfRangeException(paramName, value, "Layout dimensions must be finite and non-negative.");
   }
 
   /// <summary>
