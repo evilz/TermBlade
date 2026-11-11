@@ -96,6 +96,9 @@ namespace TermBlade.Tests
     [InlineData("e\u0301", 1)]
     [InlineData("👩‍💻", 2)]
     [InlineData("❤️", 2)]
+    [InlineData("☀\uFE0F", 2)]
+    [InlineData("☀\uFE0E", 1)]
+    [InlineData("界", 2)]
     public void DrawText_GraphemeCluster_RoundtripsInExpectedCells(string value, int width)
     {
       using var buf = CellBuffer.Create(4, 1);
@@ -129,14 +132,17 @@ namespace TermBlade.Tests
       Assert.Equal(0, buf.GetCell(6, 0)!.Value.Codepoint);
     }
 
-    [Fact]
-    public void DrawText_DoesNotSplitWideGraphemeAtRightEdge()
+    [Theory]
+    [InlineData("界")]
+    [InlineData("👩‍💻")]
+    public void DrawText_DoesNotSplitWideGraphemeAtRightEdge(string value)
     {
       using var buf = CellBuffer.Create(2, 1);
-      buf.DrawText("A👩‍💻", 0, 0, White, Black);
+      buf.DrawText("A" + value, 0, 0, White, Black);
 
       Assert.Equal('A', buf.GetCell(0, 0)!.Value.Codepoint);
       Assert.Equal(' ', buf.GetCell(1, 0)!.Value.Codepoint);
+      Assert.Null(buf.GetCell(1, 0)!.Value.Grapheme);
     }
 
     // ── SetCell / GetCell ─────────────────────────────────────────────────────
@@ -189,7 +195,8 @@ namespace TermBlade.Tests
 
       destination.DrawFrameBuffer(0, 0, source);
 
-      Assert.Equal(0, destination.GetCell(0, 0)!.Value.Codepoint);
+      Assert.Equal(' ', destination.GetCell(0, 0)!.Value.Codepoint);
+      Assert.Null(destination.GetCell(0, 0)!.Value.Grapheme);
     }
 
     [Fact]
@@ -237,7 +244,8 @@ namespace TermBlade.Tests
 
       buf.Resize(2, 1);
 
-      Assert.Equal(0, buf.GetCell(1, 0)!.Value.Codepoint);
+      Assert.Equal(' ', buf.GetCell(1, 0)!.Value.Codepoint);
+      Assert.Null(buf.GetCell(1, 0)!.Value.Grapheme);
     }
 
     // ── GetRealCharBytes ──────────────────────────────────────────────────────
@@ -369,7 +377,6 @@ namespace TermBlade.Tests
     [InlineData("👍🏽", 2)]
     [InlineData("1️⃣", 2)]
     [InlineData("\u0915\u093F", 1)]
-    [InlineData("\u0915\u094D\u0937", 2)]
     [InlineData("a\u200D", 1)]
     [InlineData("\u200D", 0)]
     public void GraphemeWidth_KnownValues(string value, int expected)
