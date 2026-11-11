@@ -95,7 +95,7 @@ public class CliRenderer : IDisposable
   private readonly CliRendererConfig _config;
   private RenderBuffer? _prevBuffer;
   private bool _running;
-  private bool _disposed;
+  private volatile bool _disposed;
   private volatile bool _renderRequested;
   private Rgba _backgroundColor;
   private Thread? _stdinThread;
@@ -242,15 +242,20 @@ public class CliRenderer : IDisposable
   /// </summary>
   public Renderable? CurrentFocus { get; private set; }
 
-  internal void OnRenderableFocused(Renderable r)
+  internal bool OnRenderableFocused(Renderable r)
   {
+    if (_disposed) return false;
+
     if (CurrentFocus != null && CurrentFocus != r)
     {
       var prev = CurrentFocus;
       CurrentFocus = null; // prevent re-entry before Blur emits
       prev.Blur();
     }
+
+    if (_disposed) return false;
     CurrentFocus = r;
+    return true;
   }
 
   internal void OnRenderableBlurred(Renderable r)
@@ -273,8 +278,16 @@ public class CliRenderer : IDisposable
   /// </summary>
   public void RequestRender()
   {
+    if (_disposed) return;
     _renderRequested = true;
-    _renderSignal.Set();
+    try
+    {
+      _renderSignal.Set();
+    }
+    catch (ObjectDisposedException)
+    {
+      // A concurrent disposal can close the signal after the disposed check.
+    }
   }
 
   internal void RegisterRenderable(Renderable r)
@@ -417,19 +430,35 @@ public class CliRenderer : IDisposable
 
     _renderThread?.Join(TimeSpan.FromSeconds(1));
     _stdinThread?.Join(TimeSpan.FromSeconds(1));
-    _renderSignal.Dispose();
 
-    if (!_config.Testing)
+    try
     {
-      // Disable mouse
-      SysConsole.Write("\x1b[?1000l\x1b[?1002l\x1b[?1006l");
-      // Re-enable autowrap
-      SysConsole.Write("\x1b[?7h");
-      SysConsole.Write(AnsiCodes.ShowCursor);
-      SysConsole.Write(AnsiCodes.SwitchToMain);
-      SysConsole.Write(AnsiCodes.Reset);
-      SysConsole.Out.Flush();
-      SetRawMode(false);
+      try
+      {
+        CurrentFocus?.Blur();
+      }
+      finally
+      {
+        Root.Destroy();
+      }
+    }
+    finally
+    {
+      _prevBuffer = null;
+      _renderSignal.Dispose();
+
+      if (!_config.Testing)
+      {
+        // Disable mouse
+        SysConsole.Write("\x1b[?1000l\x1b[?1002l\x1b[?1006l");
+        // Re-enable autowrap
+        SysConsole.Write("\x1b[?7h");
+        SysConsole.Write(AnsiCodes.ShowCursor);
+        SysConsole.Write(AnsiCodes.SwitchToMain);
+        SysConsole.Write(AnsiCodes.Reset);
+        SysConsole.Out.Flush();
+        SetRawMode(false);
+      }
     }
   }
 

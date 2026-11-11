@@ -159,6 +159,7 @@ public abstract class Renderable : EventEmitter
   protected CliRenderer? Renderer { get; private set; }
 
   private readonly List<Renderable> _children = new();
+  private volatile bool _destroyed;
 
   protected Renderable(CliRenderer? renderer = null)
   {
@@ -167,29 +168,59 @@ public abstract class Renderable : EventEmitter
   }
 
   /// <summary>
-  /// Add.
+  /// Adds or reparents a child renderable.
   /// </summary>
   /// <param name="child">The child value.</param>
+  /// <exception cref="ArgumentNullException">The child is null.</exception>
+  /// <exception cref="ArgumentException">Adding the child would create a cycle.</exception>
+  /// <exception cref="ObjectDisposedException">This renderable or the child was destroyed.</exception>
   public void Add(Renderable child)
   {
+    ArgumentNullException.ThrowIfNull(child);
+    if (_destroyed)
+      throw new ObjectDisposedException(GetType().Name);
+    if (child._destroyed)
+      throw new ObjectDisposedException(child.GetType().Name);
+    if (ReferenceEquals(child.Parent, this))
+      return;
+
+    for (Renderable? ancestor = this; ancestor != null; ancestor = ancestor.Parent)
+    {
+      if (ReferenceEquals(ancestor, child))
+        throw new ArgumentException("Adding this renderable would create a cycle.", nameof(child));
+    }
+
+    child.Parent?.Remove(child);
+    if (child._destroyed)
+      throw new ObjectDisposedException(child.GetType().Name);
+    if (!ReferenceEquals(child.Renderer, Renderer))
+      child.DetachRenderer();
+
     child.Parent = this;
-    child.Renderer = Renderer;
+    child.SetRenderer(Renderer);
     _children.Add(child);
     LayoutNode.AddChild(child.LayoutNode);
   }
 
   /// <summary>
-  /// Remove.
+  /// Detaches a child renderable without destroying it.
   /// </summary>
   /// <param name="id">The id value.</param>
   public void Remove(string id)
   {
     var child = _children.FirstOrDefault(c => c.Id == id);
-    child?.Parent = null;
-    if (child == null) return;
+    if (child != null)
+      Remove(child);
+  }
 
-    _children.Remove(child);
+  private void Remove(Renderable child)
+  {
+    if (!_children.Remove(child)) return;
+
     LayoutNode.RemoveChild(child.LayoutNode);
+    if (ReferenceEquals(child.Parent, this))
+      child.Parent = null;
+    child.DetachRenderer();
   }
 
   /// <summary>
@@ -202,9 +233,14 @@ public abstract class Renderable : EventEmitter
   /// </summary>
   public void Focus()
   {
-    if (Focused) return;
-    Renderer?.OnRenderableFocused(this);
+    var renderer = Renderer;
+    if (_destroyed || Focused || renderer == null) return;
     Focused = true;
+    if (!renderer.OnRenderableFocused(this))
+    {
+      Focused = false;
+      return;
+    }
     Emit("focused");
   }
 
@@ -212,10 +248,13 @@ public abstract class Renderable : EventEmitter
   /// Blur.
   /// </summary>
   public void Blur()
+    => Blur(Renderer);
+
+  private void Blur(CliRenderer? renderer)
   {
     if (!Focused) return;
-    Renderer?.OnRenderableBlurred(this);
     Focused = false;
+    renderer?.OnRenderableBlurred(this);
     Emit("blurred");
   }
 
@@ -232,17 +271,67 @@ public abstract class Renderable : EventEmitter
   /// <summary>
   /// Gets the request render.
   /// </summary>
-  public void RequestRender() => Renderer?.RequestRender();
+  public void RequestRender()
+  {
+    if (!_destroyed)
+      Renderer?.RequestRender();
+  }
 
   /// <summary>
-  /// Destroy.
+  /// Destroys this renderable and its children, detaches it from its parent and renderer,
+  /// and releases owned resources. Repeated calls have no effect.
   /// </summary>
   public virtual void Destroy()
   {
-    Emit("destroyed");
-    foreach (var child in _children) child.Destroy();
-    RemoveAllListeners();
+    if (_destroyed) return;
+    _destroyed = true;
+
+    if (Parent is { } parent)
+      parent.Remove(this);
+    else
+      DetachRenderer();
+
+    Exception? failure = null;
+    try
+    {
+      Emit("destroyed");
+    }
+    catch (Exception exception)
+    {
+      failure = exception;
+    }
+
+    foreach (var child in _children.ToArray())
+    {
+      try
+      {
+        child.Destroy();
+      }
+      catch (Exception exception)
+      {
+        failure ??= exception;
+      }
+    }
+
+    try
+    {
+      DisposeResources();
+    }
+    catch (Exception exception)
+    {
+      failure ??= exception;
+    }
+    finally
+    {
+      RemoveAllListeners();
+    }
+
+    if (failure != null)
+      System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failure).Throw();
   }
+
+  /// <summary>Releases resources owned by this renderable when it is destroyed.</summary>
+  protected virtual void DisposeResources() { }
 
   /// <summary>
   /// Render.
@@ -251,7 +340,7 @@ public abstract class Renderable : EventEmitter
   /// <param name="deltaTime">The deltaTime value.</param>
   public virtual void Render(RenderBuffer buffer, double deltaTime)
   {
-    if (!Visible) return;
+    if (_destroyed || !Visible) return;
 
     ScreenX = (Parent?.ScreenX ?? 0) + X;
     ScreenY = (Parent?.ScreenY ?? 0) + Y;
@@ -261,6 +350,34 @@ public abstract class Renderable : EventEmitter
     var sorted = _children.Where(c => c.Visible).OrderBy(c => c.ZIndex).ToList();
     foreach (var child in sorted)
       child.Render(buffer, deltaTime);
+  }
+
+  private bool Contains(Renderable renderable)
+  {
+    for (Renderable? current = renderable; current != null; current = current.Parent)
+    {
+      if (ReferenceEquals(current, this))
+        return true;
+    }
+
+    return false;
+  }
+
+  private void DetachRenderer()
+  {
+    var owner = Renderer;
+    var focused = owner?.CurrentFocus;
+    var shouldBlur = focused != null && Contains(focused);
+    SetRenderer(null);
+    if (shouldBlur)
+      focused!.Blur(owner);
+  }
+
+  private void SetRenderer(CliRenderer? renderer)
+  {
+    Renderer = renderer;
+    foreach (var child in _children)
+      child.SetRenderer(renderer);
   }
 
   protected abstract void RenderSelf(RenderBuffer buffer, double deltaTime);

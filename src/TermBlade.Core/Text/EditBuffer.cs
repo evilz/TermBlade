@@ -494,6 +494,15 @@ namespace TermBlade.Core.Text
     /// <summary>
     /// Dispose.
     /// </summary>
-    public void Dispose() { _disposed = true; }
+    public void Dispose()
+    {
+      if (_disposed) return;
+      _disposed = true;
+      _undoStack.Clear();
+      _redoStack.Clear();
+      _rope = new Rope("");
+      _cursor = new LogicalCursor();
+      TextChanged = null;
+    }
   }
 }
