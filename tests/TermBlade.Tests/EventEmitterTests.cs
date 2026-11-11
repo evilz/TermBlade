@@ -47,6 +47,39 @@ namespace TermBlade.Tests
     }
 
     [Fact]
+    public void Once_ReentrantEmit_InvokesHandlerOnce()
+    {
+      var e = new EventEmitter();
+      int count = 0;
+      e.Once("x", _ =>
+      {
+        count++;
+        e.Emit("x");
+      });
+
+      e.Emit("x");
+
+      Assert.Equal(1, count);
+    }
+
+    [Fact]
+    public void Once_ThrowingHandler_RemainsUnsubscribed()
+    {
+      var e = new EventEmitter();
+      int count = 0;
+      e.Once("x", _ =>
+      {
+        count++;
+        throw new System.InvalidOperationException();
+      });
+
+      Assert.Throws<System.InvalidOperationException>(() => e.Emit("x"));
+      e.Emit("x");
+
+      Assert.Equal(1, count);
+    }
+
+    [Fact]
     public void Emit_PassesData()
     {
       var e = new EventEmitter();

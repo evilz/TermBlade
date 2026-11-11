@@ -42,7 +42,11 @@ namespace TermBlade.Core.Events
     public void Once(string eventName, Action<object?> handler)
     {
       Action<object?>? wrapper = null;
-      wrapper = data => { handler(data); Off(eventName, wrapper!); };
+      wrapper = data =>
+      {
+        Off(eventName, wrapper!);
+        handler(data);
+      };
       On(eventName, wrapper);
     }
 
