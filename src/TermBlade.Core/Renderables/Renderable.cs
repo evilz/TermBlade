@@ -178,8 +178,7 @@ public abstract class Renderable : EventEmitter
   public void Add(Renderable child)
   {
     ArgumentNullException.ThrowIfNull(child);
-    if (_destroyed)
-      throw new ObjectDisposedException(GetType().Name);
+    ThrowIfDestroyed();
     if (child._destroyed)
       throw new ObjectDisposedException(child.GetType().Name);
     if (ReferenceEquals(child.Parent, this))
@@ -196,8 +195,7 @@ public abstract class Renderable : EventEmitter
     else if (!ReferenceEquals(child.Renderer, Renderer))
       child.DetachRenderer();
 
-    if (_destroyed)
-      throw new ObjectDisposedException(GetType().Name);
+    ThrowIfDestroyed();
     if (child._destroyed)
       throw new ObjectDisposedException(child.GetType().Name);
     if (ReferenceEquals(child.Parent, this))
@@ -209,6 +207,12 @@ public abstract class Renderable : EventEmitter
     child.SetRenderer(Renderer);
     _children.Add(child);
     LayoutNode.AddChild(child.LayoutNode);
+  }
+
+  private void ThrowIfDestroyed()
+  {
+    if (_destroyed)
+      throw new ObjectDisposedException(GetType().Name);
   }
 
   /// <summary>
