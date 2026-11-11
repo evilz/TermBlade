@@ -189,6 +189,9 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
   /// <param name="path">The path value.</param>
   /// <param name="recursive">The recursive value.</param>
   public void Delete(string path, bool recursive)
+      => DeletePath(path, recursive);
+
+  private static void DeletePath(string path, bool recursive)
   {
     if (Directory.Exists(path) && !IsReparsePoint(path))
       Directory.Delete(path, recursive);
@@ -243,7 +246,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     Directory.CreateDirectory(destinationPath);
     RestoreDirectoryMetadata(sourcePath, destinationPath);
 
-    foreach (var entry in Directory.EnumerateFileSystemInfos(sourcePath))
+    foreach (var entry in new DirectoryInfo(sourcePath).EnumerateFileSystemInfos())
     {
       var destinationEntry = Path.Combine(destinationPath, entry.Name);
       if (IsReparsePoint(entry.FullName))
@@ -273,7 +276,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     {
       var sourceInfo = new DirectoryInfo(sourcePath);
       var attributes = sourceInfo.Attributes & ~FileAttributes.ReparsePoint;
-      Directory.SetAttributes(destinationPath, attributes);
+      File.SetAttributes(destinationPath, attributes);
       new DirectoryInfo(destinationPath).LastWriteTimeUtc = sourceInfo.LastWriteTimeUtc;
     }
     catch
@@ -303,7 +306,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
       throw new IOException($"Destination path already exists: {destinationPath}");
 
     if (destinationExists && overwrite)
-      Delete(destinationPath, recursive: true);
+      DeletePath(destinationPath, recursive: true);
 
     var linkTarget = GetLinkTarget(sourcePath);
     var targetPath = Path.IsPathRooted(linkTarget)
@@ -384,7 +387,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
       catch
       {
         if (Directory.Exists(destinationPath) || File.Exists(destinationPath) || IsReparsePoint(destinationPath))
-          Delete(destinationPath, recursive: true);
+          DeletePath(destinationPath, recursive: true);
 
         throw;
       }
@@ -405,7 +408,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     if (error.HResult == unchecked((int)0x80070011) || error.HResult == unchecked((int)0x80070021))
       return true;
 
-    if (error is System.ComponentModel.Win32Exception win32Exception)
+    if (error.InnerException is System.ComponentModel.Win32Exception win32Exception)
       return win32Exception.NativeErrorCode == errorNotSameDevice;
 
     return false;
