@@ -156,6 +156,28 @@ public class RenderableLifecycleTests
   }
 
   [Fact]
+  public void ReparentingStopsWhenBlurHandlerDestroysDestination()
+  {
+    using var renderer = CreateTestingRenderer();
+    var oldParent = new ProbeRenderable(renderer);
+    var newParent = new ProbeRenderable(renderer);
+    var child = new ProbeRenderable(renderer) { Focusable = true };
+    renderer.Root.Add(oldParent);
+    renderer.Root.Add(newParent);
+    oldParent.Add(child);
+    child.Focus();
+    child.On("blurred", _ => newParent.Destroy());
+
+    Assert.Throws<ObjectDisposedException>(() => newParent.Add(child));
+
+    Assert.Null(newParent.Parent);
+    Assert.Null(child.Parent);
+    Assert.DoesNotContain(child, oldParent.GetChildren());
+    Assert.DoesNotContain(child, newParent.GetChildren());
+    Assert.Null(renderer.CurrentFocus);
+  }
+
+  [Fact]
   public void ReparentingMovesChildAndReattachesRendererOwnership()
   {
     using var renderer = CreateTestingRenderer();

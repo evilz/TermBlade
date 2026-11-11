@@ -195,6 +195,8 @@ public abstract class Renderable : EventEmitter
     else if (!ReferenceEquals(child.Renderer, Renderer))
       child.DetachRenderer();
 
+    if (_destroyed)
+      throw new ObjectDisposedException(GetType().Name);
     if (child._destroyed)
       throw new ObjectDisposedException(child.GetType().Name);
 
