@@ -79,6 +79,25 @@ public class RenderableLifecycleTests
 
     await Task.WhenAll(requests);
     renderer.RequestRender();
+    Assert.All(requests, task => Assert.True(task.IsCompletedSuccessfully));
+  }
+
+  [Fact]
+  public void FocusChangeStopsWhenBlurHandlerDisposesRenderer()
+  {
+    using var renderer = CreateTestingRenderer();
+    var previous = new ProbeRenderable(renderer) { Focusable = true };
+    var next = new ProbeRenderable(renderer) { Focusable = true };
+    renderer.Root.Add(previous);
+    renderer.Root.Add(next);
+    previous.Focus();
+    previous.On("blurred", _ => renderer.Destroy());
+
+    next.Focus();
+
+    Assert.Null(renderer.CurrentFocus);
+    Assert.False(previous.Focused);
+    Assert.False(next.Focused);
   }
 
   private static CliRenderer CreateTestingRenderer()

@@ -250,12 +250,18 @@ public class CliRenderer : IDisposable
     {
       var prev = CurrentFocus;
       CurrentFocus = null; // prevent re-entry before Blur emits
-      prev.Blur();
+      if (!BlurPreviousFocus(prev)) return false;
     }
 
-    if (_disposed) return false;
     CurrentFocus = r;
     return true;
+  }
+
+  private bool BlurPreviousFocus(Renderable previous)
+  {
+    previous.Blur();
+    // Blur handlers can synchronously dispose the renderer.
+    return !_disposed;
   }
 
   internal void DispatchKey(KeyEvent key)
