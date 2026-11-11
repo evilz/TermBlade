@@ -45,6 +45,7 @@ namespace TermBlade.Core.Rendering
     private readonly TextWriter _out;
     private bool _initialized;
     private bool _disposed;
+    private bool? _terminalCursorVisible;
     private (int X, int Y, bool Visible) _cursor = (0, 0, false);
 
     /// <summary>
@@ -80,6 +81,7 @@ namespace TermBlade.Core.Rendering
       _initialized = true;
       if (UseAlternateScreen) _out.Write(AnsiCodes.SwitchToAlternate);
       _out.Write(AnsiCodes.HideCursor);
+      _terminalCursorVisible = false;
       _out.Write(AnsiCodes.ClearAndHome);
     }
 
@@ -89,9 +91,12 @@ namespace TermBlade.Core.Rendering
     public void Shutdown()
     {
       if (!_initialized || Testing) return;
-      _out.Write(AnsiCodes.ShowCursor);
+      if (_terminalCursorVisible != true)
+        _out.Write(AnsiCodes.ShowCursor);
+      _terminalCursorVisible = true;
       if (UseAlternateScreen) _out.Write(AnsiCodes.SwitchToMain);
       _out.Write(AnsiCodes.Reset);
+      _initialized = false;
     }
 
     /// <summary>Returns the writable next-frame buffer for callers to draw into.</summary>
@@ -129,6 +134,7 @@ namespace TermBlade.Core.Rendering
       if (Testing) return;
 
       var sb = new StringBuilder(Width * Height * 10);
+      bool? cursorVisibleAfterRender = _terminalCursorVisible;
 
       Rgba? lastFg = null;
       Rgba? lastBg = null;
@@ -178,13 +184,30 @@ namespace TermBlade.Core.Rendering
       _current.DrawFrameBuffer(0, 0, _next);
 
       // Position the cursor
-      if (_cursor.Visible)
-        AnsiCodes.AppendMoveTo(sb, _cursor.X + 1, _cursor.Y + 1);
+      if (_cursor.Visible && Width > 0 && Height > 0)
+      {
+        if (cursorVisibleAfterRender != true)
+        {
+          sb.Append(AnsiCodes.ShowCursor);
+          cursorVisibleAfterRender = true;
+        }
+
+        int cursorX = Math.Clamp(_cursor.X, 0, Width - 1);
+        int cursorY = Math.Clamp(_cursor.Y, 0, Height - 1);
+        AnsiCodes.AppendMoveTo(sb, cursorX + 1, cursorY + 1);
+      }
       else
-        sb.Append(AnsiCodes.HideCursor);
+      {
+        if (cursorVisibleAfterRender != false)
+        {
+          sb.Append(AnsiCodes.HideCursor);
+          cursorVisibleAfterRender = false;
+        }
+      }
 
       _out.Write(sb.ToString());
       _out.Flush();
+      _terminalCursorVisible = cursorVisibleAfterRender;
     }
 
     /// <summary>
