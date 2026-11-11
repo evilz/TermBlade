@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;

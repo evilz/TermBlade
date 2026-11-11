@@ -1,5 +1,6 @@
 using System.Text;
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Input;
 using TermBlade.Core.Rendering;
 
