@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml.Linq;
 using TermBlade.Docs.Wasm.Terminal.Previews;
 using TermBlade.Gallery.Components;
 
@@ -131,7 +132,11 @@ public partial class GalleryDocumentationTests
   {
     var root = FindRepositoryRoot();
     var apiHtml = File.ReadAllText(Path.Combine(root, "docs", "api.html"));
-    var publicTypes = PublicPackageTypes().ToArray();
+    var assemblies = PublicPackageAssemblies();
+    var publicTypes = PublicPackageTypes(assemblies).ToArray();
+
+    foreach (var assembly in assemblies)
+      Assert.Contains($"<h2>{assembly.GetName().Name}</h2>", apiHtml);
 
     foreach (var type in publicTypes)
     {
@@ -140,6 +145,7 @@ public partial class GalleryDocumentationTests
     }
 
     Assert.Contains($"<strong>{publicTypes.Length}</strong> public types", apiHtml);
+    Assert.Contains($"<strong>{assemblies.Length}</strong> assemblies", apiHtml);
     Assert.DoesNotContain(">_Imports</h3>", apiHtml);
   }
 
@@ -237,15 +243,45 @@ public partial class GalleryDocumentationTests
     throw new InvalidOperationException("Could not find repository root.");
   }
 
-  private static IEnumerable<Type> PublicPackageTypes()
+  private static Assembly[] PublicPackageAssemblies()
   {
-    var assemblies = new[]
-    {
-      typeof(TermBlade.Core.Ansi.Rgba).Assembly,
-      typeof(TermBlade.Razor.Components.Text).Assembly,
-      typeof(TermBlade.FileManager.FileManagerApp).Assembly,
-    };
+    var sourceDirectory = Path.Combine(FindRepositoryRoot(), "src");
+    var packageProjects = Directory.EnumerateFiles(sourceDirectory, "*.csproj", SearchOption.AllDirectories)
+        .Where(IsPublicPackageProject)
+        .ToArray();
 
+    return packageProjects
+      .Select(projectPath =>
+      {
+        var project = XDocument.Load(projectPath);
+        var assemblyName = project.Descendants()
+            .FirstOrDefault(element => element.Name.LocalName == "AssemblyName")
+            ?.Value;
+        assemblyName = string.IsNullOrWhiteSpace(assemblyName)
+            ? Path.GetFileNameWithoutExtension(projectPath)
+            : assemblyName.Trim();
+
+        return Assembly.Load(new AssemblyName(assemblyName));
+      })
+      .OrderBy(assembly => assembly.GetName().Name, StringComparer.Ordinal)
+      .ToArray();
+  }
+
+  private static bool IsPublicPackageProject(string projectPath)
+  {
+    var project = XDocument.Load(projectPath);
+    var isPackable = project.Descendants()
+        .Any(element => element.Name.LocalName == "IsPackable"
+            && string.Equals(element.Value.Trim(), "true", StringComparison.OrdinalIgnoreCase));
+    var generatesDocumentation = project.Descendants()
+        .Any(element => element.Name.LocalName == "GenerateDocumentationFile"
+            && string.Equals(element.Value.Trim(), "true", StringComparison.OrdinalIgnoreCase));
+
+    return isPackable && generatesDocumentation;
+  }
+
+  private static IEnumerable<Type> PublicPackageTypes(IEnumerable<Assembly> assemblies)
+  {
     return assemblies
       .SelectMany(assembly => assembly.GetExportedTypes())
       .Where(type => type.Name is not "_Imports")

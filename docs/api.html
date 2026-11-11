@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TermBlade API Reference - .NET and Razor</title>
-  <meta name="description" content="Reference documentation for the public TermBlade .NET, Razor, and file manager APIs." />
+  <title>TermBlade API Reference - .NET Libraries and Tools</title>
+  <meta name="description" content="Reference documentation for the public TermBlade .NET, Razor, file manager, CSV viewer, and chess APIs." />
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/components.css" />
@@ -36,11 +36,11 @@
     <div class="container hero-content">
       <p class="hero-tagline">TermBlade .NET API</p>
       <h1 class="hero-title">API <span class="accent">Reference</span></h1>
-      <p class="hero-description">Generated from the compiled public surface of TermBlade.Core, TermBlade.Razor, and TermBlade.FileManager. XML documentation summaries are shown where the source provides them; otherwise the reference falls back to signatures so every exported type and declared public member is visible.</p>
+      <p class="hero-description">Generated from the compiled public surface of TermBlade.Core, TermBlade.Razor, TermBlade.FileManager, TermBlade.CsvViewer, and TermBlade.Chess. XML documentation summaries are shown where the source provides them; otherwise the reference falls back to signatures so every exported type and declared public member is visible.</p>
       <div class="api-stats" aria-label="API inventory summary">
-        <span><strong>229</strong> public types</span>
-        <span><strong>1126</strong> declared public members</span>
-        <span><strong>3</strong> assemblies</span>
+        <span><strong>239</strong> public types</span>
+        <span><strong>1174</strong> declared public members</span>
+        <span><strong>5</strong> assemblies</span>
       </div>
     </div>
   </header>
@@ -77,6 +77,16 @@
               <h3>TermBlade.FileManager</h3>
               <a href="#termblade-filemanager-termblade-filemanager">FileManager</a>
               <a href="#termblade-filemanager-termblade-filemanager-components">FileManager.Components</a>
+            </div>
+            <div class="sidebar-group">
+              <h3>TermBlade.CsvViewer</h3>
+              <a href="#termblade-csvviewer-termblade-csvviewer">CsvViewer</a>
+            </div>
+            <div class="sidebar-group">
+              <h3>TermBlade.Chess</h3>
+              <a href="#termblade-chess-termblade-chess">Chess app</a>
+              <a href="#termblade-chess-global">Global</a>
+              <a href="#termblade-chess-termblade-chess-chess">Chess types</a>
             </div>
           </div>
         </div>
@@ -8908,6 +8918,240 @@
             </article>
           </section>
         </section>
+        <section id="termblade-csvviewer" class="api-assembly">
+          <h2>TermBlade.CsvViewer</h2>
+          <p>Public document parsing APIs for delimited text files.</p>
+          <section id="termblade-csvviewer-termblade-csvviewer" class="component-section feature-card api-namespace">
+            <header class="component-header">
+              <p class="hero-tagline">TermBlade.CsvViewer</p>
+              <h2>TermBlade.CsvViewer</h2>
+              <p>2 public types.</p>
+            </header>
+            <article id="t-termblade-csvviewer-csvdocument" class="api-type">
+              <div class="api-type-header">
+                <span class="api-kind">sealed class</span>
+                <h3>CsvDocument</h3>
+              </div>
+              <pre class="code-block api-signature"><code>public sealed class CsvDocument</code></pre>
+              <p>Represents a parsed delimited text document with optional headers.</p>
+              <div class="table-wrapper">
+                <table class="components-table api-members-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>ColumnCount</code></td><td>property</td><td><code>public int ColumnCount { get; }</code></td><td>Gets the maximum number of columns across headers and rows.</td></tr>
+                    <tr><td><code>Delimiter</code></td><td>property</td><td><code>public char Delimiter { get; }</code></td><td>Gets the delimiter used to parse the document.</td></tr>
+                    <tr><td><code>Headers</code></td><td>property</td><td><code>public IReadOnlyList&lt;string&gt; Headers { get; }</code></td><td>Gets the column header labels.</td></tr>
+                    <tr><td><code>Rows</code></td><td>property</td><td><code>public IReadOnlyList&lt;IReadOnlyList&lt;string&gt;&gt; Rows { get; }</code></td><td>Gets the parsed data rows.</td></tr>
+                    <tr><td><code>LoadAsync</code></td><td>method</td><td><code>public static Task&lt;CsvDocument&gt; LoadAsync(string path, char? delimiter, bool hasHeader)</code></td><td>Loads and parses a CSV document from a file path.</td></tr>
+                    <tr><td><code>Parse</code></td><td>method</td><td><code>public static CsvDocument Parse(string content, char? delimiter = null, bool hasHeader = true)</code></td><td>Parses delimited text into a CSV document.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article id="t-termblade-csvviewer-csvviewerapp" class="api-type">
+              <div class="api-type-header">
+                <span class="api-kind">class</span>
+                <h3>CsvViewerApp</h3>
+              </div>
+              <pre class="code-block api-signature"><code>public class CsvViewerApp : ComponentBase, IComponent, IHandleAfterRender, IHandleEvent, IDisposable</code></pre>
+              <p>Razor terminal component that displays a CSV document and supports scrolling through its rows and columns.</p>
+              <div class="table-wrapper">
+                <table class="components-table api-members-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>CsvViewerApp</code></td><td>constructor</td><td><code>public CsvViewerApp()</code></td><td>Initializes a new instance of the component.</td></tr>
+                    <tr><td><code>Dispose</code></td><td>method</td><td><code>public void Dispose()</code></td><td>Releases the component's key event subscriptions.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </section>
+        </section>
+        <section id="termblade-chess" class="api-assembly">
+          <h2>TermBlade.Chess</h2>
+          <p>Chess rules, board state, move selection, and terminal piece art for the chess tool and sample.</p>
+          <section id="termblade-chess-termblade-chess-chess" class="component-section feature-card api-namespace">
+            <header class="component-header">
+              <p class="hero-tagline">TermBlade.Chess</p>
+              <h2>TermBlade.Chess.Chess</h2>
+              <p>6 public types.</p>
+            </header>
+            <article id="t-termblade-chess-chess-piececolor" class="api-type">
+              <div class="api-type-header">
+                <span class="api-kind">enum</span>
+                <h3>PieceColor</h3>
+              </div>
+              <pre class="code-block api-signature"><code>public enum PieceColor : IComparable, IConvertible, IFormattable, ISpanFormattable</code></pre>
+              <p>Color of a chess piece or player.</p>
+              <div class="table-wrapper">
+                <table class="components-table api-members-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>Black</code></td><td>field</td><td><code>public const PieceColor Black = 2</code></td><td>Black player or piece.</td></tr>
+                    <tr><td><code>None</code></td><td>field</td><td><code>public const PieceColor None = 0</code></td><td>No piece color.</td></tr>
+                    <tr><td><code>White</code></td><td>field</td><td><code>public const PieceColor White = 1</code></td><td>White player or piece.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article id="t-termblade-chess-chess-piecetype" class="api-type">
+              <div class="api-type-header">
+                <span class="api-kind">enum</span>
+                <h3>PieceType</h3>
+              </div>
+              <pre class="code-block api-signature"><code>public enum PieceType : IComparable, IConvertible, IFormattable, ISpanFormattable</code></pre>
+              <p>Types of chess pieces.</p>
+              <div class="table-wrapper">
+                <table class="components-table api-members-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>Bishop</code></td><td>field</td><td><code>public const PieceType Bishop = 3</code></td><td>Bishop piece.</td></tr>
+                    <tr><td><code>King</code></td><td>field</td><td><code>public const PieceType King = 6</code></td><td>King piece.</td></tr>
+                    <tr><td><code>Knight</code></td><td>field</td><td><code>public const PieceType Knight = 2</code></td><td>Knight piece.</td></tr>
+                    <tr><td><code>None</code></td><td>field</td><td><code>public const PieceType None = 0</code></td><td>Empty square.</td></tr>
+                    <tr><td><code>Pawn</code></td><td>field</td><td><code>public const PieceType Pawn = 1</code></td><td>Pawn piece.</td></tr>
+                    <tr><td><code>Queen</code></td><td>field</td><td><code>public const PieceType Queen = 5</code></td><td>Queen piece.</td></tr>
+                    <tr><td><code>Rook</code></td><td>field</td><td><code>public const PieceType Rook = 4</code></td><td>Rook piece.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article id="t-termblade-chess-chess-chesspiece" class="api-type">
+              <div class="api-type-header">
+                <span class="api-kind">readonly struct</span>
+                <h3>ChessPiece</h3>
+              </div>
+              <pre class="code-block api-signature"><code>public readonly record struct ChessPiece(PieceType Type, PieceColor Color)</code></pre>
+              <p>Immutable value representing a chess piece or an empty square. It exposes the piece color, type, notation, and chess symbol.</p>
+              <div class="table-wrapper">
+                <table class="components-table api-members-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>ChessPiece</code></td><td>constructor</td><td><code>public ChessPiece(PieceType Type, PieceColor Color)</code></td><td>Creates a piece value from its type and color.</td></tr>
+                    <tr><td><code>Color</code></td><td>property</td><td><code>public PieceColor Color { get; init; }</code></td><td>Gets the piece color.</td></tr>
+                    <tr><td><code>Empty</code></td><td>field</td><td><code>public static readonly ChessPiece Empty</code></td><td>Represents an empty square.</td></tr>
+                    <tr><td><code>IsEmpty</code></td><td>property</td><td><code>public bool IsEmpty { get; }</code></td><td>True when this square is empty.</td></tr>
+                    <tr><td><code>Notation</code></td><td>property</td><td><code>public string Notation { get; }</code></td><td>Single-letter identifier used in move notation.</td></tr>
+                    <tr><td><code>Symbol</code></td><td>property</td><td><code>public string Symbol { get; }</code></td><td>Chess emoji symbol for this piece, or a space for an empty square.</td></tr>
+                    <tr><td><code>Type</code></td><td>property</td><td><code>public PieceType Type { get; init; }</code></td><td>Gets the piece type.</td></tr>
+                    <tr><td><code>Deconstruct</code></td><td>method</td><td><code>public void Deconstruct(out PieceType Type, out PieceColor Color)</code></td><td>Deconstructs the piece value into its type and color.</td></tr>
+                    <tr><td><code>Equals</code></td><td>method</td><td><code>public bool Equals(ChessPiece other)</code></td><td>Determines whether this value equals another piece value.</td></tr>
+                    <tr><td><code>Equals</code></td><td>method</td><td><code>public override bool Equals(object? obj)</code></td><td>Determines whether this value equals the specified object.</td></tr>
+                    <tr><td><code>GetHashCode</code></td><td>method</td><td><code>public override int GetHashCode()</code></td><td>Returns the hash code for this value.</td></tr>
+                    <tr><td><code>ToString</code></td><td>method</td><td><code>public override string ToString()</code></td><td>Returns a string representation of this value.</td></tr>
+                    <tr><td><code>operator !=</code></td><td>method</td><td><code>public static bool operator !=(ChessPiece left, ChessPiece right)</code></td><td>Compares two piece values for inequality.</td></tr>
+                    <tr><td><code>operator ==</code></td><td>method</td><td><code>public static bool operator ==(ChessPiece left, ChessPiece right)</code></td><td>Compares two piece values for equality.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article id="t-termblade-chess-chess-chessgame" class="api-type">
+              <div class="api-type-header">
+                <span class="api-kind">sealed class</span>
+                <h3>ChessGame</h3>
+              </div>
+              <pre class="code-block api-signature"><code>public sealed class ChessGame</code></pre>
+              <p>Manages board state, legal moves, captured pieces, move history, check, checkmate, and stalemate. Castling and en passant are omitted; pawns automatically promote to queens.</p>
+              <div class="table-wrapper">
+                <table class="components-table api-members-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>ChessGame</code></td><td>constructor</td><td><code>public ChessGame()</code></td><td>Creates a game in the standard starting position.</td></tr>
+                    <tr><td><code>BlackCaptured</code></td><td>property</td><td><code>public IReadOnlyList&lt;ChessPiece&gt; BlackCaptured { get; }</code></td><td>Gets pieces captured by Black.</td></tr>
+                    <tr><td><code>CurrentTurn</code></td><td>property</td><td><code>public PieceColor CurrentTurn { get; }</code></td><td>Gets the player whose turn is current.</td></tr>
+                    <tr><td><code>History</code></td><td>property</td><td><code>public IReadOnlyList&lt;string&gt; History { get; }</code></td><td>Gets the move history.</td></tr>
+                    <tr><td><code>IsGameOver</code></td><td>property</td><td><code>public bool IsGameOver { get; }</code></td><td>Gets whether the game has ended.</td></tr>
+                    <tr><td><code>StatusMessage</code></td><td>property</td><td><code>public string StatusMessage { get; }</code></td><td>Gets the current check, checkmate, or stalemate status message.</td></tr>
+                    <tr><td><code>WhiteCaptured</code></td><td>property</td><td><code>public IReadOnlyList&lt;ChessPiece&gt; WhiteCaptured { get; }</code></td><td>Gets pieces captured by White.</td></tr>
+                    <tr><td><code>GetLegalMoves</code></td><td>method</td><td><code>public List&lt;(int Row, int Col)&gt; GetLegalMoves(int row, int col)</code></td><td>Returns legal destination squares for the piece at the given row and column.</td></tr>
+                    <tr><td><code>GetPiece</code></td><td>method</td><td><code>public ChessPiece GetPiece(int row, int col)</code></td><td>Returns the piece at the board position; row 0 is rank 1 and column 0 is file A.</td></tr>
+                    <tr><td><code>Reset</code></td><td>method</td><td><code>public void Reset()</code></td><td>Resets the board to the standard starting position.</td></tr>
+                    <tr><td><code>TryMove</code></td><td>method</td><td><code>public bool TryMove(int fromRow, int fromCol, int toRow, int toCol)</code></td><td>Attempts a legal move and updates game state when it succeeds.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article id="t-termblade-chess-chess-chessbot" class="api-type">
+              <div class="api-type-header">
+                <span class="api-kind">static class</span>
+                <h3>ChessBot</h3>
+              </div>
+              <pre class="code-block api-signature"><code>public static class ChessBot</code></pre>
+              <p>Simple in-process chess bot that selects random legal moves and prefers captures when available.</p>
+              <div class="table-wrapper">
+                <table class="components-table api-members-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>PickMove</code></td><td>method</td><td><code>public static (int FromRow, int FromCol, int ToRow, int ToCol)? PickMove(ChessGame game)</code></td><td>Picks a move for the current player, or returns null when no legal move exists.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+            <article id="t-termblade-chess-chess-chesspieceart" class="api-type">
+              <div class="api-type-header">
+                <span class="api-kind">static class</span>
+                <h3>ChessPieceArt</h3>
+              </div>
+              <pre class="code-block api-signature"><code>public static class ChessPieceArt</code></pre>
+              <p>Provides multi-line ASCII art for chess pieces.</p>
+              <div class="table-wrapper">
+                <table class="components-table api-members-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>GetRows</code></td><td>method</td><td><code>public static string[] GetRows(ChessPiece piece, int squareWidth = 7)</code></td><td>Returns four art rows padded to the requested square width.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </section>
+          <section id="termblade-chess-termblade-chess" class="component-section feature-card api-namespace">
+            <header class="component-header">
+              <p class="hero-tagline">TermBlade.Chess</p>
+              <h2>TermBlade.Chess</h2>
+              <p>1 public type.</p>
+            </header>
+            <article id="t-termblade-chess-chessapp" class="api-type">
+              <div class="api-type-header">
+                <span class="api-kind">class</span>
+                <h3>ChessApp</h3>
+              </div>
+              <pre class="code-block api-signature"><code>public class ChessApp : ComponentBase, IComponent, IHandleAfterRender, IHandleEvent, IDisposable</code></pre>
+              <p>Razor terminal component for the standalone chess application.</p>
+              <div class="table-wrapper">
+                <table class="components-table api-members-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>ChessApp</code></td><td>constructor</td><td><code>public ChessApp()</code></td><td>Initializes a new instance of the component.</td></tr>
+                    <tr><td><code>Dispose</code></td><td>method</td><td><code>public void Dispose()</code></td><td>Releases the component's input subscriptions and timers.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </section>
+          <section id="termblade-chess-global" class="component-section feature-card api-namespace">
+            <header class="component-header">
+              <p class="hero-tagline">TermBlade.Chess</p>
+              <h2>Global namespace</h2>
+              <p>1 public type.</p>
+            </header>
+            <article id="t-program" class="api-type">
+              <div class="api-type-header">
+                <span class="api-kind">class</span>
+                <h3>Program</h3>
+              </div>
+              <pre class="code-block api-signature"><code>public class Program</code></pre>
+              <p>Compiler-generated entry-point container for the Chess command-line tool.</p>
+              <div class="table-wrapper">
+                <table class="components-table api-members-table">
+                  <thead><tr><th>Member</th><th>Kind</th><th>Signature</th><th>Description</th></tr></thead>
+                  <tbody>
+                    <tr><td><code>Program</code></td><td>constructor</td><td><code>public Program()</code></td><td>Initializes the generated entry-point container.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </section>
+        </section>
       </div>
         <section class="api-section" id="api-generated-supplement">
           <header class="api-section-header">
@@ -9144,6 +9388,16 @@
               <article id="t-termblade-razor-hosting-termbladehostbuilderextensions" class="api-type-card api-generated-supplement"><h3>TermBladeHostBuilderExtensions</h3><p><code>TermBlade.Razor.Hosting.TermBladeHostBuilderExtensions</code></p></article>
               <article id="t-termblade-razor-hosting-termbladerazoroptions" class="api-type-card api-generated-supplement"><h3>TermBladeRazorOptions</h3><p><code>TermBlade.Razor.Hosting.TermBladeRazorOptions</code></p></article>
               <article id="t-termblade-razor-hosting-termbladerazorservicecollectionextensions" class="api-type-card api-generated-supplement"><h3>TermBladeRazorServiceCollectionExtensions</h3><p><code>TermBlade.Razor.Hosting.TermBladeRazorServiceCollectionExtensions</code></p></article>
+              <article id="t-termblade-csvviewer-csvdocument" class="api-type-card api-generated-supplement"><h3>CsvDocument</h3><p><code>TermBlade.CsvViewer.CsvDocument</code></p></article>
+              <article id="t-termblade-chess-chess-chessbot" class="api-type-card api-generated-supplement"><h3>ChessBot</h3><p><code>TermBlade.Chess.Chess.ChessBot</code></p></article>
+              <article id="t-termblade-chess-chess-chessgame" class="api-type-card api-generated-supplement"><h3>ChessGame</h3><p><code>TermBlade.Chess.Chess.ChessGame</code></p></article>
+              <article id="t-termblade-chess-chess-chesspiece" class="api-type-card api-generated-supplement"><h3>ChessPiece</h3><p><code>TermBlade.Chess.Chess.ChessPiece</code></p></article>
+              <article id="t-termblade-chess-chess-chesspieceart" class="api-type-card api-generated-supplement"><h3>ChessPieceArt</h3><p><code>TermBlade.Chess.Chess.ChessPieceArt</code></p></article>
+              <article id="t-termblade-chess-chess-piececolor" class="api-type-card api-generated-supplement"><h3>PieceColor</h3><p><code>TermBlade.Chess.Chess.PieceColor</code></p></article>
+              <article id="t-termblade-chess-chess-piecetype" class="api-type-card api-generated-supplement"><h3>PieceType</h3><p><code>TermBlade.Chess.Chess.PieceType</code></p></article>
+              <article id="t-termblade-csvviewer-csvviewerapp" class="api-type-card api-generated-supplement"><h3>CsvViewerApp</h3><p><code>TermBlade.CsvViewer.CsvViewerApp</code></p></article>
+              <article id="t-termblade-chess-chessapp" class="api-type-card api-generated-supplement"><h3>ChessApp</h3><p><code>TermBlade.Chess.ChessApp</code></p></article>
+              <article id="t-program" class="api-type-card api-generated-supplement"><h3>Program</h3><p><code>Program</code></p></article>
           </div>
         </section>
       </div>
