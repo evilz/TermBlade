@@ -59,9 +59,9 @@ public readonly struct LayoutDimension
     return value switch
     {
       null => Auto,
-      int i => Fixed(i),
-      float f => Fixed(f),
-      double d => Fixed((float)d),
+      int i => CreateParsedValue(i, DimType.Fixed),
+      float f => CreateParsedValue(f, DimType.Fixed),
+      double d => CreateParsedValue((float)d, DimType.Fixed),
       string s when s.Equals("auto", StringComparison.OrdinalIgnoreCase) => Auto,
       string s => ParseString(s),
       _ => Auto,
@@ -79,7 +79,13 @@ public readonly struct LayoutDimension
     if (!float.TryParse(number, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed))
       throw new FormatException($"'{value}' is not a valid layout dimension.");
 
-    return isPercent ? Percent(parsed) : Fixed(parsed);
+    return CreateParsedValue(parsed, isPercent ? DimType.Percent : DimType.Fixed);
+  }
+
+  private static LayoutDimension CreateParsedValue(float value, DimType type)
+  {
+    ValidateValue(value, nameof(value));
+    return new(type, value);
   }
 
   private static void ValidateValue(float value, string paramName)

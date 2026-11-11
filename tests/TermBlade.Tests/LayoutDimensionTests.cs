@@ -1,7 +1,10 @@
 using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
 using TermBlade.Core.Layout;
 using TermBlade.Core.Renderables;
 using TermBlade.Core.Rendering;
+using TermBlade.Razor.Components;
+using TermBlade.Razor.Hosting;
 using Xunit;
 
 namespace TermBlade.Tests;
@@ -71,6 +74,18 @@ public class LayoutDimensionTests
   }
 
   [Theory]
+  [InlineData(-1)]
+  [InlineData(-1f)]
+  [InlineData(-1d)]
+  [InlineData(double.NaN)]
+  [InlineData(double.PositiveInfinity)]
+  public void ParseRejectsInvalidNumericValuesWithValueParameter(object value)
+  {
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => LayoutDimension.Parse(value));
+    Assert.Equal("value", exception.ParamName);
+  }
+
+  [Theory]
   [InlineData("-1")]
   [InlineData("-1%")]
   [InlineData("NaN")]
@@ -78,7 +93,8 @@ public class LayoutDimensionTests
   [InlineData("NaN%")]
   public void ParseRejectsNegativeAndNonFiniteValues(string value)
   {
-    Assert.Throws<ArgumentOutOfRangeException>(() => LayoutDimension.Parse(value));
+    var exception = Assert.Throws<ArgumentOutOfRangeException>(() => LayoutDimension.Parse(value));
+    Assert.Equal("value", exception.ParamName);
   }
 
   [Fact]
@@ -89,9 +105,60 @@ public class LayoutDimensionTests
     Assert.Throws<ArgumentOutOfRangeException>(() => LayoutDimension.Fixed((float)double.NaN));
   }
 
+  [Theory]
+  [InlineData("en-US")]
+  [InlineData("fr-FR")]
+  [InlineData("de-DE")]
+  public async Task RazorWidthParameterUsesInvariantCulture(string cultureName)
+  {
+    var previousCulture = CultureInfo.CurrentCulture;
+    var previousUiCulture = CultureInfo.CurrentUICulture;
+    try
+    {
+      var culture = CultureInfo.GetCultureInfo(cultureName);
+      CultureInfo.CurrentCulture = culture;
+      CultureInfo.CurrentUICulture = culture;
+
+      using var services = new ServiceCollection()
+          .AddLogging()
+          .AddTermBladeRazor()
+          .Configure<TermBladeRazorOptions>(options => options.Testing = true)
+          .BuildServiceProvider();
+      var componentRenderer = services.GetRequiredService<NoopComponentRenderer>();
+      await componentRenderer.MountComponentAsync<WidthProbeComponent>();
+
+      var renderable = Assert.Single(services.GetRequiredService<TermBladeAppContext>().Renderer.Root.GetChildren());
+      Assert.Equal("layout-width-probe", renderable.Id);
+      Assert.Equal(LayoutDimension.DimType.Percent, renderable.LayoutNode.Width.Type);
+      Assert.Equal(12.5f, renderable.LayoutNode.Width.Value);
+
+      await componentRenderer.DisposeAsync();
+    }
+    finally
+    {
+      CultureInfo.CurrentCulture = previousCulture;
+      CultureInfo.CurrentUICulture = previousUiCulture;
+    }
+  }
+
+  private sealed class WidthProbeComponent : RenderableComponentBase<WidthProbeRenderable>
+  {
+    public WidthProbeComponent()
+    {
+      Id = "layout-width-probe";
+      Width = "12.5%";
+    }
+
+    protected override WidthProbeRenderable CreateRenderable(TermBlade.Core.Rendering.CliRenderer renderer)
+        => new(renderer);
+
+    protected override void ApplyParameters(WidthProbeRenderable renderable) { }
+  }
+
   private sealed class WidthProbeRenderable : Renderable
   {
     public WidthProbeRenderable() : base() { }
+    public WidthProbeRenderable(CliRenderer renderer) : base(renderer) { }
 
     protected override void RenderSelf(RenderBuffer buffer, double deltaTime) { }
   }
