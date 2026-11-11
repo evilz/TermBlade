@@ -114,6 +114,30 @@ public class RenderableLifecycleTests
   }
 
   [Fact]
+  public void FocusChangeStopsWhenBlurHandlerDestroysPendingTarget()
+  {
+    using var renderer = CreateTestingRenderer();
+    var previous = new ProbeRenderable(renderer) { Focusable = true };
+    var next = new ProbeRenderable(renderer) { Focusable = true };
+    renderer.Root.Add(previous);
+    renderer.Root.Add(next);
+    previous.Focus();
+
+    int destroyCount = 0;
+    next.On("destroyed", _ => destroyCount++);
+    previous.On("blurred", _ => next.Destroy());
+
+    next.Focus();
+
+    Assert.Null(renderer.CurrentFocus);
+    Assert.Null(next.Parent);
+    Assert.False(next.Focused);
+    Assert.Equal(1, destroyCount);
+    next.Focus();
+    Assert.Null(renderer.CurrentFocus);
+  }
+
+  [Fact]
   public void FocusChangeStopsWhenBlurHandlerDisposesRenderer()
   {
     using var renderer = CreateTestingRenderer();

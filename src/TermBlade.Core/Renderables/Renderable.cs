@@ -230,6 +230,9 @@ public abstract class Renderable : EventEmitter
   /// </summary>
   public List<Renderable> GetChildren() => new(_children);
 
+  internal bool CanBeFocusedBy(CliRenderer renderer)
+    => !_destroyed && ReferenceEquals(Renderer, renderer);
+
   /// <summary>
   /// Focus.
   /// </summary>

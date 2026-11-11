@@ -244,13 +244,13 @@ public class CliRenderer : IDisposable
 
   internal bool OnRenderableFocused(Renderable r)
   {
-    if (_disposed) return false;
+    if (_disposed || !r.CanBeFocusedBy(this)) return false;
 
     if (CurrentFocus != null && CurrentFocus != r)
     {
       var prev = CurrentFocus;
       CurrentFocus = null; // prevent re-entry before Blur emits
-      if (!BlurPreviousFocus(prev)) return false;
+      if (!BlurPreviousFocus(prev) || !r.CanBeFocusedBy(this) || CurrentFocus != null) return false;
     }
 
     CurrentFocus = r;
