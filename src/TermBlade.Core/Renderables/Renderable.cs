@@ -190,11 +190,13 @@ public abstract class Renderable : EventEmitter
         throw new ArgumentException("Adding this renderable would create a cycle.", nameof(child));
     }
 
-    child.Parent?.Remove(child);
+    if (child.Parent is { } previousParent)
+      previousParent.Remove(child);
+    else if (!ReferenceEquals(child.Renderer, Renderer))
+      child.DetachRenderer();
+
     if (child._destroyed)
       throw new ObjectDisposedException(child.GetType().Name);
-    if (!ReferenceEquals(child.Renderer, Renderer))
-      child.DetachRenderer();
 
     child.Parent = this;
     child.SetRenderer(Renderer);

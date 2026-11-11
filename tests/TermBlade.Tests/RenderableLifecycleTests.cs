@@ -101,6 +101,32 @@ public class RenderableLifecycleTests
     Assert.False(next.Focused);
   }
 
+  [Fact]
+  public void ReparentingMovesChildAndReattachesRendererOwnership()
+  {
+    using var renderer = CreateTestingRenderer();
+    var oldParent = new ProbeRenderable(renderer);
+    var newParent = new ProbeRenderable(renderer);
+    var child = new ProbeRenderable(renderer) { Focusable = true };
+    renderer.Root.Add(oldParent);
+    renderer.Root.Add(newParent);
+    oldParent.Add(child);
+
+    int blurCount = 0;
+    child.On("blurred", _ => blurCount++);
+    child.Focus();
+    newParent.Add(child);
+
+    Assert.Same(newParent, child.Parent);
+    Assert.DoesNotContain(child, oldParent.GetChildren());
+    Assert.Contains(child, newParent.GetChildren());
+    Assert.Null(renderer.CurrentFocus);
+    Assert.False(child.Focused);
+    Assert.Equal(1, blurCount);
+
+    child.Focus();
+    Assert.Same(child, renderer.CurrentFocus);
+  }
   private static CliRenderer CreateTestingRenderer()
     => new(new CliRendererConfig { Testing = true });
 
