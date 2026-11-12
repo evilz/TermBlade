@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
@@ -221,7 +222,7 @@ public class LineChartRenderable : Renderable
         int dataIdx = (int)(ratio * (Data.Count - 1));
         string label = FormatValue(dataIdx);
         int lx = chartX + (int)(ratio * (chartW - 1));
-        lx = Math.Min(lx, x + w - label.Length);
+        lx = Math.Min(lx, x + w - CellBuffer.GetTextWidth(label.AsSpan()));
         buffer.DrawText(lx, labelY, label, labelFg, bg);
       }
     }

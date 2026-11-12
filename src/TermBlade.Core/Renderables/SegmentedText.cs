@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text;
 using TermBlade.Core.Ansi;
 using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
@@ -49,34 +51,51 @@ public sealed class SegmentedTextRenderable : Renderable
     if (defaultBg.AlphaByte > 0)
       buffer.FillRect(x, y, width, height, defaultBg);
 
-    var col = 0;
-    var row = 0;
+    var text = new StringBuilder();
+    var styles = new List<(int End, Rgba Fg, Rgba Bg, TextAttributes Attributes)>();
     foreach (var segment in Segments)
     {
       var fg = segment.Fg == null ? defaultFg : Rgba.FromCss(segment.Fg);
       var bg = segment.Bg == null ? defaultBg : Rgba.FromCss(segment.Bg);
+      text.Append(segment.Text);
+      styles.Add((text.Length, fg, bg, segment.Attributes));
+    }
 
-      foreach (var rune in segment.Text.EnumerateRunes())
+    var fullText = text.ToString();
+    int col = 0;
+    int row = 0;
+    int styleIndex = 0;
+    var remaining = fullText.AsSpan();
+    while (!remaining.IsEmpty)
+    {
+      int graphemeLength = StringInfo.GetNextTextElementLength(remaining);
+      var grapheme = remaining[..graphemeLength];
+      while (styleIndex + 1 < styles.Count && fullText.Length - remaining.Length >= styles[styleIndex].End)
+        styleIndex++;
+
+      if (grapheme[0] is '\r' or '\n')
       {
-        if (rune.Value == '\n')
-        {
-          row++;
-          col = 0;
-          if (row >= height)
-            return;
-          continue;
-        }
-
-        var runeWidth = CellBuffer.RuneWidth(rune);
-        if (col + runeWidth > width)
-          continue;
-
-        buffer.SetCell(x + col, y + row, rune.Value, fg, bg, segment.Attributes);
-        if (runeWidth == 2 && col + 1 < width)
-          buffer.SetCell(x + col + 1, y + row, 0, fg, bg, segment.Attributes);
-
-        col += runeWidth;
+        row++;
+        col = 0;
+        if (row >= height)
+          return;
+        remaining = remaining[graphemeLength..];
+        continue;
       }
+
+      int cellWidth = CellBuffer.GraphemeWidth(grapheme);
+      if (cellWidth > 0)
+      {
+        if (col + cellWidth > width)
+          break;
+
+        var style = styles[styleIndex];
+        buffer.DrawGrapheme(x + col, y + row, grapheme, cellWidth,
+            style.Fg, style.Bg, style.Attributes);
+        col += cellWidth;
+      }
+
+      remaining = remaining[graphemeLength..];
     }
   }
 

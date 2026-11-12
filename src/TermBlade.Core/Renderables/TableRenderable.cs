@@ -1,5 +1,6 @@
 using System.Text.Json;
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Input;
 using TermBlade.Core.Layout;
 using TermBlade.Core.Rendering;
@@ -63,7 +64,9 @@ public class TableRenderable : Renderable
     for (var i = 0; i < widths.Count; i++)
     {
       var cell = i < cells.Count ? cells[i] : string.Empty;
-      formatted[i] = LabelRenderable.TrimToWidth(cell, widths[i]).PadRight(widths[i]);
+      var visible = LabelRenderable.TrimToWidth(cell, widths[i]);
+      int cellWidth = CellBuffer.GetTextWidth(visible.AsSpan());
+      formatted[i] = visible + new string(' ', Math.Max(0, widths[i] - cellWidth));
     }
     return string.Join(" | ", formatted);
   }

@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Input;
 using TermBlade.Core.Rendering;
 
@@ -194,7 +195,7 @@ public class InputRenderable : Renderable
     if (Value.Length == 0 && Placeholder != null)
     {
       var phColor = PlaceholderColor != null ? Rgba.FromCss(PlaceholderColor) : Rgba.FromInts(100, 100, 100);
-      var ph = Placeholder.Length > w ? Placeholder[..w] : Placeholder;
+      var ph = CellBuffer.TruncateToCellWidth(Placeholder, w);
       buffer.DrawText(x, y, ph, phColor, bg);
     }
     else
@@ -204,7 +205,7 @@ public class InputRenderable : Renderable
       if (_cursorPos < _scrollOffset) _scrollOffset = _cursorPos;
 
       var visible = Value.Length > _scrollOffset ? Value[_scrollOffset..] : "";
-      if (visible.Length > w) visible = visible[..w];
+      visible = CellBuffer.TruncateToCellWidth(visible, w);
       buffer.DrawText(x, y, visible, fg, bg);
 
       // Draw cursor

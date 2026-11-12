@@ -1,5 +1,8 @@
+using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
@@ -87,9 +90,9 @@ public class CodeRenderable : Renderable
     foreach (var (text, color) in tokens)
     {
       if (col >= maxWidth) break;
-      var visible = text.Length > maxWidth - col ? text[..(maxWidth - col)] : text;
+      var visible = CellBuffer.TruncateToCellWidth(text, maxWidth - col);
       buffer.DrawText(x + col, y, visible, color, BgColor);
-      col += visible.Length;
+      col += CellBuffer.GetTextWidth(visible.AsSpan());
     }
   }
 
@@ -139,8 +142,14 @@ public class CodeRenderable : Renderable
       if (char.IsLetter(line[i]) || line[i] == '_')
       {
         int j = i;
-        while (j < line.Length && (char.IsLetterOrDigit(line[j]) || line[j] == '_'))
-          j++;
+        while (j < line.Length)
+        {
+          if (!Rune.TryGetRuneAt(line, j, out var rune) ||
+              (!Rune.IsLetterOrDigit(rune) && rune.Value != '_'))
+            break;
+
+          j += StringInfo.GetNextTextElementLength(line.AsSpan(j));
+        }
         var word = line[i..j];
         var color = Array.IndexOf(Keywords, word) >= 0 ? KeywordColor : DefaultFg;
         result.Add((word, color));
@@ -148,8 +157,9 @@ public class CodeRenderable : Renderable
         continue;
       }
 
-      result.Add((line[i].ToString(), DefaultFg));
-      i++;
+      int graphemeLength = StringInfo.GetNextTextElementLength(line.AsSpan(i));
+      result.Add((line.Substring(i, graphemeLength), DefaultFg));
+      i += graphemeLength;
     }
 
     return result;

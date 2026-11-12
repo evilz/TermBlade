@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Input;
 using TermBlade.Core.Rendering;
 using TermBlade.Core.Text;
@@ -265,7 +266,7 @@ public class TextareaRenderable : Renderable
       if (lineIdx >= lines.Length) break;
 
       var line = lines[lineIdx];
-      var visible = line.Length > w ? line[..w] : line;
+      var visible = CellBuffer.TruncateToCellWidth(line, w);
       buffer.DrawText(x, y + row, visible, fg, bg);
 
       if (ShowCursor && Focused && lineIdx == cursorRow)

@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Input;
 using TermBlade.Core.Layout;
 using TermBlade.Core.Rendering;
@@ -88,9 +89,10 @@ public class TabSelectRenderable : Renderable
       var fg = active ? activeFg : inactiveFg;
       var bg = active ? activeBg : inactiveBg;
       var label = " " + Tabs[i] + " ";
-      buffer.FillRect(col, y, label.Length, 1, bg);
+      int labelWidth = CellBuffer.GetTextWidth(label.AsSpan());
+      buffer.FillRect(col, y, labelWidth, 1, bg);
       buffer.DrawText(col, y, label, fg, bg);
-      col += label.Length;
+      col += labelWidth;
     }
   }
 }

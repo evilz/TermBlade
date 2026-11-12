@@ -560,7 +560,7 @@ public class CliRenderer : IDisposable
           if (p != null)
           {
             var pc = p.Value;
-            if (nc.Codepoint == pc.Codepoint && nc.Fg == pc.Fg &&
+            if (nc.Codepoint == pc.Codepoint && nc.Grapheme == pc.Grapheme && nc.Fg == pc.Fg &&
                 nc.Bg == pc.Bg && nc.Attributes == pc.Attributes)
               continue;
           }
@@ -589,7 +589,7 @@ public class CliRenderer : IDisposable
         }
 
         if (nc.Codepoint != 0)
-          sb.Append(char.ConvertFromUtf32(nc.Codepoint));
+          sb.Append(nc.Grapheme ?? char.ConvertFromUtf32(nc.Codepoint));
       }
     }
 

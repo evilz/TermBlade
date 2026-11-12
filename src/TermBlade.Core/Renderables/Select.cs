@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Input;
 using TermBlade.Core.Rendering;
 
@@ -124,7 +125,7 @@ public class SelectRenderable : Renderable
 
       buffer.FillRect(x, y + row, w, 1, rowBg);
 
-      var name = opt.Name.Length > w - 2 ? opt.Name[..(w - 2)] : opt.Name;
+      var name = CellBuffer.TruncateToCellWidth(opt.Name, w - 2);
       var prefix = isSelected ? "▶ " : "  ";
       buffer.DrawText(x, y + row, prefix + name, fg, rowBg);
     }

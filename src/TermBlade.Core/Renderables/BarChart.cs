@@ -1,4 +1,5 @@
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Rendering;
 
 namespace TermBlade.Core.Renderables;
@@ -191,7 +192,7 @@ public class BarChartRenderable : Renderable
       if (hasLabels && i < Labels!.Count)
       {
         var label = Labels[i];
-        if (label.Length > BarWidth) label = label[..BarWidth];
+        label = CellBuffer.TruncateToCellWidth(label, BarWidth);
         buffer.DrawText(bx, y + chartHeight, label, labelFg, bg);
       }
     }
@@ -203,7 +204,7 @@ public class BarChartRenderable : Renderable
     int labelWidth = 0;
     if (Labels != null)
     {
-      labelWidth = Labels.Select(l => l.Length).DefaultIfEmpty(0).Max();
+      labelWidth = Labels.Select(label => CellBuffer.GetTextWidth(label.AsSpan())).DefaultIfEmpty(0).Max();
       labelWidth += 1; // gap
     }
 
@@ -224,7 +225,9 @@ public class BarChartRenderable : Renderable
       // Label
       if (Labels != null && i < Labels.Count)
       {
-        var label = Labels[i].PadLeft(labelWidth - 1);
+        var labelText = Labels[i];
+        int labelTextWidth = CellBuffer.GetTextWidth(labelText.AsSpan());
+        var label = new string(' ', Math.Max(0, labelWidth - 1 - labelTextWidth)) + labelText;
         buffer.DrawText(x, by, label, labelFg, bg);
       }
 

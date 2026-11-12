@@ -1,5 +1,6 @@
 using System.Text;
 using TermBlade.Core.Ansi;
+using TermBlade.Core.Buffer;
 using TermBlade.Core.Input;
 using TermBlade.Core.Rendering;
 
@@ -475,11 +476,7 @@ public class TreeViewRenderable : Renderable
       sb.Append(' ');
       sb.Append(node.Label);
 
-      var text = sb.ToString();
-      // Truncate to avoid overflowing the component width
-      if (text.Length > w)
-        text = text[..w];
-
+      var text = CellBuffer.TruncateToCellWidth(sb.ToString(), w);
       buffer.DrawText(x, y + row, text, fg, rowBg);
     }
 
