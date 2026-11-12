@@ -37,8 +37,8 @@ public class CsvViewerTests
 
   [Theory]
   [InlineData("\"\"")]
-  [InlineData("\"\"\\n")]
-  [InlineData("\"\"\\r\\n")]
+  [InlineData("\"\"\n")]
+  [InlineData("\"\"\r\n")]
   public void Parse_PreservesFinalQuotedEmptyFieldWithoutAddingBlankRow(string content)
   {
     var document = CsvDocument.Parse(content, ',', hasHeader: false);
@@ -71,7 +71,7 @@ public class CsvViewerTests
   [Fact]
   public void Parse_PreservesBlankRecordsWithoutAddingOneAfterFinalNewline()
   {
-    var document = CsvDocument.Parse("first\\n\\n", ',', hasHeader: false);
+    var document = CsvDocument.Parse("first\n\n", ',', hasHeader: false);
 
     Assert.Equal(2, document.Rows.Count);
     Assert.Equal(["first"], document.Rows[0]);
