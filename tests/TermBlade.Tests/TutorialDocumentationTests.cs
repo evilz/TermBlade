@@ -110,11 +110,12 @@ public class TutorialDocumentationTests
     };
     selection.SetWidth("30");
     selection.SetHeight("4");
-    status = CreateText(renderer, "Selected: Build", height: 1, fg: "#8b949e");
+    var statusText = CreateText(renderer, "Selected: Build", height: 1, fg: "#8b949e");
+    status = statusText;
     selection.On("selectionChanged", value =>
     {
       int selectedIndex = Convert.ToInt32(value ?? 0);
-      status.Content = $"Selected: {items[selectedIndex].Name}";
+      statusText.Content = $"Selected: {items[selectedIndex].Name}";
     });
 
     dashboard.Add(selection);
