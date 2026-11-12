@@ -97,6 +97,35 @@ public class StdinParserTests
   }
 
   [Fact]
+  public void Feed_ParsesAltLetterAfterEscapePrefix()
+  {
+    var parser = new StdinParser();
+
+    var key = Assert.IsType<KeyEvent>(Assert.Single(parser.Feed(Encoding.ASCII.GetBytes("\u001ba"))));
+
+    Assert.Equal("alt+a", key.Name);
+    Assert.True(key.Alt);
+    Assert.True(key.Meta);
+    Assert.Equal('a', key.Char);
+  }
+
+  [Fact]
+  public void Feed_PreservesUtf8CharacterSplitAcrossReads()
+  {
+    var parser = new StdinParser();
+    var bytes = Encoding.UTF8.GetBytes("é");
+
+    Assert.Empty(parser.Feed(bytes.AsSpan(0, 1)));
+    Assert.True(parser.HasPendingInput);
+
+    var key = Assert.IsType<KeyEvent>(Assert.Single(parser.Feed(bytes.AsSpan(1))));
+
+    Assert.Equal("é", key.Name);
+    Assert.Equal('é', key.Char);
+    Assert.False(parser.HasPendingInput);
+  }
+
+  [Fact]
   public void Feed_RecoversFromOversizedIncompleteMouseSequence()
   {
     var parser = new StdinParser();
