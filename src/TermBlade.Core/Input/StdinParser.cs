@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 namespace TermBlade.Core.Input;
@@ -9,35 +10,117 @@ public class StdinParser
 {
   private const string EscapeKey = "escape";
   private const string BackspaceKey = "backspace";
+  private const int MaxBufferedSequenceBytes = 256;
 
+  private readonly object _sync = new();
   private readonly List<byte> _buf = new();
 
+  /// <summary>Gets whether the parser is retaining an incomplete input sequence.</summary>
+  public bool HasPendingInput
+  {
+    get
+    {
+      lock (_sync)
+      {
+        return _buf.Count > 0;
+      }
+    }
+  }
+
   /// <summary>
-  /// Feed.
+  /// Feed bytes into the parser while retaining incomplete sequences for the next read.
   /// </summary>
   /// <param name="data">The data value.</param>
   public IEnumerable<object> Feed(ReadOnlySpan<byte> data)
   {
-    _buf.AddRange(data);
     var events = new List<object>();
-
-    while (_buf.Count > 0)
+    lock (_sync)
     {
-      var evt = TryParse(events);
-      if (!evt) break;
-    }
+      foreach (var value in data)
+      {
+        _buf.Add(value);
+        while (_buf.Count > 0)
+        {
+          if (_buf.Count > MaxBufferedSequenceBytes)
+          {
+            RecoverOversizedInput(events);
+            continue;
+          }
 
-    // If only ESC remains after parsing the complete read chunk, treat it as
-    // a standalone escape key press.  Terminals always send full escape
-    // sequences atomically in a single read(), so a lone ESC that survives to
-    // this point was not the start of a sequence.
-    if (_buf.Count == 1 && _buf[0] == 0x1b)
-    {
-      events.Add(new KeyEvent { Name = EscapeKey, Key = EscapeKey });
-      _buf.Clear();
+          if (!TryParse(events))
+          {
+            break;
+          }
+        }
+      }
     }
 
     return events;
+  }
+
+  /// <summary>
+  /// Flush incomplete input after the caller's escape-sequence timeout expires.
+  /// </summary>
+  public IEnumerable<object> FlushPending()
+  {
+    var events = new List<object>();
+    lock (_sync)
+    {
+      while (_buf.Count > 0)
+      {
+        if (TryParse(events))
+        {
+          continue;
+        }
+
+        var first = _buf[0];
+        _buf.RemoveAt(0);
+        if (first == 0x1b)
+        {
+          events.Add(new KeyEvent { Name = EscapeKey, Key = EscapeKey });
+          continue;
+        }
+
+        var key = ParseSingleByte(first);
+        if (key != null)
+        {
+          events.Add(key);
+        }
+        else if (first >= 0x80)
+        {
+          events.Add(CreateReplacementKey());
+        }
+      }
+    }
+
+    return events;
+  }
+
+  private void RecoverOversizedInput(List<object> events)
+  {
+    var first = _buf[0];
+    _buf.RemoveAt(0);
+    if (first == 0x1b)
+    {
+      events.Add(new KeyEvent { Name = EscapeKey, Key = EscapeKey });
+      return;
+    }
+
+    var key = ParseSingleByte(first);
+    if (key != null)
+    {
+      events.Add(key);
+    }
+    else if (first >= 0x80)
+    {
+      events.Add(CreateReplacementKey());
+    }
+  }
+
+  private static KeyEvent CreateReplacementKey()
+  {
+    const string replacement = "\uFFFD";
+    return new KeyEvent { Name = replacement, Key = replacement, Char = replacement[0] };
   }
 
   private bool TryParse(List<object> events)
@@ -213,42 +296,82 @@ public class StdinParser
 
     return terminator switch
     {
-      (byte)'A' => new KeyEvent { Name = "up", Key = "up" },
-      (byte)'B' => new KeyEvent { Name = "down", Key = "down" },
-      (byte)'C' => new KeyEvent { Name = "right", Key = "right" },
-      (byte)'D' => new KeyEvent { Name = "left", Key = "left" },
-      (byte)'H' => new KeyEvent { Name = "home", Key = "home" },
-      (byte)'F' => new KeyEvent { Name = "end", Key = "end" },
+      (byte)'A' => CreateModifiedKey("up", GetModifierParameter(param)),
+      (byte)'B' => CreateModifiedKey("down", GetModifierParameter(param)),
+      (byte)'C' => CreateModifiedKey("right", GetModifierParameter(param)),
+      (byte)'D' => CreateModifiedKey("left", GetModifierParameter(param)),
+      (byte)'H' => CreateModifiedKey("home", GetModifierParameter(param)),
+      (byte)'F' => CreateModifiedKey("end", GetModifierParameter(param)),
       (byte)'Z' => new KeyEvent { Name = "shift+tab", Key = "shift+tab", Shift = true },
       (byte)'~' => ParseTilde(param),
       _ => null
     };
   }
 
+  private static string? GetModifierParameter(string param)
+  {
+    var parameters = param.Split(';');
+    return parameters.Length > 1 ? parameters[^1] : null;
+  }
+
+  private static KeyEvent CreateModifiedKey(string keyName, string? modifierParameter)
+  {
+    var flags = 0;
+    if (int.TryParse(modifierParameter, NumberStyles.None, CultureInfo.InvariantCulture, out var modifier) &&
+        modifier is >= 1 and <= 8)
+    {
+      flags = modifier - 1;
+    }
+
+    bool shift = (flags & 1) != 0;
+    bool alt = (flags & 2) != 0;
+    bool ctrl = (flags & 4) != 0;
+    string name = alt ? $"alt+{keyName}" : keyName;
+
+    return new KeyEvent
+    {
+      Name = name,
+      Key = name,
+      Ctrl = ctrl,
+      Alt = alt,
+      Meta = alt,
+      Shift = shift
+    };
+  }
+
   private static KeyEvent? ParseTilde(string param)
   {
-    return param switch
+    var parameters = param.Split(';');
+    if (!int.TryParse(parameters[0], NumberStyles.None, CultureInfo.InvariantCulture, out var code))
+      return null;
+
+    string? keyName = code switch
     {
-      "1" or "7" => new KeyEvent { Name = "home", Key = "home" },
-      "4" or "8" => new KeyEvent { Name = "end", Key = "end" },
-      "2" => new KeyEvent { Name = "insert", Key = "insert" },
-      "3" => new KeyEvent { Name = "delete", Key = "delete" },
-      "5" => new KeyEvent { Name = "pageup", Key = "pageup" },
-      "6" => new KeyEvent { Name = "pagedown", Key = "pagedown" },
-      "11" => new KeyEvent { Name = "f1", Key = "f1" },
-      "12" => new KeyEvent { Name = "f2", Key = "f2" },
-      "13" => new KeyEvent { Name = "f3", Key = "f3" },
-      "14" => new KeyEvent { Name = "f4", Key = "f4" },
-      "15" => new KeyEvent { Name = "f5", Key = "f5" },
-      "17" => new KeyEvent { Name = "f6", Key = "f6" },
-      "18" => new KeyEvent { Name = "f7", Key = "f7" },
-      "19" => new KeyEvent { Name = "f8", Key = "f8" },
-      "20" => new KeyEvent { Name = "f9", Key = "f9" },
-      "21" => new KeyEvent { Name = "f10", Key = "f10" },
-      "23" => new KeyEvent { Name = "f11", Key = "f11" },
-      "24" => new KeyEvent { Name = "f12", Key = "f12" },
+      1 or 7 => "home",
+      4 or 8 => "end",
+      2 => "insert",
+      3 => "delete",
+      5 => "pageup",
+      6 => "pagedown",
+      11 => "f1",
+      12 => "f2",
+      13 => "f3",
+      14 => "f4",
+      15 => "f5",
+      17 => "f6",
+      18 => "f7",
+      19 => "f8",
+      20 => "f9",
+      21 => "f10",
+      23 => "f11",
+      24 => "f12",
       _ => null
     };
+    if (keyName == null)
+      return null;
+
+    var modifierParameter = parameters.Length > 1 ? parameters[^1] : null;
+    return CreateModifiedKey(keyName, modifierParameter);
   }
 
   private KeyEvent? ParseSs3(byte c)
