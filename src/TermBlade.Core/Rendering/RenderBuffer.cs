@@ -68,7 +68,7 @@ public class RenderBuffer
       => SetCell(x, y, (int)ch, fg, bg, attrs);
 
   /// <summary>
-  /// Set cell.
+  /// Set cell. Control codepoints are replaced with U+FFFD; zero remains the wide-character continuation marker.
   /// </summary>
   /// <param name="x">The x value.</param>
   /// <param name="y">The y value.</param>
@@ -78,11 +78,12 @@ public class RenderBuffer
   public void SetCell(int x, int y, int codepoint, Rgba fg, Rgba bg, TextAttributes attrs = 0)
   {
     if (!InBounds(x, y) || !InClip(x, y)) return;
+    codepoint = TerminalTextSafety.NormalizeCellCodepoint(codepoint);
     _cells[y * Width + x] = new Cell { Codepoint = codepoint, Fg = fg, Bg = bg, Attributes = attrs };
   }
 
   /// <summary>
-  /// Draw text.
+  /// Draw text, replacing terminal control characters with U+FFFD.
   /// </summary>
   /// <param name="x">The x value.</param>
   /// <param name="y">The y value.</param>
@@ -96,7 +97,7 @@ public class RenderBuffer
     {
       if (col >= Width) break;
       int w = CellBuffer.RuneWidth(rune);
-      SetCell(col, y, rune.Value, fg, bg, attrs);
+      SetCell(col, y, TerminalTextSafety.ReplaceControlCodepoint(rune.Value), fg, bg, attrs);
       if (w == 2 && col + 1 < Width)
         SetCell(col + 1, y, 0, fg, bg, attrs);
       col += w;
