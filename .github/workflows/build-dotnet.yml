@@ -43,6 +43,10 @@ jobs:
       - name: Run tests
         run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
 
+      - name: Benchmark persistent rope
+        if: matrix.os == 'ubuntu-latest'
+        run: dotnet run --project benchmarks/TermBlade.RopeBenchmarks/TermBlade.RopeBenchmarks.csproj --configuration Release
+
       - name: Upload coverage report
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
