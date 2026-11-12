@@ -25,11 +25,13 @@ public class RenderBuffer
   /// </summary>
   /// <param name="width">The width value.</param>
   /// <param name="height">The height value.</param>
+  /// <exception cref="ArgumentOutOfRangeException">The dimensions are non-positive or their cell count is unsupported.</exception>
   public RenderBuffer(int width, int height)
   {
+    var cellCount = BufferDimensions.GetCellCount(width, height);
     Width = width;
     Height = height;
-    _cells = new Cell[width * height];
+    _cells = new Cell[cellCount];
     var empty = Cell.Empty(Rgba.FromInts(0, 0, 0));
     for (int i = 0; i < _cells.Length; i++) _cells[i] = empty;
   }
