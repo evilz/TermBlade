@@ -44,7 +44,7 @@ public class TutorialDocumentationTests
 
     Assert.Contains("TermBlade dashboard", frame);
     Assert.Contains("Press ↑ or ↓ to change the selected item.", frame);
-    Assert.Contains("Build", frame);
+    Assert.True(frame.Contains("Build", StringComparison.Ordinal), $"Rendered frame:\n{frame}");
   }
 
   [Fact]
@@ -61,7 +61,7 @@ public class TutorialDocumentationTests
 
     Assert.Equal(1, selection.SelectedIndex);
     Assert.Equal("Selected: Test", status.Content);
-    Assert.Contains("▶ Test", frame);
+    Assert.True(frame.Contains("▶ Test", StringComparison.Ordinal), $"Rendered frame:\n{frame}");
     Assert.Contains("Selected: Test", frame);
   }
 
