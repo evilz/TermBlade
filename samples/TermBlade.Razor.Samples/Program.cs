@@ -29,7 +29,8 @@ var hostBuilder = sample switch
   "treeview" => builder.UseTermBladeRazor<TreeViewSample>(),
   "calendar" => builder.UseTermBladeRazor<CalendarSample>(),
   "chess" => builder.UseTermBladeRazor<ChessSample>(),
-  _ => throw new InvalidOperationException($"Unknown sample: '{sample}'. Available samples: layout, styled, editor, scroll, input, keypress, ascii, framebuffer, code, markdown, diff, select, slider, tabs, console, treeview, calendar, chess")
+  "tutorial" => builder.UseTermBladeRazor<TutorialDashboardSample>(),
+  _ => throw new InvalidOperationException($"Unknown sample: '{sample}'. Available samples: layout, styled, editor, scroll, input, keypress, ascii, framebuffer, code, markdown, diff, select, slider, tabs, console, treeview, calendar, chess, tutorial")
 };
 
 var host = hostBuilder.Build();
