@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Xunit;
 using TermBlade.Core.Text;
 
@@ -221,6 +223,49 @@ namespace TermBlade.Tests
       buf.Undo();
       buf.Redo();
       Assert.Equal("Hello!", buf.GetText());
+    }
+
+    [Fact]
+    public void RandomizedEditsRemainConsistentAcrossUndoAndRedo()
+    {
+      using var buf = EditBuffer.Create();
+      var random = new Random(0x6233);
+      var states = new List<string> { string.Empty };
+      var expected = string.Empty;
+
+      for (int step = 0; step < 200; step++)
+      {
+        if (expected.Length == 0 || random.Next(2) == 0)
+        {
+          int index = random.Next(expected.Length + 1);
+          string inserted = ((char)('a' + random.Next(26))).ToString();
+          buf.SetCursorByOffset(index);
+          buf.InsertText(inserted);
+          expected = expected.Insert(index, inserted);
+        }
+        else
+        {
+          int index = random.Next(expected.Length);
+          buf.SetCursorByOffset(index);
+          buf.DeleteChar();
+          expected = expected.Remove(index, 1);
+        }
+
+        states.Add(expected);
+        Assert.Equal(expected, buf.GetText());
+      }
+
+      for (int state = states.Count - 2; state >= 0; state--)
+      {
+        Assert.Equal("undo", buf.Undo());
+        Assert.Equal(states[state], buf.GetText());
+      }
+
+      for (int state = 1; state < states.Count; state++)
+      {
+        Assert.Equal("redo", buf.Redo());
+        Assert.Equal(states[state], buf.GetText());
+      }
     }
 
     [Fact]
