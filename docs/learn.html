@@ -59,7 +59,7 @@ dotnet add package TermBlade.Razor</code></pre>
           <pre id="dashboard-code" class="code-block"><code>&lt;Box Width="100%" Height="100%" PaddingLeft="2" PaddingTop="1"
      BackgroundColor="#0d1117" FlexDirection="FlexDirection.Column"&gt;
   &lt;Text Height="1" Content="TermBlade dashboard" Fg="#58a6ff" Attributes="TextAttributes.Bold" /&gt;
-  &lt;Text Height="1" Content="Press ↑ or ↓ to change the selected item." Fg="#8b949e" /&gt;
+  &lt;Text Height="1" Content="Use ↑/↓ to choose an item." Fg="#8b949e" /&gt;
   &lt;Box Height="4" MarginTop="1" Border="true" BorderColor="#30363d" PaddingLeft="1" PaddingTop="1"&gt;
     &lt;Text Height="1" Content="@Items[SelectedIndex].Name" Fg="#ffffff" /&gt;
   &lt;/Box&gt;
@@ -102,7 +102,7 @@ await host.RunAsync();</code></pre>
           <pre id="input-code" class="code-block"><code>&lt;Box Width="100%" Height="100%" PaddingLeft="2" PaddingTop="1"
      BackgroundColor="#0d1117" FlexDirection="FlexDirection.Column"&gt;
   &lt;Text Height="1" Content="TermBlade dashboard" Fg="#58a6ff" Attributes="TextAttributes.Bold" /&gt;
-  &lt;Text Height="1" Content="Use ↑ or ↓ to change the selected item." Fg="#8b949e" /&gt;
+  &lt;Text Height="1" Content="Use ↑/↓ to choose an item." Fg="#8b949e" /&gt;
   &lt;Select Width="30" Height="4" Options="@Items" SelectedIndex="@SelectedIndex"
           SelectedIndexChanged="@OnSelectionChanged" AutoFocus="true" /&gt;
   &lt;Text Height="1" Content="@SelectedLabel" Fg="#8b949e" /&gt;
