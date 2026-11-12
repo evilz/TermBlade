@@ -203,6 +203,14 @@ public abstract class Renderable : EventEmitter
     if (child.Parent != null)
       throw new InvalidOperationException("A detach callback reparented the child elsewhere.");
 
+    // Detaching can invoke user callbacks that change the tree. Revalidate the
+    // ancestry before attaching so a callback cannot introduce a cycle.
+    for (Renderable? ancestor = this; ancestor != null; ancestor = ancestor.Parent)
+    {
+      if (ReferenceEquals(ancestor, child))
+        throw new ArgumentException("Adding this renderable would create a cycle.", nameof(child));
+    }
+
     child.Parent = this;
     child.SetRenderer(Renderer);
     _children.Add(child);
@@ -252,20 +260,30 @@ public abstract class Renderable : EventEmitter
     var renderer = Renderer;
     if (_destroyed || Focused || renderer == null) return;
     Focused = true;
+
+    FocusResult result;
     try
     {
-      if (!renderer.OnRenderableFocused(this))
-      {
-        Focused = false;
-        return;
-      }
+      result = renderer.OnRenderableFocused(this);
     }
     catch
     {
-      Focused = false;
+      if (!renderer.IsCurrentFocus(this))
+        Focused = false;
       throw;
     }
-    Emit("focused");
+
+    if (result == FocusResult.Rejected)
+    {
+      if (!renderer.IsCurrentFocus(this))
+        Focused = false;
+      return;
+    }
+
+    // A blur callback may have focused this renderable reentrantly while the
+    // outer focus transition was waiting for the callback to finish.
+    if (result == FocusResult.Acquired)
+      Emit("focused");
   }
 
   /// <summary>
