@@ -119,7 +119,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
   /// <param name="overwrite">The overwrite value.</param>
   public void Copy(string sourcePath, string destinationPath, bool overwrite)
   {
-    if (IsReparsePoint(sourcePath))
+    if (IsSymbolicLink(sourcePath))
     {
       CopyLink(sourcePath, destinationPath, overwrite);
       return;
@@ -256,7 +256,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
     foreach (var entry in new DirectoryInfo(sourcePath).EnumerateFileSystemInfos())
     {
       var destinationEntry = Path.Combine(destinationPath, entry.Name);
-      if (IsReparsePoint(entry.FullName))
+      if (IsSymbolicLink(entry.FullName))
       {
         // Preserve links as entries; never recurse through their targets.
         CopyLink(entry.FullName, destinationEntry, overwrite);
