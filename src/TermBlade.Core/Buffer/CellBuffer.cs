@@ -105,20 +105,21 @@ namespace TermBlade.Core.Buffer
     }
 
     /// <summary>
-    /// Set cell.
+    /// Set cell. Control codepoints are replaced with U+FFFD; zero remains the wide-character continuation marker.
     /// </summary>
     public void SetCell(int x, int y, int codepoint, Rgba fg, Rgba bg,
                         TextAttributes attrs = TextAttributes.None)
     {
       Guard();
       if (!InBounds(x, y)) return;
+      codepoint = TerminalTextSafety.NormalizeCellCodepoint(codepoint);
       _cells[y * Width + x] = new Cell { Codepoint = codepoint, Fg = fg, Bg = bg, Attributes = attrs };
     }
 
     // ── draw text ─────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Draw text.
+    /// Draw text, replacing terminal control characters with U+FFFD.
     /// </summary>
     public void DrawText(string text, int x, int y, Rgba fg, Rgba? bg = null,
                          TextAttributes attrs = TextAttributes.None)
@@ -130,7 +131,7 @@ namespace TermBlade.Core.Buffer
       {
         if (col >= Width) break;
         int w = RuneWidth(rune);
-        SetCell(col, y, rune.Value, fg, bgColor, attrs);
+        SetCell(col, y, TerminalTextSafety.ReplaceControlCodepoint(rune.Value), fg, bgColor, attrs);
         if (w == 2 && col + 1 < Width)
           SetCell(col + 1, y, 0, fg, bgColor, attrs); // continuation cell
         col += w;
