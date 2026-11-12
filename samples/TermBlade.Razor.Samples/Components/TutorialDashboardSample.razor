@@ -1,7 +1,7 @@
 <Box Width="100%" Height="100%" PaddingLeft="2" PaddingTop="1"
      BackgroundColor="#0d1117" FlexDirection="FlexDirection.Column">
   <Text Height="1" Content="TermBlade dashboard" Fg="#58a6ff" Attributes="TextAttributes.Bold" />
-  <Text Height="1" Content="Use ↑ or ↓ to change the selected item." Fg="#8b949e" />
+  <Text Height="1" Content="Use ↑/↓ to choose an item." Fg="#8b949e" />
   <Select Width="30" Height="4" Options="@Items" SelectedIndex="@SelectedIndex"
           SelectedIndexChanged="@OnSelectionChanged" AutoFocus="true" />
   <Text Height="1" Content="@SelectedLabel" Fg="#8b949e" />
