@@ -42,15 +42,15 @@ namespace TermBlade.Core.Buffer
     /// <param name="height">The height value.</param>
     /// <param name="id">The id value.</param>
     /// <param name="respectAlpha">The respectAlpha value.</param>
+    /// <exception cref="ArgumentOutOfRangeException">The dimensions are non-positive or their cell count is unsupported.</exception>
     public CellBuffer(int width, int height, string? id = null, bool respectAlpha = false)
     {
-      if (width <= 0) throw new ArgumentOutOfRangeException(nameof(width));
-      if (height <= 0) throw new ArgumentOutOfRangeException(nameof(height));
+      var cellCount = BufferDimensions.GetCellCount(width, height);
       Id = id ?? $"fb_{System.Threading.Interlocked.Increment(ref _idSeq)}";
       Width = width;
       Height = height;
       RespectAlpha = respectAlpha;
-      _cells = new Cell[width * height];
+      _cells = new Cell[cellCount];
       FillAll(Rgba.FromInts(0, 0, 0));
     }
 
@@ -261,11 +261,13 @@ namespace TermBlade.Core.Buffer
     /// </summary>
     /// <param name="width">The width value.</param>
     /// <param name="height">The height value.</param>
+    /// <exception cref="ArgumentOutOfRangeException">The dimensions are non-positive or their cell count is unsupported.</exception>
     public void Resize(int width, int height)
     {
       Guard();
+      var cellCount = BufferDimensions.GetCellCount(width, height);
       if (Width == width && Height == height) return;
-      var newCells = new Cell[width * height];
+      var newCells = new Cell[cellCount];
       var empty = Cell.Empty(Rgba.FromInts(0, 0, 0));
       for (int i = 0; i < newCells.Length; i++) newCells[i] = empty;
       for (int fy = 0; fy < Math.Min(Height, height); fy++)
