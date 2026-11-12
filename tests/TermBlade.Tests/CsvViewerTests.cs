@@ -91,6 +91,17 @@ public class CsvViewerTests
   }
 
   [Fact]
+  public void Parse_DoesNotLetLaterFieldPunctuationOverrideFirstRecordDelimiter()
+  {
+    var document = CsvDocument.Parse("name,note\nAlice,one;two;three\nBob,four;five;six", hasHeader: true);
+
+    Assert.Equal(',', document.Delimiter);
+    Assert.Equal(["name", "note"], document.Headers);
+    Assert.Equal("one;two;three", document.Rows[0][1]);
+    Assert.Equal("four;five;six", document.Rows[1][1]);
+  }
+
+  [Fact]
   public void Parse_GeneratesHeaders_WhenNoHeaderIsSelected()
   {
     var document = CsvDocument.Parse("Ada,10\nGrace,9", hasHeader: false);
