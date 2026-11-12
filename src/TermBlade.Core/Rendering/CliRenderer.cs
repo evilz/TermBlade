@@ -1089,108 +1089,118 @@ public class CliRenderer : IDisposable
     return mode;
   }
 
-  // Use raw IntPtr so we control the exact native buffer size for both
-  // Linux (struct termios = 60 bytes: c_line + c_cc[32]) and
-  // macOS (struct termios = 44 bytes: c_cc[20], no c_line).
+  // Use raw pointers so the buffer size and platform-specific flag widths match
+  // the native termios ABI.
   [DllImport("libc", EntryPoint = "tcgetattr", SetLastError = true)]
   private static extern int TcGetAttrPtr(int fd, IntPtr termios);
 
   [DllImport("libc", EntryPoint = "tcsetattr", SetLastError = true)]
   private static extern int TcSetAttrPtr(int fd, int action, IntPtr termios);
 
-  // Large enough for Linux (60 B) and macOS (44 B) termios structs.
-  private const int TermiosBufSize = 64;
-
-  // Byte offsets into the native termios struct (same on both platforms).
-  private const int TermiosIflagOffset = 0;
-  private const int TermiosLflagOffset = 12;
-
   // c_lflag bits — ECHO is 0x8 on both; the rest differ between platforms.
-  private const uint ECHO = 0x8;
-  private const uint ICANON_LINUX = 0x2; private const uint ISIG_LINUX = 0x1; private const uint IEXTEN_LINUX = 0x8000;
-  private const uint ICANON_MAC = 0x100; private const uint ISIG_MAC = 0x80; private const uint IEXTEN_MAC = 0x400;
+  private const ulong ECHO = 0x8;
+  private const ulong ICANON_LINUX = 0x2; private const ulong ISIG_LINUX = 0x1; private const ulong IEXTEN_LINUX = 0x8000;
+  private const ulong ICANON_MAC = 0x100; private const ulong ISIG_MAC = 0x80; private const ulong IEXTEN_MAC = 0x400;
 
   // c_iflag bits — ICRNL is 0x100 on both; IXON differs.
-  private const uint ICRNL = 0x100;
-  private const uint IXON_LINUX = 0x400;
-  private const uint IXON_MAC = 0x200;
-
-  // c_cc array: starting byte offset in the native struct, and VMIN/VTIME indices.
-  // macOS: c_cc at offset 16, VMIN=16, VTIME=17
-  // Linux: c_cc at offset 17 (c_line byte sits at offset 16), VMIN=6, VTIME=5
-  private const int CcStartMac = 16; private const int VminIdxMac = 16; private const int VtimeIdxMac = 17;
-  private const int CcStartLinux = 17; private const int VminIdxLinux = 6; private const int VtimeIdxLinux = 5;
+  private const ulong ICRNL = 0x100;
+  private const ulong IXON_LINUX = 0x400;
+  private const ulong IXON_MAC = 0x200;
 
   private static byte[]? _savedTermiosBytes;
   private static bool _termiosSaved;
 
-  private static void SetRawModeUnix(bool enable)
+  internal static void SetRawModeUnix(bool enable, int fd = 0)
   {
     try
     {
       bool isMac = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+      var layout = UnixTermiosLayout.ForPlatform(isMac);
 
       if (enable)
       {
-        var buf = Marshal.AllocHGlobal(TermiosBufSize);
+        var buffer = Marshal.AllocHGlobal(layout.Size);
         try
         {
-          // Zero-initialise so any padding bytes are deterministic.
-          for (int i = 0; i < TermiosBufSize; i++)
-            Marshal.WriteByte(buf, i, 0);
+          for (int i = 0; i < layout.Size; i++)
+            Marshal.WriteByte(buffer, i, 0);
 
-          if (TcGetAttrPtr(0, buf) != 0) return;
+          if (TcGetAttrPtr(fd, buffer) != 0)
+            return;
 
-          // Persist original settings for restore on exit.
-          _savedTermiosBytes = new byte[TermiosBufSize];
-          Marshal.Copy(buf, _savedTermiosBytes, 0, TermiosBufSize);
-          _termiosSaved = true;
+          var currentBytes = new byte[layout.Size];
+          Marshal.Copy(buffer, currentBytes, 0, layout.Size);
 
-          // Clear raw-mode flags in c_lflag (offset 12, same on both platforms).
-          uint c_lflag = (uint)Marshal.ReadInt32(buf, TermiosLflagOffset);
-          c_lflag &= isMac
-              ? ~(ECHO | ICANON_MAC | ISIG_MAC | IEXTEN_MAC)
-              : ~(ECHO | ICANON_LINUX | ISIG_LINUX | IEXTEN_LINUX);
-          Marshal.WriteInt32(buf, TermiosLflagOffset, (int)c_lflag);
+          bool alreadySaved = _termiosSaved && _savedTermiosBytes?.Length == layout.Size;
+          if (!alreadySaved)
+          {
+            _savedTermiosBytes = currentBytes;
+            _termiosSaved = true;
+          }
 
-          // Clear flow-control flags in c_iflag (offset 0, same on both platforms).
-          uint c_iflag = (uint)Marshal.ReadInt32(buf, TermiosIflagOffset);
-          c_iflag &= isMac
-              ? ~(IXON_MAC | ICRNL)
-              : ~(IXON_LINUX | ICRNL);
-          Marshal.WriteInt32(buf, TermiosIflagOffset, (int)c_iflag);
+          ulong localFlagsToClear = isMac
+            ? ECHO | ICANON_MAC | ISIG_MAC | IEXTEN_MAC
+            : ECHO | ICANON_LINUX | ISIG_LINUX | IEXTEN_LINUX;
+          ulong localFlags = ReadTermiosFlags(buffer, layout.LocalFlagsOffset, layout.FlagsWidth);
+          WriteTermiosFlags(buffer, layout.LocalFlagsOffset, layout.FlagsWidth, localFlags & ~localFlagsToClear);
 
-          // Set VMIN=1 (block until 1 byte available) and VTIME=0 (no timeout).
-          int ccStart = isMac ? CcStartMac : CcStartLinux;
-          int vminIdx = isMac ? VminIdxMac : VminIdxLinux;
-          int vtimeIdx = isMac ? VtimeIdxMac : VtimeIdxLinux;
-          Marshal.WriteByte(buf, ccStart + vminIdx, 1); // VMIN
-          Marshal.WriteByte(buf, ccStart + vtimeIdx, 0); // VTIME
+          ulong inputFlagsToClear = isMac
+            ? IXON_MAC | ICRNL
+            : IXON_LINUX | ICRNL;
+          ulong inputFlags = ReadTermiosFlags(buffer, layout.InputFlagsOffset, layout.FlagsWidth);
+          WriteTermiosFlags(buffer, layout.InputFlagsOffset, layout.FlagsWidth, inputFlags & ~inputFlagsToClear);
 
-          TcSetAttrPtr(0, 0, buf); // TCSANOW = 0
+          Marshal.WriteByte(buffer, layout.ControlCharactersOffset + layout.VminIndex, 1);
+          Marshal.WriteByte(buffer, layout.ControlCharactersOffset + layout.VtimeIndex, 0);
+
+          if (TcSetAttrPtr(fd, 0, buffer) != 0)
+          {
+            // tcsetattr can fail after a partial change. Restore the snapshot and
+            // retain it only when the rollback also fails so disposal can retry.
+            Marshal.Copy(currentBytes, 0, buffer, layout.Size);
+            if (TcSetAttrPtr(fd, 0, buffer) == 0 && !alreadySaved)
+            {
+              _savedTermiosBytes = null;
+              _termiosSaved = false;
+            }
+          }
         }
         finally
         {
-          Marshal.FreeHGlobal(buf);
+          Marshal.FreeHGlobal(buffer);
         }
       }
-      else
+      else if (_termiosSaved && _savedTermiosBytes is { } savedBytes && savedBytes.Length == layout.Size)
       {
-        if (_termiosSaved && _savedTermiosBytes != null)
+        var buffer = Marshal.AllocHGlobal(layout.Size);
+        try
         {
-          var buf = Marshal.AllocHGlobal(TermiosBufSize);
-          try
+          Marshal.Copy(savedBytes, 0, buffer, layout.Size);
+          if (TcSetAttrPtr(fd, 0, buffer) == 0)
           {
-            Marshal.Copy(_savedTermiosBytes, 0, buf, TermiosBufSize);
-            TcSetAttrPtr(0, 0, buf);
+            _savedTermiosBytes = null;
+            _termiosSaved = false;
           }
-          finally
-          {
-            Marshal.FreeHGlobal(buf);
-          }
+        }
+        finally
+        {
+          Marshal.FreeHGlobal(buffer);
         }
       }
     }
-    catch { /* ignore in non-tty */ }
+    catch { /* ignore in non-tty hosts; retain saved state so restore can be retried */ }
+  }
+
+  private static ulong ReadTermiosFlags(IntPtr buffer, int offset, int width)
+    => width == sizeof(ulong)
+      ? unchecked((ulong)Marshal.ReadInt64(buffer, offset))
+      : unchecked((uint)Marshal.ReadInt32(buffer, offset));
+
+  private static void WriteTermiosFlags(IntPtr buffer, int offset, int width, ulong value)
+  {
+    if (width == sizeof(ulong))
+      Marshal.WriteInt64(buffer, offset, unchecked((long)value));
+    else
+      Marshal.WriteInt32(buffer, offset, unchecked((int)value));
   }
 }
