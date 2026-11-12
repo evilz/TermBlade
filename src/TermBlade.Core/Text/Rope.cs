@@ -145,6 +145,13 @@ namespace TermBlade.Core.Text
       if (left.Length == 0) return right;
       if (right.Length == 0) return left;
 
+      if (left is RopeLeaf leftLeaf
+          && right is RopeLeaf rightLeaf
+          && left.Length + right.Length <= MaxLeafLength)
+      {
+        return new RopeLeaf(leftLeaf.GetText() + rightLeaf.GetText());
+      }
+
       if (left.Height > right.Height + 1)
       {
         var branch = (RopeBranch)left;
