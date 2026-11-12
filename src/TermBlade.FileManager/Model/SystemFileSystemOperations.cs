@@ -112,14 +112,14 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
   }
 
   /// <summary>
-  /// Copy.
+  /// Copies a file or directory, preserving symbolic links without traversing their targets.
   /// </summary>
   /// <param name="sourcePath">The sourcePath value.</param>
   /// <param name="destinationPath">The destinationPath value.</param>
   /// <param name="overwrite">The overwrite value.</param>
   public void Copy(string sourcePath, string destinationPath, bool overwrite)
   {
-    if (IsSymbolicLink(sourcePath))
+    if (IsReparsePoint(sourcePath))
     {
       CopyLink(sourcePath, destinationPath, overwrite);
       return;
@@ -258,6 +258,7 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
       var destinationEntry = Path.Combine(destinationPath, entry.Name);
       if (IsReparsePoint(entry.FullName))
       {
+        // Preserve links as entries; never recurse through their targets.
         CopyLink(entry.FullName, destinationEntry, overwrite);
         continue;
       }
@@ -503,8 +504,11 @@ internal sealed class SystemFileSystemOperations : IFileSystemOperations
   {
     try
     {
-      return (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0
-          && new FileInfo(path).LinkTarget is not null;
+      if ((File.GetAttributes(path) & FileAttributes.ReparsePoint) == 0)
+        return false;
+
+      return !string.IsNullOrEmpty(new FileInfo(path).LinkTarget)
+          || !string.IsNullOrEmpty(new DirectoryInfo(path).LinkTarget);
     }
     catch
     {
