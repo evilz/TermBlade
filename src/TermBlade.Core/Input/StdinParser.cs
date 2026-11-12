@@ -14,6 +14,18 @@ public class StdinParser
 
   private readonly object _sync = new();
   private readonly List<byte> _buf = new();
+  private long _bufferVersion;
+
+  internal long PendingInputVersion
+  {
+    get
+    {
+      lock (_sync)
+      {
+        return _bufferVersion;
+      }
+    }
+  }
 
   /// <summary>Gets whether the parser is retaining an incomplete input sequence.</summary>
   public bool HasPendingInput
@@ -36,6 +48,11 @@ public class StdinParser
     var events = new List<object>();
     lock (_sync)
     {
+      if (!data.IsEmpty)
+      {
+        _bufferVersion++;
+      }
+
       foreach (var value in data)
       {
         _buf.Add(value);
@@ -63,34 +80,57 @@ public class StdinParser
   /// </summary>
   public IEnumerable<object> FlushPending()
   {
-    var events = new List<object>();
     lock (_sync)
     {
-      while (_buf.Count > 0)
+      return FlushPendingCore();
+    }
+  }
+
+  internal IEnumerable<object> FlushPending(long expectedVersion)
+  {
+    lock (_sync)
+    {
+      if (expectedVersion != _bufferVersion)
       {
-        if (TryParse(events))
-        {
-          continue;
-        }
-
-        var first = _buf[0];
-        _buf.RemoveAt(0);
-        if (first == 0x1b)
-        {
-          events.Add(new KeyEvent { Name = EscapeKey, Key = EscapeKey });
-          continue;
-        }
-
-        var key = ParseSingleByte(first);
-        if (key != null)
-        {
-          events.Add(key);
-        }
-        else if (first >= 0x80)
-        {
-          events.Add(CreateReplacementKey());
-        }
+        return Array.Empty<object>();
       }
+
+      return FlushPendingCore();
+    }
+  }
+
+  private List<object> FlushPendingCore()
+  {
+    var events = new List<object>();
+    while (_buf.Count > 0)
+    {
+      if (TryParse(events))
+      {
+        continue;
+      }
+
+      var first = _buf[0];
+      _buf.RemoveAt(0);
+      if (first == 0x1b)
+      {
+        events.Add(new KeyEvent { Name = EscapeKey, Key = EscapeKey });
+        continue;
+      }
+
+      var key = ParseSingleByte(first);
+      if (key != null)
+      {
+        events.Add(key);
+      }
+      else if (first >= 0x80)
+      {
+        events.Add(CreateReplacementKey());
+      }
+    }
+
+    if (events.Count > 0)
+    {
+      _bufferVersion++;
     }
 
     return events;
