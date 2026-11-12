@@ -41,6 +41,13 @@ public class CliRendererConfig
   public string? BackgroundColor { get; set; }
 }
 
+internal enum FocusResult
+{
+  Rejected,
+  Acquired,
+  AlreadyEstablished
+}
+
 /// <summary>
 /// Represents resize event args.
 /// </summary>
@@ -242,20 +249,25 @@ public class CliRenderer : IDisposable
   /// </summary>
   public Renderable? CurrentFocus { get; private set; }
 
-  internal bool OnRenderableFocused(Renderable r)
+  internal FocusResult OnRenderableFocused(Renderable r)
   {
-    if (_disposed || !r.CanBeFocusedBy(this)) return false;
+    if (_disposed || !r.CanBeFocusedBy(this)) return FocusResult.Rejected;
 
     if (CurrentFocus != null && CurrentFocus != r)
     {
       var prev = CurrentFocus;
       CurrentFocus = null; // prevent re-entry before Blur emits
-      if (!BlurPreviousFocus(prev) || !r.CanBeFocusedBy(this) || CurrentFocus != null) return false;
+      if (!BlurPreviousFocus(prev) || !r.CanBeFocusedBy(this)) return FocusResult.Rejected;
+      if (ReferenceEquals(CurrentFocus, r)) return FocusResult.AlreadyEstablished;
+      if (CurrentFocus != null) return FocusResult.Rejected;
     }
 
     CurrentFocus = r;
-    return true;
+    return FocusResult.Acquired;
   }
+
+  internal bool IsCurrentFocus(Renderable r)
+    => ReferenceEquals(CurrentFocus, r);
 
   private bool BlurPreviousFocus(Renderable previous)
   {
