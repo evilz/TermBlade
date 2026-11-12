@@ -614,22 +614,34 @@ public class CliRenderer : IDisposable
     var parser = new StdinParser();
     var stream = SysConsole.OpenStandardInput();
     var buf = new byte[256];
-    using var sequenceTimeout = new Timer(
-        _ =>
-        {
-          if (!_running || _disposed) return;
-          try
-          {
-            DispatchInputEvents(parser.FlushPending());
-          }
-          catch
-          {
-            // Input callbacks must not terminate the renderer's timer thread.
-          }
-        },
-        null,
-        Timeout.Infinite,
-        Timeout.Infinite);
+    var timeoutLock = new object();
+    Timer? sequenceTimeout = null;
+
+    void ScheduleSequenceTimeout()
+    {
+      var version = parser.PendingInputVersion;
+      var hasPendingInput = parser.HasPendingInput;
+      lock (timeoutLock)
+      {
+        sequenceTimeout?.Dispose();
+        sequenceTimeout = hasPendingInput
+            ? new Timer(FlushPendingInput, version, StdinSequenceTimeoutMilliseconds, Timeout.Infinite)
+            : null;
+      }
+    }
+
+    void FlushPendingInput(object? state)
+    {
+      if (!_running || _disposed || state is not long version) return;
+      try
+      {
+        DispatchInputEvents(parser.FlushPending(version));
+      }
+      catch
+      {
+        // Input callbacks must not terminate the renderer's timer thread.
+      }
+    }
 
     while (_running && !_disposed)
     {
@@ -638,26 +650,17 @@ public class CliRenderer : IDisposable
         int n = stream.Read(buf, 0, buf.Length);
         if (n <= 0) { Thread.Sleep(1); continue; }
 
-        DispatchInputEvents(parser.Feed(buf.AsSpan(0, n)));
-        sequenceTimeout.Change(
-            parser.HasPendingInput ? StdinSequenceTimeoutMilliseconds : Timeout.Infinite,
-            Timeout.Infinite);
+        var events = parser.Feed(buf.AsSpan(0, n));
+        ScheduleSequenceTimeout();
+        DispatchInputEvents(events);
       }
       catch { Thread.Sleep(10); }
     }
-  }
 
-  private void DispatchInputEvents(IEnumerable<object> events)
-  {
-    lock (_stdinDispatchLock)
+    lock (timeoutLock)
     {
-      foreach (var evt in events)
-      {
-        if (evt is KeyEvent key)
-          KeyInput.EmitKey(key);
-        else if (evt is MouseEvent mouse)
-          KeyInput.EmitMouse(mouse);
-      }
+      sequenceTimeout?.Dispose();
+      sequenceTimeout = null;
     }
   }
 
