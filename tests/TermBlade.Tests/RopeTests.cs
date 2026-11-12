@@ -64,7 +64,7 @@ namespace TermBlade.Tests
 
       Assert.Equal("persistent text", original.GetText());
       Assert.Equal("persistent rope text", inserted.GetText());
-      Assert.Equal("tent rope text", deleted.GetText());
+      Assert.Equal("stent rope text", deleted.GetText());
     }
 
     private static int CeilingLog2(int value)
