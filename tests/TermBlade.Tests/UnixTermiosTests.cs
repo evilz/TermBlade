@@ -33,6 +33,7 @@ namespace TermBlade.Tests
       Assert.Equal(24, layout.LocalFlagsOffset);
       Assert.Equal(8, layout.FlagsWidth);
       Assert.Equal(32, layout.ControlCharactersOffset);
+      Assert.Equal(20, layout.ControlCharactersLength);
       Assert.Equal(56, layout.InputSpeedOffset);
       Assert.Equal(64, layout.OutputSpeedOffset);
       Assert.Equal(16, layout.VminIndex);
@@ -55,7 +56,7 @@ namespace TermBlade.Tests
         buffer = Marshal.AllocHGlobal(layout.Size);
 
         Assert.Equal(0, TcGetAttr(slave, buffer));
-        var original = Snapshot(buffer, layout.Size);
+        var original = Snapshot(buffer, layout);
 
         try
         {
@@ -92,10 +93,32 @@ namespace TermBlade.Tests
       }
     }
 
-    private static byte[] Snapshot(IntPtr buffer, int size)
+    private static byte[] Snapshot(IntPtr buffer, UnixTermiosLayout layout)
     {
-      var bytes = new byte[size];
-      Marshal.Copy(buffer, bytes, 0, size);
+      int width = layout.FlagsWidth;
+      var bytes = new byte[(width * 6) + layout.ControlCharactersLength];
+      int destinationOffset = 0;
+
+      for (int field = 0; field < 4; field++)
+      {
+        Marshal.Copy(
+          IntPtr.Add(buffer, layout.InputFlagsOffset + (field * width)),
+          bytes,
+          destinationOffset,
+          width);
+        destinationOffset += width;
+      }
+
+      Marshal.Copy(
+        IntPtr.Add(buffer, layout.ControlCharactersOffset),
+        bytes,
+        destinationOffset,
+        layout.ControlCharactersLength);
+      destinationOffset += layout.ControlCharactersLength;
+
+      Marshal.Copy(IntPtr.Add(buffer, layout.InputSpeedOffset), bytes, destinationOffset, width);
+      destinationOffset += width;
+      Marshal.Copy(IntPtr.Add(buffer, layout.OutputSpeedOffset), bytes, destinationOffset, width);
       return bytes;
     }
 
