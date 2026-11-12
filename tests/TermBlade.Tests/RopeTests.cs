@@ -25,6 +25,19 @@ namespace TermBlade.Tests
     }
 
     [Fact]
+    public void SequentialSmallAppendsCoalesceIntoBoundedLeaves()
+    {
+      var rope = new Rope();
+
+      for (int i = 0; i < 2_048; i++)
+        rope = rope.Insert(rope.Length, "x");
+
+      Assert.Equal(2_048, rope.Length);
+      Assert.Equal(3, rope.Height);
+      Assert.Equal(new string('x', 2_048), rope.GetText());
+    }
+
+    [Fact]
     public void RandomizedEditsMatchStringModelAndStayBalanced()
     {
       var random = new Random(0x62);
