@@ -156,6 +156,32 @@ public class RenderableLifecycleTests
   }
 
   [Fact]
+  public void FocusChangePreservesReentrantFocusByBlurHandler()
+  {
+    using var renderer = CreateTestingRenderer();
+    var previous = new ProbeRenderable(renderer) { Focusable = true };
+    var next = new ProbeRenderable(renderer) { Focusable = true };
+    renderer.Root.Add(previous);
+    renderer.Root.Add(next);
+    previous.Focus();
+
+    int focusedCount = 0;
+    next.On("focused", _ => focusedCount++);
+    previous.On("blurred", _ =>
+    {
+      next.Blur();
+      next.Focus();
+    });
+
+    next.Focus();
+
+    Assert.False(previous.Focused);
+    Assert.True(next.Focused);
+    Assert.Same(next, renderer.CurrentFocus);
+    Assert.Equal(1, focusedCount);
+  }
+
+  [Fact]
   public void FocusChangeStopsWhenBlurHandlerDisposesRenderer()
   {
     using var renderer = CreateTestingRenderer();
@@ -216,6 +242,28 @@ public class RenderableLifecycleTests
     Assert.Null(child.Parent);
     Assert.DoesNotContain(child, oldParent.GetChildren());
     Assert.DoesNotContain(child, newParent.GetChildren());
+    Assert.Null(renderer.CurrentFocus);
+  }
+
+  [Fact]
+  public void ReparentingRechecksCyclesAfterDetachCallbacks()
+  {
+    using var renderer = CreateTestingRenderer();
+    var oldParent = new ProbeRenderable(renderer);
+    var destination = new ProbeRenderable(renderer);
+    var child = new ProbeRenderable(renderer) { Focusable = true };
+    renderer.Root.Add(oldParent);
+    renderer.Root.Add(destination);
+    oldParent.Add(child);
+    child.Focus();
+    child.On("blurred", _ => child.Add(destination));
+
+    Assert.Throws<ArgumentException>(() => destination.Add(child));
+
+    Assert.Null(child.Parent);
+    Assert.Same(child, destination.Parent);
+    Assert.Contains(destination, child.GetChildren());
+    Assert.DoesNotContain(child, destination.GetChildren());
     Assert.Null(renderer.CurrentFocus);
   }
 
