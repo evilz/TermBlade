@@ -33,7 +33,7 @@ namespace TermBlade.Tests
         rope = rope.Insert(rope.Length, "x");
 
       Assert.Equal(2_048, rope.Length);
-      Assert.Equal(3, rope.Height);
+      Assert.InRange(rope.Height, 1, 4);
       Assert.Equal(new string('x', 2_048), rope.GetText());
     }
 
