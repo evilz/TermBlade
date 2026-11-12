@@ -76,11 +76,11 @@ namespace TermBlade.Tests
         }
 
         Assert.Equal(0, TcGetAttr(slave, buffer));
-        Assert.Equal(original, Snapshot(buffer, layout.Size));
+        Assert.Equal(original, Snapshot(buffer, layout));
 
         CliRenderer.SetRawModeUnix(enable: false, fd: slave);
         Assert.Equal(0, TcGetAttr(slave, buffer));
-        Assert.Equal(original, Snapshot(buffer, layout.Size));
+        Assert.Equal(original, Snapshot(buffer, layout));
       }
       finally
       {
