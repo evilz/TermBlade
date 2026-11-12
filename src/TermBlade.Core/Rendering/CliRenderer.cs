@@ -1,6 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using TermBlade.Core.Ansi;
 using TermBlade.Core.Input;
 using TermBlade.Core.Layout;
@@ -76,6 +77,7 @@ public class CliRenderer : IDisposable
 {
   internal readonly record struct ConsoleSize(int Width, int Height);
   private static readonly Regex TerminalSizeReportRegex = new(@"\x1b\[8;(?<rows>\d+);(?<cols>\d+)t", RegexOptions.Compiled);
+  private const int StdinSequenceTimeoutMilliseconds = 100;
 
   /// <summary>
   /// Gets or sets the terminal width.
@@ -109,6 +111,7 @@ public class CliRenderer : IDisposable
   private Thread? _renderThread;
   private readonly AutoResetEvent _renderSignal = new(false);
   private readonly object _renderLock = new();
+  private readonly object _stdinDispatchLock = new();
   private DateTime _lastFrame = DateTime.UtcNow;
   private IDisposable? _sigwinchReg;
 
@@ -611,6 +614,22 @@ public class CliRenderer : IDisposable
     var parser = new StdinParser();
     var stream = SysConsole.OpenStandardInput();
     var buf = new byte[256];
+    using var sequenceTimeout = new Timer(
+        _ =>
+        {
+          if (!_running || _disposed) return;
+          try
+          {
+            DispatchInputEvents(parser.FlushPending());
+          }
+          catch
+          {
+            // Input callbacks must not terminate the renderer's timer thread.
+          }
+        },
+        null,
+        Timeout.Infinite,
+        Timeout.Infinite);
 
     while (_running && !_disposed)
     {
@@ -619,16 +638,26 @@ public class CliRenderer : IDisposable
         int n = stream.Read(buf, 0, buf.Length);
         if (n <= 0) { Thread.Sleep(1); continue; }
 
-        var events = parser.Feed(buf[..n]);
-        foreach (var evt in events)
-        {
-          if (evt is KeyEvent key)
-            KeyInput.EmitKey(key);
-          else if (evt is MouseEvent mouse)
-            KeyInput.EmitMouse(mouse);
-        }
+        DispatchInputEvents(parser.Feed(buf.AsSpan(0, n)));
+        sequenceTimeout.Change(
+            parser.HasPendingInput ? StdinSequenceTimeoutMilliseconds : Timeout.Infinite,
+            Timeout.Infinite);
       }
       catch { Thread.Sleep(10); }
+    }
+  }
+
+  private void DispatchInputEvents(IEnumerable<object> events)
+  {
+    lock (_stdinDispatchLock)
+    {
+      foreach (var evt in events)
+      {
+        if (evt is KeyEvent key)
+          KeyInput.EmitKey(key);
+        else if (evt is MouseEvent mouse)
+          KeyInput.EmitMouse(mouse);
+      }
     }
   }
 
