@@ -187,6 +187,7 @@ public class StdinParser
             Name = "alt+" + inner.Name,
             Key = inner.Key,
             Alt = true,
+            Meta = true,
             Ctrl = inner.Ctrl,
             Char = inner.Char
           });
