@@ -1,0 +1,25 @@
+<Box Width="100%" Height="100%" PaddingLeft="2" PaddingTop="1"
+     BackgroundColor="#0d1117" FlexDirection="FlexDirection.Column">
+  <Text Height="1" Content="TermBlade dashboard" Fg="#58a6ff" Attributes="TextAttributes.Bold" />
+  <Text Height="1" Content="Use ↑ or ↓ to change the selected item." Fg="#8b949e" />
+  <Select Width="30" Height="4" Options="@Items" SelectedIndex="@SelectedIndex"
+          SelectedIndexChanged="@OnSelectionChanged" AutoFocus="true" />
+  <Text Height="1" Content="@SelectedLabel" Fg="#8b949e" />
+</Box>
+
+@code {
+  private static readonly List<SelectOption> Items =
+  [
+    new() { Name = "Build", Description = "Compile the application", Value = "build" },
+    new() { Name = "Test", Description = "Run the test suite", Value = "test" },
+    new() { Name = "Ship", Description = "Create a release", Value = "ship" },
+  ];
+  private int SelectedIndex { get; set; }
+  private string SelectedLabel => $"Selected: {Items[SelectedIndex].Name}";
+
+  private Task OnSelectionChanged(int index)
+  {
+    SelectedIndex = index;
+    return Task.CompletedTask;
+  }
+}
