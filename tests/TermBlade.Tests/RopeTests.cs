@@ -59,7 +59,7 @@ namespace TermBlade.Tests
     public void EditingPreservesEarlierRopeVersions()
     {
       var original = new Rope("persistent text");
-      var inserted = original.Insert(10, "rope ");
+      var inserted = original.Insert(10, " rope");
       var deleted = inserted.Delete(0, 5);
 
       Assert.Equal("persistent text", original.GetText());
