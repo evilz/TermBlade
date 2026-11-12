@@ -68,7 +68,7 @@ internal static class FrameBufferSample
 
     var hint = new TextRenderable(renderer, new TextOptions
     {
-      Content = "Press q or Escape to quit",
+      Content = "Press q, Escape, or Ctrl+C to quit",
       Fg = "#888888"
     });
     box.Add(hint);
@@ -82,8 +82,14 @@ internal static class FrameBufferSample
       }
     });
 
-    renderer.Start();
-    StopAnimation();
-    renderer.Destroy();
+    try
+    {
+      renderer.Start();
+    }
+    finally
+    {
+      StopAnimation();
+      renderer.Destroy();
+    }
   }
 }
