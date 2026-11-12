@@ -81,12 +81,14 @@ public sealed class CsvDocument
     var counts = new int[candidates.Length];
     var inQuotes = false;
     var fieldStart = true;
+    var hasContent = false;
 
     for (var i = 0; i < content.Length; i++)
     {
       var current = content[i];
       if (current == '"')
       {
+        hasContent = true;
         if (inQuotes && i + 1 < content.Length && content[i + 1] == '"')
         {
           i++;
@@ -115,6 +117,11 @@ public sealed class CsvDocument
 
       if (current == '\r' || current == '\n')
       {
+        if (hasContent)
+        {
+          break;
+        }
+
         if (current == '\r' && i + 1 < content.Length && content[i + 1] == '\n')
         {
           i++;
@@ -124,6 +131,7 @@ public sealed class CsvDocument
         continue;
       }
 
+      hasContent = true;
       var candidateIndex = Array.IndexOf(candidates, current);
       if (candidateIndex >= 0)
       {
