@@ -259,8 +259,14 @@ namespace TermBlade.Core.Text
       if (text.Length == 0) return this;
 
       index = Math.Clamp(index, 0, _root.Length);
-      var (left, right) = _root.Split(index);
       var insert = RopeNodeOps.FromText(text);
+
+      if (index == 0)
+        return new Rope(RopeNodeOps.Join(insert, _root));
+      if (index == _root.Length)
+        return new Rope(RopeNodeOps.Join(_root, insert));
+
+      var (left, right) = _root.Split(index);
       return new Rope(RopeNodeOps.Join(RopeNodeOps.Join(left, insert), right));
     }
 
