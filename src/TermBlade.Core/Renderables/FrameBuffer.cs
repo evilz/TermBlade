@@ -17,7 +17,7 @@ public class FrameBufferRenderable : Renderable
   /// </summary>
   public int BufferHeight { get; }
 
-  private readonly Rgba[] _pixels;
+  private Rgba[]? _pixels;
 
   /// <summary>
   /// Frame buffer renderable.
@@ -41,8 +41,9 @@ public class FrameBufferRenderable : Renderable
   /// <param name="color">The color value.</param>
   public void SetPixel(int x, int y, Rgba color)
   {
+    var pixels = _pixels ?? throw new ObjectDisposedException(nameof(FrameBufferRenderable));
     if (x < 0 || x >= BufferWidth || y < 0 || y >= BufferHeight) return;
-    _pixels[y * BufferWidth + x] = color;
+    pixels[y * BufferWidth + x] = color;
   }
 
   /// <summary>
@@ -51,7 +52,8 @@ public class FrameBufferRenderable : Renderable
   /// <param name="color">The color value.</param>
   public void Clear(Rgba color)
   {
-    for (int i = 0; i < _pixels.Length; i++) _pixels[i] = color;
+    var pixels = _pixels ?? throw new ObjectDisposedException(nameof(FrameBufferRenderable));
+    for (int i = 0; i < pixels.Length; i++) pixels[i] = color;
   }
 
   /// <summary>
@@ -114,7 +116,8 @@ public class FrameBufferRenderable : Renderable
   protected override void RenderSelf(RenderBuffer buffer, double deltaTime)
   {
     int sx = ScreenX, sy = ScreenY, w = ComputedWidth, h = ComputedHeight;
-    if (w <= 0 || h <= 0 || BufferWidth <= 0 || BufferHeight <= 0) return;
+    var pixels = _pixels;
+    if (pixels == null || w <= 0 || h <= 0 || BufferWidth <= 0 || BufferHeight <= 0) return;
 
     // Each cell is 2 pixel rows (top=fg with ▀, bottom=bg)
     for (int cy = 0; cy < h; cy++)
@@ -125,11 +128,17 @@ public class FrameBufferRenderable : Renderable
         int py1 = Math.Clamp((cy * 2) * BufferHeight / Math.Max(1, h * 2), 0, BufferHeight - 1);
         int py2 = Math.Clamp((cy * 2 + 1) * BufferHeight / Math.Max(1, h * 2), 0, BufferHeight - 1);
 
-        var topColor = _pixels[py1 * BufferWidth + px];
-        var botColor = _pixels[py2 * BufferWidth + px];
+        var topColor = pixels[py1 * BufferWidth + px];
+        var botColor = pixels[py2 * BufferWidth + px];
 
         buffer.SetCell(sx + cx, sy + cy, '▀', topColor, botColor);
       }
     }
+  }
+
+  protected override void DisposeResources()
+  {
+    _pixels = null;
+    base.DisposeResources();
   }
 }

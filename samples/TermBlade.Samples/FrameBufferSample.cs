@@ -33,12 +33,17 @@ internal static class FrameBufferSample
     box.Add(fb);
 
     float time = 0;
+    int animationStopped = 0;
+    using var callbacksStopped = new System.Threading.ManualResetEvent(false);
 
     renderer.Resize += (_, args) => { };
 
     // Animate
     var timer = new System.Threading.Timer(_ =>
     {
+      if (System.Threading.Volatile.Read(ref animationStopped) != 0)
+        return;
+
       time += 0.05f;
       fb.Clear(Rgba.FromInts(0, 0, 20));
 
@@ -52,19 +57,39 @@ internal static class FrameBufferSample
       renderer.RequestRender();
     }, null, 0, 50);
 
+    void StopAnimation()
+    {
+      if (System.Threading.Interlocked.Exchange(ref animationStopped, 1) != 0)
+        return;
+
+      if (timer.Dispose(callbacksStopped))
+        callbacksStopped.WaitOne();
+    }
+
     var hint = new TextRenderable(renderer, new TextOptions
     {
-      Content = "Press q or Escape to quit",
+      Content = "Press q, Escape, or Ctrl+C to quit",
       Fg = "#888888"
     });
     box.Add(hint);
 
     renderer.KeyInput.On("keypress", (KeyEvent key) =>
     {
-      if (key.Name == "q" || key.Name == "escape") { timer.Dispose(); renderer.Destroy(); }
+      if (key.Name is "q" or "escape" or "ctrl+c")
+      {
+        StopAnimation();
+        renderer.Destroy();
+      }
     });
 
-    renderer.Start();
-    timer.Dispose();
+    try
+    {
+      renderer.Start();
+    }
+    finally
+    {
+      StopAnimation();
+      renderer.Destroy();
+    }
   }
 }

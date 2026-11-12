@@ -277,4 +277,10 @@ public class TextareaRenderable : Renderable
       }
     }
   }
+
+  protected override void DisposeResources()
+  {
+    _editBuffer.Dispose();
+    base.DisposeResources();
+  }
 }

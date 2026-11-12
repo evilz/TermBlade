@@ -41,6 +41,13 @@ public class CliRendererConfig
   public string? BackgroundColor { get; set; }
 }
 
+internal enum FocusResult
+{
+  Rejected,
+  Acquired,
+  AlreadyEstablished
+}
+
 /// <summary>
 /// Represents resize event args.
 /// </summary>
@@ -95,7 +102,7 @@ public class CliRenderer : IDisposable
   private readonly CliRendererConfig _config;
   private RenderBuffer? _prevBuffer;
   private bool _running;
-  private bool _disposed;
+  private volatile bool _disposed;
   private volatile bool _renderRequested;
   private Rgba _backgroundColor;
   private Thread? _stdinThread;
@@ -242,15 +249,40 @@ public class CliRenderer : IDisposable
   /// </summary>
   public Renderable? CurrentFocus { get; private set; }
 
-  internal void OnRenderableFocused(Renderable r)
+  internal FocusResult OnRenderableFocused(Renderable r)
   {
+    if (_disposed || !r.CanBeFocusedBy(this)) return FocusResult.Rejected;
+
     if (CurrentFocus != null && CurrentFocus != r)
     {
       var prev = CurrentFocus;
       CurrentFocus = null; // prevent re-entry before Blur emits
-      prev.Blur();
+      if (!BlurPreviousFocus(prev) || !r.CanBeFocusedBy(this)) return FocusResult.Rejected;
+      if (ReferenceEquals(CurrentFocus, r)) return FocusResult.AlreadyEstablished;
+      if (CurrentFocus != null) return FocusResult.Rejected;
     }
+
     CurrentFocus = r;
+    return FocusResult.Acquired;
+  }
+
+  internal bool IsCurrentFocus(Renderable r)
+    => ReferenceEquals(CurrentFocus, r);
+
+  private bool BlurPreviousFocus(Renderable previous)
+  {
+    previous.Blur();
+    // Blur handlers can synchronously dispose the renderer.
+    return !_disposed;
+  }
+
+  internal void DispatchKey(KeyEvent key)
+  {
+    if (_disposed) return;
+    if (_config.ExitOnCtrlC && key.Name == "ctrl+c")
+      Destroy();
+    if (!key.DefaultPrevented)
+      CurrentFocus?.HandleKey(key);
   }
 
   internal void OnRenderableBlurred(Renderable r)
@@ -273,8 +305,16 @@ public class CliRenderer : IDisposable
   /// </summary>
   public void RequestRender()
   {
+    if (_disposed) return;
     _renderRequested = true;
-    _renderSignal.Set();
+    try
+    {
+      _renderSignal.Set();
+    }
+    catch (ObjectDisposedException)
+    {
+      // A concurrent disposal can close the signal after the disposed check.
+    }
   }
 
   internal void RegisterRenderable(Renderable r)
@@ -328,13 +368,8 @@ public class CliRenderer : IDisposable
 
     KeyInput.On("keypress", (object? data) =>
     {
-      if (_config.ExitOnCtrlC && data is KeyEvent k && k.Name == "ctrl+c")
-        Destroy();
       if (data is KeyEvent key)
-      {
-        if (!key.DefaultPrevented)
-          CurrentFocus?.HandleKey(key);
-      }
+        DispatchKey(key);
     });
 
     KeyInput.On("mouse", (object? data) =>
@@ -417,19 +452,35 @@ public class CliRenderer : IDisposable
 
     _renderThread?.Join(TimeSpan.FromSeconds(1));
     _stdinThread?.Join(TimeSpan.FromSeconds(1));
-    _renderSignal.Dispose();
 
-    if (!_config.Testing)
+    try
     {
-      // Disable mouse
-      SysConsole.Write("\x1b[?1000l\x1b[?1002l\x1b[?1006l");
-      // Re-enable autowrap
-      SysConsole.Write("\x1b[?7h");
-      SysConsole.Write(AnsiCodes.ShowCursor);
-      SysConsole.Write(AnsiCodes.SwitchToMain);
-      SysConsole.Write(AnsiCodes.Reset);
-      SysConsole.Out.Flush();
-      SetRawMode(false);
+      try
+      {
+        CurrentFocus?.Blur();
+      }
+      finally
+      {
+        Root.Destroy();
+      }
+    }
+    finally
+    {
+      _prevBuffer = null;
+      _renderSignal.Dispose();
+
+      if (!_config.Testing)
+      {
+        // Disable mouse
+        SysConsole.Write("\x1b[?1000l\x1b[?1002l\x1b[?1006l");
+        // Re-enable autowrap
+        SysConsole.Write("\x1b[?7h");
+        SysConsole.Write(AnsiCodes.ShowCursor);
+        SysConsole.Write(AnsiCodes.SwitchToMain);
+        SysConsole.Write(AnsiCodes.Reset);
+        SysConsole.Out.Flush();
+        SetRawMode(false);
+      }
     }
   }
 
