@@ -16,7 +16,7 @@ public class TutorialDocumentationTests
     var dashboardCode = ReadCodeBlock("dashboard-code");
 
     Assert.Contains("<Text Height=\"1\" Content=\"TermBlade dashboard\"", dashboardCode);
-    Assert.Contains("<Text Height=\"1\" Content=\"Press ↑ or ↓ to change the selected item.\"", dashboardCode);
+    Assert.Contains("<Text Height=\"1\" Content=\"Use ↑/↓ to choose an item.\"", dashboardCode);
     Assert.Contains("<Box Height=\"4\" MarginTop=\"1\" Border=\"true\"", dashboardCode);
     Assert.Contains("<Text Height=\"1\" Content=\"@Items[SelectedIndex].Name\"", dashboardCode);
   }
@@ -43,7 +43,7 @@ public class TutorialDocumentationTests
     var frame = RenderFrame(renderer);
 
     Assert.Contains("TermBlade dashboard", frame);
-    Assert.Contains("Press ↑ or ↓ to change the selected item.", frame);
+    Assert.Contains("Use ↑/↓ to choose an item.", frame);
     Assert.True(frame.Contains("Build", StringComparison.Ordinal), $"Rendered frame:\n{frame}");
   }
 
@@ -54,6 +54,7 @@ public class TutorialDocumentationTests
     var dashboard = BuildInteractiveDashboard(renderer, out var selection, out var status);
     renderer.Root.Add(dashboard);
     selection.Focus();
+    _ = RenderFrame(renderer); // Calculate the initial dimensions before the key handler uses its viewport.
 
     renderer.DispatchKey(new KeyEvent { Name = "down", Key = "down" });
 
@@ -69,7 +70,7 @@ public class TutorialDocumentationTests
   {
     var dashboard = CreateDashboard(renderer);
     dashboard.Add(CreateText(renderer, "TermBlade dashboard", height: 1, fg: "#58a6ff", bold: true));
-    dashboard.Add(CreateText(renderer, "Press ↑ or ↓ to change the selected item.", height: 1, fg: "#8b949e"));
+    dashboard.Add(CreateText(renderer, "Use ↑/↓ to choose an item.", height: 1, fg: "#8b949e"));
 
     var panel = new BoxRenderable(renderer, new BoxOptions
     {
