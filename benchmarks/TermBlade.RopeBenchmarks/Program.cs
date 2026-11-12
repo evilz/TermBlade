@@ -12,10 +12,10 @@ Measure("balanced append", () => BuildBalanced(AppendCount).Length, Repetitions)
 
 var legacyTraversal = BuildLegacy(TraversalLength);
 var balancedTraversal = BuildBalanced(TraversalLength);
-Measure("legacy GetText x3", () => ReadRepeatedly(legacyTraversal, TraversalCalls), Repetitions);
-Measure("balanced GetText x3", () => ReadRepeatedly(balancedTraversal, TraversalCalls), Repetitions);
+Measure("legacy GetText x3", () => ReadLegacyRepeatedly(legacyTraversal, TraversalCalls), Repetitions);
+Measure("balanced GetText x3", () => ReadBalancedRepeatedly(balancedTraversal, TraversalCalls), Repetitions);
 
-static int ReadRepeatedly(LegacyRope rope, int calls)
+static int ReadLegacyRepeatedly(LegacyRope rope, int calls)
 {
   int length = 0;
   for (int i = 0; i < calls; i++)
@@ -23,7 +23,7 @@ static int ReadRepeatedly(LegacyRope rope, int calls)
   return length;
 }
 
-static int ReadRepeatedly(Rope rope, int calls)
+static int ReadBalancedRepeatedly(Rope rope, int calls)
 {
   int length = 0;
   for (int i = 0; i < calls; i++)
