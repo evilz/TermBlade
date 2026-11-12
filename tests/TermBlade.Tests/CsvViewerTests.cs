@@ -35,6 +35,49 @@ public class CsvViewerTests
     Assert.Equal(2, document.Rows.Count);
   }
 
+  [Theory]
+  [InlineData("\"\"")]
+  [InlineData("\"\"\\n")]
+  [InlineData("\"\"\\r\\n")]
+  public void Parse_PreservesFinalQuotedEmptyFieldWithoutAddingBlankRow(string content)
+  {
+    var document = CsvDocument.Parse(content, ',', hasHeader: false);
+
+    Assert.Single(document.Rows);
+    Assert.Single(document.Rows[0]);
+    Assert.Equal(string.Empty, document.Rows[0][0]);
+    Assert.Equal(1, document.ColumnCount);
+  }
+
+  [Fact]
+  public void Parse_PreservesQuotedEmptyHeader()
+  {
+    var document = CsvDocument.Parse("\"\"", ',', hasHeader: true);
+
+    Assert.Equal([""], document.Headers);
+    Assert.Empty(document.Rows);
+    Assert.Equal(1, document.ColumnCount);
+  }
+
+  [Fact]
+  public void Parse_PreservesTrailingEmptyField()
+  {
+    var document = CsvDocument.Parse("name,", ',', hasHeader: false);
+
+    Assert.Equal(["name", ""], document.Rows[0]);
+    Assert.Equal(2, document.ColumnCount);
+  }
+
+  [Fact]
+  public void Parse_PreservesBlankRecordsWithoutAddingOneAfterFinalNewline()
+  {
+    var document = CsvDocument.Parse("first\\n\\n", ',', hasHeader: false);
+
+    Assert.Equal(2, document.Rows.Count);
+    Assert.Equal(["first"], document.Rows[0]);
+    Assert.Equal([""], document.Rows[1]);
+  }
+
   [Fact]
   public void Options_ParseSupportsTabDelimiterAlias()
   {
