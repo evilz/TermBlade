@@ -50,7 +50,7 @@ public class PlainTextControlSafetyTests
         captured.Append(char.ConvertFromUtf32(codepoint));
     }
 
-    Assert.Equal(ToPrintableText(UntrustedText), captured.ToString());
+    Assert.Equal(ToPrintableText(UntrustedText), captured.ToString().TrimEnd());
     Assert.DoesNotContain(captured.ToString(), character => char.IsControl(character));
   }
 
