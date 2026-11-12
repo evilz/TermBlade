@@ -26,6 +26,81 @@ public class CsvViewerTests
     Assert.Equal("10", document.Rows[0][1]);
   }
 
+  [Theory]
+  [InlineData("\"a,b,c\";value\n\"x,y,z\";42", ';')]
+  [InlineData("\"a,b,c\"\tvalue\n\"x,y,z\"\t42", '\t')]
+  [InlineData("\"a,b,c\"|value\n\"x,y,z\"|42", '|')]
+  public void Parse_DetectsSeparatorsOutsideQuotedFields(string content, char expectedDelimiter)
+  {
+    var document = CsvDocument.Parse(content, hasHeader: false);
+
+    Assert.Equal(expectedDelimiter, document.Delimiter);
+    Assert.Equal(2, document.ColumnCount);
+    Assert.Equal("a,b,c", document.Rows[0][0]);
+    Assert.Equal("42", document.Rows[1][1]);
+  }
+
+  [Fact]
+  public void Parse_DetectsSeparatorWithEscapedQuotes()
+  {
+    var document = CsvDocument.Parse("\"a,\"\"b,c\"\"\";value\n\"x\";42", hasHeader: false);
+
+    Assert.Equal(';', document.Delimiter);
+    Assert.Equal("a,\"b,c\"", document.Rows[0][0]);
+    Assert.Equal("42", document.Rows[1][1]);
+  }
+
+  [Fact]
+  public void Parse_DetectsSeparatorAcrossMultilineFields()
+  {
+    var document = CsvDocument.Parse("\"first\nline,inside\";value\n\"second\nline\";42", hasHeader: false);
+
+    Assert.Equal(';', document.Delimiter);
+    Assert.Equal("first\nline,inside", document.Rows[0][0]);
+    Assert.Equal("42", document.Rows[1][1]);
+  }
+
+  [Fact]
+  public void Parse_IgnoresBomBeforeDetectingAndParsing()
+  {
+    var document = CsvDocument.Parse("\uFEFF\"name,with,comma\";value\n\"x,y,z\";42", hasHeader: false);
+
+    Assert.Equal(';', document.Delimiter);
+    Assert.Equal("name,with,comma", document.Rows[0][0]);
+  }
+
+  [Fact]
+  public void Parse_EmptyInputUsesDefaultDelimiter()
+  {
+    var document = CsvDocument.Parse(string.Empty);
+
+    Assert.Equal(',', document.Delimiter);
+    Assert.Empty(document.Headers);
+    Assert.Empty(document.Rows);
+  }
+
+  [Fact]
+  public void Parse_ExplicitDelimiterTakesPrecedenceOverDetection()
+  {
+    var document = CsvDocument.Parse("\"a,b,c\";value", '|', hasHeader: false);
+
+    Assert.Equal('|', document.Delimiter);
+    Assert.Single(document.Rows);
+    Assert.Single(document.Rows[0]);
+    Assert.Equal("a,b,c;value", document.Rows[0][0]);
+  }
+
+  [Fact]
+  public void Parse_DoesNotLetLaterFieldPunctuationOverrideFirstRecordDelimiter()
+  {
+    var document = CsvDocument.Parse("name,note\nAlice,one;two;three\nBob,four;five;six", hasHeader: true);
+
+    Assert.Equal(',', document.Delimiter);
+    Assert.Equal(["name", "note"], document.Headers);
+    Assert.Equal("one;two;three", document.Rows[0][1]);
+    Assert.Equal("four;five;six", document.Rows[1][1]);
+  }
+
   [Fact]
   public void Parse_GeneratesHeaders_WhenNoHeaderIsSelected()
   {
@@ -33,6 +108,49 @@ public class CsvViewerTests
 
     Assert.Equal(["Column 1", "Column 2"], document.Headers);
     Assert.Equal(2, document.Rows.Count);
+  }
+
+  [Theory]
+  [InlineData("\"\"")]
+  [InlineData("\"\"\n")]
+  [InlineData("\"\"\r\n")]
+  public void Parse_PreservesFinalQuotedEmptyFieldWithoutAddingBlankRow(string content)
+  {
+    var document = CsvDocument.Parse(content, ',', hasHeader: false);
+
+    Assert.Single(document.Rows);
+    Assert.Single(document.Rows[0]);
+    Assert.Equal(string.Empty, document.Rows[0][0]);
+    Assert.Equal(1, document.ColumnCount);
+  }
+
+  [Fact]
+  public void Parse_PreservesQuotedEmptyHeader()
+  {
+    var document = CsvDocument.Parse("\"\"", ',', hasHeader: true);
+
+    Assert.Equal([""], document.Headers);
+    Assert.Empty(document.Rows);
+    Assert.Equal(1, document.ColumnCount);
+  }
+
+  [Fact]
+  public void Parse_PreservesTrailingEmptyField()
+  {
+    var document = CsvDocument.Parse("name,", ',', hasHeader: false);
+
+    Assert.Equal(["name", ""], document.Rows[0]);
+    Assert.Equal(2, document.ColumnCount);
+  }
+
+  [Fact]
+  public void Parse_PreservesBlankRecordsWithoutAddingOneAfterFinalNewline()
+  {
+    var document = CsvDocument.Parse("first\n\n", ',', hasHeader: false);
+
+    Assert.Equal(2, document.Rows.Count);
+    Assert.Equal(["first"], document.Rows[0]);
+    Assert.Equal([""], document.Rows[1]);
   }
 
   [Fact]
