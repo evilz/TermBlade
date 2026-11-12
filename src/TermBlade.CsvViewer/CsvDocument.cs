@@ -49,6 +49,11 @@ public sealed class CsvDocument
   {
     ArgumentNullException.ThrowIfNull(content);
 
+    if (content.Length > 0 && content[0] == '\uFEFF')
+    {
+      content = content[1..];
+    }
+
     var actualDelimiter = delimiter ?? DetectDelimiter(content);
     var rows = CsvParser.Parse(content, actualDelimiter);
     var headers = hasHeader && rows.Count > 0
@@ -72,8 +77,74 @@ public sealed class CsvDocument
 
   private static char DetectDelimiter(string content)
   {
-    var firstLine = content.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? string.Empty;
     var candidates = new[] { ',', ';', '\t', '|' };
-    return candidates.OrderByDescending(candidate => firstLine.Count(character => character == candidate)).First();
+    var counts = new int[candidates.Length];
+    var inQuotes = false;
+    var fieldStart = true;
+
+    for (var i = 0; i < content.Length; i++)
+    {
+      var current = content[i];
+      if (current == '"')
+      {
+        if (inQuotes && i + 1 < content.Length && content[i + 1] == '"')
+        {
+          i++;
+        }
+        else if (inQuotes)
+        {
+          inQuotes = false;
+          fieldStart = false;
+        }
+        else if (fieldStart)
+        {
+          inQuotes = true;
+        }
+        else
+        {
+          fieldStart = false;
+        }
+
+        continue;
+      }
+
+      if (inQuotes)
+      {
+        continue;
+      }
+
+      if (current == '\r' || current == '\n')
+      {
+        if (current == '\r' && i + 1 < content.Length && content[i + 1] == '\n')
+        {
+          i++;
+        }
+
+        fieldStart = true;
+        continue;
+      }
+
+      var candidateIndex = Array.IndexOf(candidates, current);
+      if (candidateIndex >= 0)
+      {
+        counts[candidateIndex]++;
+        fieldStart = true;
+      }
+      else
+      {
+        fieldStart = false;
+      }
+    }
+
+    var bestIndex = 0;
+    for (var i = 1; i < counts.Length; i++)
+    {
+      if (counts[i] > counts[bestIndex])
+      {
+        bestIndex = i;
+      }
+    }
+
+    return candidates[bestIndex];
   }
 }
