@@ -128,6 +128,100 @@ public sealed class SystemFileSystemOperationsTests
     Assert.True((File.GetAttributes(destinationPath) & FileAttributes.ReparsePoint) != 0);
   }
 
+  [Fact]
+  public void CopyDirectory_PreservesExternalDirectoryLinkWithoutCopyingTarget()
+  {
+    if (OperatingSystem.IsWindows())
+      return;
+
+    using var workspace = new TemporaryWorkspace();
+    var sourcePath = workspace.CreateDirectory("source");
+    var outsidePath = workspace.CreateDirectory("outside");
+    var markerPath = workspace.CreateFile("outside/private.txt", "private");
+    Directory.CreateSymbolicLink(Path.Combine(sourcePath, "outside-link"), outsidePath);
+    var destinationPath = workspace.GetPath("destination");
+    var operations = new SystemFileSystemOperations();
+
+    operations.Copy(sourcePath, destinationPath, overwrite: false);
+
+    var copiedLink = new DirectoryInfo(Path.Combine(destinationPath, "outside-link"));
+    Assert.NotNull(copiedLink.LinkTarget);
+    Assert.True((copiedLink.Attributes & FileAttributes.ReparsePoint) != 0);
+    Assert.Single(Directory.EnumerateFileSystemEntries(destinationPath));
+    Assert.True(File.Exists(markerPath));
+  }
+
+  [Fact]
+  public void Copy_RootDirectoryLinkPreservesLinkInsteadOfTraversingTarget()
+  {
+    if (OperatingSystem.IsWindows())
+      return;
+
+    using var workspace = new TemporaryWorkspace();
+    var sourcePath = workspace.CreateDirectory("source");
+    _ = workspace.CreateFile("source/marker.txt", "data");
+    var linkPath = workspace.GetPath("source-link");
+    var destinationPath = workspace.GetPath("destination-link");
+    Directory.CreateSymbolicLink(linkPath, sourcePath);
+    var operations = new SystemFileSystemOperations();
+
+    operations.Copy(linkPath, destinationPath, overwrite: false);
+
+    var copiedLink = new DirectoryInfo(destinationPath);
+    Assert.NotNull(copiedLink.LinkTarget);
+    Assert.True((copiedLink.Attributes & FileAttributes.ReparsePoint) != 0);
+  }
+
+  [Fact]
+  public void Copy_DanglingSymbolicLinkPreservesLinkTarget()
+  {
+    if (OperatingSystem.IsWindows())
+      return;
+
+    using var workspace = new TemporaryWorkspace();
+    var sourcePath = workspace.GetPath("dangling-link");
+    var missingTarget = workspace.GetPath("missing-target");
+    var destinationPath = workspace.GetPath("copied-link");
+    File.CreateSymbolicLink(sourcePath, missingTarget);
+    var operations = new SystemFileSystemOperations();
+
+    operations.Copy(sourcePath, destinationPath, overwrite: false);
+
+    var copiedLink = new FileInfo(destinationPath);
+    Assert.NotNull(copiedLink.LinkTarget);
+    Assert.Equal(Path.GetFullPath(missingTarget), Path.GetFullPath(copiedLink.LinkTarget!));
+    Assert.True((File.GetAttributes(destinationPath) & FileAttributes.ReparsePoint) != 0);
+  }
+
+  [Fact]
+  public void CopyDirectory_PreservesSelfAndMultiDirectoryLinksWithoutRecursing()
+  {
+    if (OperatingSystem.IsWindows())
+      return;
+
+    using var workspace = new TemporaryWorkspace();
+    var sourcePath = workspace.CreateDirectory("source");
+    var firstDirectory = workspace.CreateDirectory("source/first");
+    var secondDirectory = workspace.CreateDirectory("source/second");
+    Directory.CreateSymbolicLink(Path.Combine(sourcePath, "self"), sourcePath);
+    Directory.CreateSymbolicLink(Path.Combine(firstDirectory, "to-second"), secondDirectory);
+    Directory.CreateSymbolicLink(Path.Combine(secondDirectory, "to-first"), firstDirectory);
+    var destinationPath = workspace.GetPath("destination");
+    var operations = new SystemFileSystemOperations();
+
+    operations.Copy(sourcePath, destinationPath, overwrite: false);
+
+    var copiedSelf = new DirectoryInfo(Path.Combine(destinationPath, "self"));
+    var copiedToSecond = new DirectoryInfo(Path.Combine(destinationPath, "first", "to-second"));
+    var copiedToFirst = new DirectoryInfo(Path.Combine(destinationPath, "second", "to-first"));
+    Assert.NotNull(copiedSelf.LinkTarget);
+    Assert.NotNull(copiedToSecond.LinkTarget);
+    Assert.NotNull(copiedToFirst.LinkTarget);
+    Assert.Equal(3, Directory.EnumerateFileSystemEntries(destinationPath).Count());
+    Assert.Single(Directory.EnumerateFileSystemEntries(Path.Combine(destinationPath, "first")));
+    Assert.Single(Directory.EnumerateFileSystemEntries(Path.Combine(destinationPath, "second")));
+  }
+
   private static string? FindAlternateVolumeRoot(string path)
   {
     var currentRoot = Path.GetPathRoot(Path.GetFullPath(path));
