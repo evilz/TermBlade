@@ -1111,6 +1111,15 @@ public class CliRenderer : IDisposable
   private static bool _termiosSaved;
 
   internal static void SetRawModeUnix(bool enable, int fd = 0)
+    => SetRawModeUnix(enable, fd, TcGetAttrPtr, TcSetAttrPtr);
+
+  // Native delegates keep the rollback path exercisable with a real PTY while
+  // simulating a tcsetattr error after the kernel has applied the raw settings.
+  internal static void SetRawModeUnix(
+    bool enable,
+    int fd,
+    Func<int, IntPtr, int> tcGetAttr,
+    Func<int, int, IntPtr, int> tcSetAttr)
   {
     try
     {
@@ -1125,7 +1134,7 @@ public class CliRenderer : IDisposable
           for (int i = 0; i < layout.Size; i++)
             Marshal.WriteByte(buffer, i, 0);
 
-          if (TcGetAttrPtr(fd, buffer) != 0)
+          if (tcGetAttr(fd, buffer) != 0)
             return;
 
           var currentBytes = new byte[layout.Size];
@@ -1153,12 +1162,12 @@ public class CliRenderer : IDisposable
           Marshal.WriteByte(buffer, layout.ControlCharactersOffset + layout.VminIndex, 1);
           Marshal.WriteByte(buffer, layout.ControlCharactersOffset + layout.VtimeIndex, 0);
 
-          if (TcSetAttrPtr(fd, 0, buffer) != 0)
+          if (tcSetAttr(fd, 0, buffer) != 0)
           {
             // tcsetattr can fail after a partial change. Restore the snapshot and
             // retain it only when the rollback also fails so disposal can retry.
             Marshal.Copy(currentBytes, 0, buffer, layout.Size);
-            if (TcSetAttrPtr(fd, 0, buffer) == 0 && !alreadySaved)
+            if (tcSetAttr(fd, 0, buffer) == 0 && !alreadySaved)
             {
               _savedTermiosBytes = null;
               _termiosSaved = false;
@@ -1176,7 +1185,7 @@ public class CliRenderer : IDisposable
         try
         {
           Marshal.Copy(savedBytes, 0, buffer, layout.Size);
-          if (TcSetAttrPtr(fd, 0, buffer) == 0)
+          if (tcSetAttr(fd, 0, buffer) == 0)
           {
             _savedTermiosBytes = null;
             _termiosSaved = false;
