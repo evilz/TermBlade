@@ -15,10 +15,13 @@ internal static class CsvParser
     var row = new List<string>();
     var field = new StringBuilder();
     var inQuotes = false;
+    var recordStarted = false;
 
     for (var i = 0; i < content.Length; i++)
     {
       var current = content[i];
+      recordStarted = true;
+
       if (current == '"')
       {
         if (inQuotes && i + 1 < content.Length && content[i + 1] == '"')
@@ -47,6 +50,7 @@ internal static class CsvParser
         field.Clear();
         rows.Add(row.ToArray());
         row.Clear();
+        recordStarted = false;
       }
       else
       {
@@ -54,7 +58,7 @@ internal static class CsvParser
       }
     }
 
-    if (field.Length > 0 || row.Count > 0)
+    if (recordStarted)
     {
       row.Add(field.ToString());
       rows.Add(row.ToArray());
