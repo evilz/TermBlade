@@ -104,21 +104,31 @@ internal sealed class LegacyLeaf(string value) : LegacyNode
   }
 }
 
-internal sealed class LegacyBranch(LegacyNode left, LegacyNode right) : LegacyNode
+internal sealed class LegacyBranch : LegacyNode
 {
-  public override int Length => left.Length + right.Length;
-  public override string GetText() => left.GetText() + right.GetText();
+  private readonly LegacyNode _left;
+  private readonly LegacyNode _right;
+  private readonly int _length;
+
+  public LegacyBranch(LegacyNode left, LegacyNode right)
+  {
+    _left = left;
+    _right = right;
+    _length = left.Length + right.Length;
+  }
+
+  public override int Length => _length;
+  public override string GetText() => _left.GetText() + _right.GetText();
 
   public override (LegacyNode Left, LegacyNode Right) Split(int index)
   {
-    int leftLength = left.Length;
-    if (index <= leftLength)
+    if (index <= _left.Length)
     {
-      var (leftPart, rightPart) = left.Split(index);
-      return (leftPart, new LegacyBranch(rightPart, right));
+      var (leftPart, rightPart) = _left.Split(index);
+      return (leftPart, new LegacyBranch(rightPart, _right));
     }
 
-    var (rightPartLeft, rightPartRight) = right.Split(index - leftLength);
-    return (new LegacyBranch(left, rightPartLeft), rightPartRight);
+    var (rightPartLeft, rightPartRight) = _right.Split(index - _left.Length);
+    return (new LegacyBranch(_left, rightPartLeft), rightPartRight);
   }
 }
