@@ -49,7 +49,7 @@ dotnet add package TermBlade.Razor</code></pre>
 
         <section id="component" class="tutorial-step">
           <p class="eyebrow">Step 2</p><h2>Compose a screen with Razor</h2>
-          <p>Create <code>_Imports.razor</code> and <code>Dashboard.razor</code> beside <code>Program.cs</code>. Imports make the layout types and TermBlade components available to every Razor file.</p>
+          <p>Create <code>_Imports.razor</code> and <code>Dashboard.razor</code> beside <code>Program.cs</code>. Imports make the layout types and TermBlade components available to every Razor file. Explicit row heights keep the dashboard visible in a compact 40-column by 8-row terminal.</p>
           <div class="code-heading"><span>_Imports.razor</span><button class="copy-button" data-copy="#imports-code">Copy</button></div>
           <pre id="imports-code" class="code-block"><code>@using TermBlade.Core.Ansi
 @using TermBlade.Core.Layout
@@ -58,10 +58,10 @@ dotnet add package TermBlade.Razor</code></pre>
           <div class="code-heading"><span>Dashboard.razor</span><button class="copy-button" data-copy="#dashboard-code">Copy</button></div>
           <pre id="dashboard-code" class="code-block"><code>&lt;Box Width="100%" Height="100%" PaddingLeft="2" PaddingTop="1"
      BackgroundColor="#0d1117" FlexDirection="FlexDirection.Column"&gt;
-  &lt;Text Content="TermBlade dashboard" Fg="#58a6ff" Attributes="TextAttributes.Bold" /&gt;
-  &lt;Text Content="Press ↑ or ↓ to change the selected item." Fg="#8b949e" /&gt;
-  &lt;Box MarginTop="1" Border="true" BorderColor="#30363d" PaddingLeft="1" PaddingTop="1"&gt;
-    &lt;Text Content="@Items[SelectedIndex].Name" Fg="#ffffff" /&gt;
+  &lt;Text Height="1" Content="TermBlade dashboard" Fg="#58a6ff" Attributes="TextAttributes.Bold" /&gt;
+  &lt;Text Height="1" Content="Press ↑ or ↓ to change the selected item." Fg="#8b949e" /&gt;
+  &lt;Box Height="4" MarginTop="1" Border="true" BorderColor="#30363d" PaddingLeft="1" PaddingTop="1"&gt;
+    &lt;Text Height="1" Content="@Items[SelectedIndex].Name" Fg="#ffffff" /&gt;
   &lt;/Box&gt;
 &lt;/Box&gt;
 
@@ -92,14 +92,21 @@ var host = Host.CreateDefaultBuilder(args)
 await host.RunAsync();</code></pre>
           <div class="code-heading"><span>Run</span><button class="copy-button" data-copy="#run-code">Copy</button></div>
           <pre id="run-code" class="code-block"><code>dotnet run</code></pre>
+          <p>At 40 columns by 8 rows or larger, the title, prompt, and current item remain visible. Press <code>Ctrl+C</code> to exit.</p>
         </section>
 
         <section id="input" class="tutorial-step">
           <p class="eyebrow">Step 4</p><h2>Add keyboard interaction</h2>
-          <p>For focused controls, use their supplied callbacks. Replace the final <code>Text</code> in the previous step with a real selection control; TermBlade handles focus and arrow-key navigation.</p>
+          <p>Replace the complete <code>Dashboard.razor</code> file with this version so the items and selected index are declared only once. TermBlade moves focus to the selection control; the footer updates when you press ↑ or ↓.</p>
           <div class="code-heading"><span>Dashboard.razor</span><button class="copy-button" data-copy="#input-code">Copy</button></div>
-          <pre id="input-code" class="code-block"><code>&lt;Select Width="30" Height="5" Options="@Items" SelectedIndex="@SelectedIndex"
-        SelectedIndexChanged="@OnSelectionChanged" AutoFocus="true" /&gt;
+          <pre id="input-code" class="code-block"><code>&lt;Box Width="100%" Height="100%" PaddingLeft="2" PaddingTop="1"
+     BackgroundColor="#0d1117" FlexDirection="FlexDirection.Column"&gt;
+  &lt;Text Height="1" Content="TermBlade dashboard" Fg="#58a6ff" Attributes="TextAttributes.Bold" /&gt;
+  &lt;Text Height="1" Content="Use ↑ or ↓ to change the selected item." Fg="#8b949e" /&gt;
+  &lt;Select Width="30" Height="4" Options="@Items" SelectedIndex="@SelectedIndex"
+          SelectedIndexChanged="@OnSelectionChanged" AutoFocus="true" /&gt;
+  &lt;Text Height="1" Content="@SelectedLabel" Fg="#8b949e" /&gt;
+&lt;/Box&gt;
 
 @code {
   private static readonly List&lt;SelectOption&gt; Items =
@@ -109,6 +116,7 @@ await host.RunAsync();</code></pre>
     new() { Name = "Ship", Description = "Create a release", Value = "ship" },
   ];
   private int SelectedIndex { get; set; }
+  private string SelectedLabel =&gt; $"Selected: {Items[SelectedIndex].Name}";
 
   private Task OnSelectionChanged(int index)
   {
